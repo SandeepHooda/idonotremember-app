@@ -1,5 +1,5 @@
-APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicLoading','$http','$ionicPopup','appData',
-    function($scope,$state,$rootScope,$ionicLoading,$http,$ionicPopup, appData){
+APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicLoading','$http','$ionicPopup','appData','$timeout',
+    function($scope,$state,$rootScope,$ionicLoading,$http,$ionicPopup, appData,$timeout){
 	//cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=myreversedclientid
 	//cordova plugin add cordova-plugin-keyboard
 	//https://github.com/apache/cordova-plugin-geolocation
@@ -165,10 +165,11 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 			function(response){
 	  			 $scope.hideBusy();
 	  			$scope.retryCount ++;
-	  			if ($scope.retryCount <=1){
-	  				$scope.getReminders();
+	  			if ($scope.retryCount <=10){
+	  				$timeout($scope.getReminders(), 500);
+	  				
 	  			}else {
-	  				$scope.popUp('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+	  				$scope.popUp('Sorry '+$scope.retryCount, 'Could not fectch data. Do you want to retry now? ','menu.login' );
 	  			}
 	  			
 			});
