@@ -90,7 +90,7 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
 			 localStorage.removeItem('name');
 		 }
 		 
-		 window.open("/Oauth", "_self");
+		 window.open("/OauthDaddy", "_self");
 	 }
 	 
 	 

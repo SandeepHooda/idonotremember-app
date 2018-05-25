@@ -1,28 +1,23 @@
 package com.google;
 
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.communication.email.EmailAddess;
-import com.communication.email.EmailVO;
-import com.communication.email.MailService;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -36,11 +31,11 @@ import com.login.vo.LoginVO;
 
 import mangodb.MangoDB;
 
-
 /**
- * Servlet implementation class Oauth
+ * Servlet implementation class OauthDaddy
  */
-public class Oauth extends HttpServlet {
+
+public class OauthDaddy extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate().setDeadline(300d);
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
@@ -50,7 +45,7 @@ public class Oauth extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Oauth() {
+    public OauthDaddy() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -120,7 +115,7 @@ public class Oauth extends HttpServlet {
 	private void getAuthCode(HttpServletRequest request, HttpServletResponse response, String client_id, String state){
 		//Client id + redirect url + scope + response type
 	
-			String redirectUrl = "https://accounts.google.com/o/oauth2/auth?response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&client_id="+client_id+"&state="+state+"&redirect_uri=https%3A%2F%2Fidonotremember-app.appspot.com%2FOauth&output=embed";
+			String redirectUrl = "https://accounts.google.com/o/oauth2/auth?response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&client_id="+client_id+"&state="+state+"&redirect_uri=http%3A%2F%2Fwww.idonotremember.com%2FOauthDaddy&output=embed";
 			try {
 				response.sendRedirect(redirectUrl);
 			} catch (IOException e) {
@@ -136,7 +131,7 @@ public class Oauth extends HttpServlet {
 	
 		
 		
-		String urlParameters  = "grant_type=authorization_code&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri=https%3A%2F%2Fidonotremember-app.appspot.com%2FOauth&code="+code+"&output=embed";
+		String urlParameters  = "grant_type=authorization_code&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri=http%3A%2F%2Fwww.idonotremember.com%2FOauthDaddy&code="+code+"&output=embed";
 		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
 		int    postDataLength = postData.length;
 		

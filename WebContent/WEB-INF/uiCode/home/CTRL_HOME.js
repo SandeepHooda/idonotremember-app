@@ -27,6 +27,7 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 	            }
 	        }
 	 dataLayer.push({'pageTitle': 'Home'});    // Better
+	 $scope.retryCount = 0;
 	var theCtrl = this;
 	theCtrl.searchInput = "";
 	$scope.reminders =[];
@@ -163,7 +164,13 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 	  		},
 			function(response){
 	  			 $scope.hideBusy();
-	  			$scope.popUp('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+	  			$scope.retryCount ++;
+	  			if ($scope.retryCount <=1){
+	  				$scope.getReminders();
+	  			}else {
+	  				$scope.popUp('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+	  			}
+	  			
 			});
 	}
 	

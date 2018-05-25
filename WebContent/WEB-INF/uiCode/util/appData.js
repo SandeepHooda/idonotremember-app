@@ -6,7 +6,7 @@ APP.SERVICES.service ('appData',['$window','dataRestore','$ionicPopup',
 		return "1519981368108";
 	}
 	this.getHost = function () {
-		var host = "https://remind-me-on.appspot.com";
+		var host = "http://www.idonotremember.com";
 		if ($window.location.host == ""){
 			host = "phone";
 			//host = "https://deliveratmydoor.appspot.com";

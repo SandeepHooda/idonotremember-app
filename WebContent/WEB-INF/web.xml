@@ -39,4 +39,14 @@
     <servlet-name>Oauth</servlet-name>
     <url-pattern>/Oauth</url-pattern>
   </servlet-mapping>
+   <servlet>
+    <description></description>
+    <display-name>OauthDaddy</display-name>
+    <servlet-name>OauthDaddy</servlet-name>
+    <servlet-class>com.google.OauthDaddy</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>OauthDaddy</servlet-name>
+    <url-pattern>/OauthDaddy</url-pattern>
+  </servlet-mapping>
 </web-app>
