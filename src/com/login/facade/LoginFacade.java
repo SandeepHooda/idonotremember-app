@@ -342,7 +342,7 @@ public class LoginFacade {
 	    	   ipAddress= ipAddress.contains(",") ? ipAddress.split(",")[0] : ipAddress;
 	       }
 	       
-	       if (StringUtils.isNoneBlank(ipAddress)) {  
+	       if (StringUtils.isNotBlank(ipAddress)) {  
 	    	   loginVO.setIpAddress(ipAddress);
 	    	   
 	    	 //Get geo location via IP
@@ -359,7 +359,7 @@ public class LoginFacade {
 	       
 	       
 	       
-	       if (null != userAgent && null != userAgent.getParse() && StringUtils.isNoneBlank(userAgent.getParse().getOperating_system()) ) {
+	       if (null != userAgent && null != userAgent.getParse() && StringUtils.isNotBlank(userAgent.getParse().getOperating_system()) ) {
 	    	   loginVO.setUserAgent(userAgent.getParse().getOperating_system()+" # "+userAgent.getParse().getSoftware_name()+" # "+userAgent.getParse().getSoftware_version());
 		       loginVO.setUserAgentObj(userAgent);
 		       

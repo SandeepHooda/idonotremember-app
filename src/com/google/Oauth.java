@@ -60,8 +60,8 @@ public class Oauth extends HttpServlet {
 	 */
     //https://console.cloud.google.com/apis/credentials?project=remind-me-on&authuser=5
     //Also change redirect URI
-   private static String client_secret = "clarCZYMkThQBzW8AmlwTFAd";
-   private static String client_id = "442257875897-aklpbvb97dsrleaf4g98mjjngdmf8t18.apps.googleusercontent.com";
+   private static String client_secret = "JKxIjO-4o7zyPP2Up5Fc4Li2";
+   private static String client_id = "880304193567-42sve75pq3vs1h8ivimqmjtn8on2ltk2.apps.googleusercontent.com";
    //Enanle people.googleapis.com from https://console.cloud.google.com/apis/library?project=remind-me-on&authuser=5
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -120,7 +120,7 @@ public class Oauth extends HttpServlet {
 	private void getAuthCode(HttpServletRequest request, HttpServletResponse response, String client_id, String state){
 		//Client id + redirect url + scope + response type
 	
-			String redirectUrl = "https://accounts.google.com/o/oauth2/auth?response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&client_id="+client_id+"&state="+state+"&redirect_uri=https%3A%2F%2Fremind-me-on.appspot.com%2FOauth";
+			String redirectUrl = "https://accounts.google.com/o/oauth2/auth?response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&client_id="+client_id+"&state="+state+"&redirect_uri=https%3A%2F%2Fidonotremember-app.appspot.com%2FOauth";
 			try {
 				response.sendRedirect(redirectUrl);
 			} catch (IOException e) {
@@ -136,7 +136,7 @@ public class Oauth extends HttpServlet {
 	
 		
 		
-		String urlParameters  = "grant_type=authorization_code&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri=https%3A%2F%2Fremind-me-on.appspot.com%2FOauth&code="+code;
+		String urlParameters  = "grant_type=authorization_code&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri=https%3A%2F%2Fidonotremember-app.appspot.com%2FOauth&code="+code;
 		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
 		int    postDataLength = postData.length;
 		
