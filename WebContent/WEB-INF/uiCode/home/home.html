@@ -1,0 +1,106 @@
+<ion-view title="Reminders" cache-view="false"  class="backhroundcolor " ng-init="getReminders();" ng-controller="CTRL_HOME as $ctrl">
+
+<ion-header-bar class="bar-positive">
+      <h1 class="title">Reminders</h1>   
+</ion-header-bar>
+
+<ion-content class="padding">
+	<div>
+	<span class="userName blockDisplay">{{userName}}</span> <span class="userName" ng-click="$ctrl.logOut()">
+	
+	Log Out &nbsp;<i class="icon ion-log-out"></i></span>
+	
+	<div id="geoLocationPermission" ng-if="!geoLocationPermissionGranted">
+		<div class="fullwidth">
+			<hr/>
+		</div>
+		<span class="userName blockDisplay">
+		To server you better we need to know you location
+		<button class="button button-balanced order-button buttonAnimationSmall" ng-click="getLocation()">
+						I am OK
+		</button> 
+		</span>
+	</div>
+	
+	<div class="fullwidth">
+		<hr/>
+	</div>
+	
+	<div id="filterDiv1" >
+	<span class="userName">Filter reminders</span> 
+	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter(null,null)">
+					"All"
+	</button>
+	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Once')">
+					"Once"
+	</button>
+	
+	
+	
+	</div>
+	
+	
+	<div id="filterDiv2" style="padding-top: 10px;" >
+	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Yearly')">
+					"Yearly"
+	</button> 
+	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Monthly')">
+					"Monthly"
+	</button>
+	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Day', null)">
+					"Weekly"
+	</button>
+	</div>
+	<div class="fullwidth">
+		<hr/>
+	</div>
+	
+	</div>
+	<div>
+		<span class="whitecolor ">
+		<div><span class="userName">Swipe left to delete an item.</span></div>
+		 <!-- Search bar -->
+		    <div class="list list-inset searchbox">
+			  <label class="item item-input searchboxInput">
+			    <i class="icon ion-search placeholder-icon"></i>
+			    <input type="text" placeholder="Search" ng-change="filterByText()" ng-model="$ctrl.searchInput">
+			  </label>
+			</div>
+		</span>
+		
+		<button ng-click="$ctrl.addNewReminder()" id="floatingBtn" class="floatingBtn top0" name="add new" title="add new reminder" ng-click="newReminder()">
+			 <i class="icon ion-plus"></i>
+		</button>
+	</div>
+	
+	<!-- Users reminder -->
+	
+	<div class="topSpace"	>
+		<ion-item class="smallPadding" ng-repeat="reminder in reminders track by $index" on-swipe-left="deleteReminder({{$index}})">
+		  <div class="productDesc">
+		  		 <b>{{reminder.reminderSubject}} - {{reminder.reminderText}}</b> <br/>
+		  		 <span class="italicBlue">Remind via Email, 
+		  		 
+		  		 
+		  		 <button ng-if="!reminder.makeACall" class="button button-balanced order-button buttonAnimationTiny" style="background-color:gray;" ng-click="toggleCall($index)"> 
+				 No Call
+				</button>
+				<button ng-if="reminder.makeACall"  class="button button-balanced order-button buttonAnimationTiny"  ng-click="toggleCall($index)"> 
+					Call
+				</button>
+				
+				<button ng-if="!reminder.sendText" class="button button-balanced order-button buttonAnimationTiny" style="background-color:gray;" ng-click="toggleSMS($index)"> 
+				 No SMS
+				</button>
+				<button ng-if="reminder.sendText"  class="button button-balanced order-button buttonAnimationTiny"  ng-click="toggleSMS($index)"> 
+					SMS
+				</button>
+		  		
+		  		 <span ng-show="reminder.makeACall || reminder.sendText">On {{reminder.selectedPhone}}</span>
+		  		 <span ng-if="reminder.frequencyWithDate != 'Once'"> Time: <span> {{reminder.displayTime}}</span></span><br/>
+		  		  <span class="italicGreen"> Next due time <span> {{reminder.nextExecutionDisplayTime}}</span> 
+		   </div>
+		 </ion-item>
+	</div>
+</ion-content>
+</ion-view>

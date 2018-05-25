@@ -1,0 +1,18 @@
+<ion-view title="Login"  class="white" ng-controller="CTRL_Login as $ctrl" cache-view="false">
+<ion-header-bar class="bar-positive">
+      <h1 class="title">Login</h1>
+    </ion-header-bar>
+ <ion-content class="padding">
+	 <div ng-if="!conditionAgree">
+	  
+	 <button   ng-click="iAgree()"  name="signin" class="termsAgree">I agree</button>
+	 	<iframe  src="/docs/globalTermsAndConditions.html" style="width: 90%; height: 80%"></iframe>
+		
+	 </div>
+
+  <button ng-if=" conditionAgree && host != 'phone' "  ng-click="$ctrl.signIN()" id="signin" name="signin" class="loginBtn loginBtn--google centerText">Secure Sign in with Google</button>
+	<button ng-if="conditionAgree && host == 'phone' " ng-click="googleSignIn()" id="signin" name="signin" class="loginBtn loginBtn--google centerText">Secure Sign in with Google Plus</button>
+	
+	
+ </ion-content>
+</ion-view>
