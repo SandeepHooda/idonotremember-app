@@ -312,7 +312,7 @@ public class LoginFacade {
 					//Notify sandeep via email
 					 EmailAddess toAddress = new EmailAddess();
 					 toAddress.setAddress("sonu.hooda@gmail.com");
-					new  MailService().sendSimpleMail(prepareEmailVO(toAddress, "Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
+					new  MailService().sendSimpleMail(prepareEmailVO(toAddress, "User precise location. \n\r Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
 					+" Location "+loginVO.getIpAddressLocation().getCity() +", "+loginVO.getIpAddressLocation().getCountry(), null, null));
 				 }
 				
