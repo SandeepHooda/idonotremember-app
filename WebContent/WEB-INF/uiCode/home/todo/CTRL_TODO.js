@@ -68,11 +68,16 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	  			$scope.popUp('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
 			});
 		}
+	$scope.noDataFound = false;
 	$scope.showToDos = function(data){
+		$scope.noDataFound = false;
 		$scope.todos = []
 		$scope.completedTodos = [];
 		var todos = [];
 		var completedTodos = [];
+		if (data.length == 0){
+			$scope.noDataFound = true;
+		}
 		for (var i=0;i<data.length;i++){
 			if (data[i].complete){
 				completedTodos.push(data[i]);

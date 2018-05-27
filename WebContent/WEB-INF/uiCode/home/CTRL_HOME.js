@@ -181,10 +181,14 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 			
 			});
 	}
-	
+	$scope.noDataFound = false;
 	$scope.formatReminderDisplay = function(dbResponse){
+		$scope.noDataFound = false;
 		var formattedReminders = [];
 		if (dbResponse){
+			if (dbResponse.length == 0){
+				$scope.noDataFound = true;
+			}
 				for (var i=0;i<dbResponse.length;i++){
 					var date =  new Date(dbResponse[i].nextExecutionTime);
 					var today = new Date();

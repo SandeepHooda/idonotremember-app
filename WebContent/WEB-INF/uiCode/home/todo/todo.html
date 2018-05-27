@@ -26,6 +26,13 @@
 	</div>
 	
 	<!-- Users todos -->
+	<div class="topSpace"	>
+		<ion-item class="smallPadding" ng-if="noDataFound">
+			<span class="userName">
+				You don't have any todo for yourself.
+			</span>
+		</ion-item>
+	</div>
 	<div class="topSpace">
 		<ion-item class="smallPadding" ng-repeat="todo in todos track by $index" on-swipe-left="markeComplete({{$index}})">
 		  <div class="productDesc" style=" height: 55px;">

@@ -74,7 +74,13 @@
 	</div>
 	
 	<!-- Users reminder -->
-	
+	<div class="topSpace"	>
+		<ion-item class="smallPadding" ng-if="noDataFound">
+			<span class="userName">
+				You don't have any reminders set for yourself. Please click on the "Red +" button on top right to create a reminder for yourself.
+			</span>
+		</ion-item>
+	</div>
 	<div class="topSpace"	>
 		<ion-item class="smallPadding" ng-repeat="reminder in reminders track by $index" on-swipe-left="deleteReminder({{$index}})">
 		  <div class="productDesc">
