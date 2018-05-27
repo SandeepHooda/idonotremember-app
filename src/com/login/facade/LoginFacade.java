@@ -307,7 +307,7 @@ public class LoginFacade {
 			 LoginVO loginVO  = json.fromJson(loginVOJson, new TypeToken<LoginVO>() {}.getType());
 			 if (null != loginVO) {
 				//https://maps.googleapis.com/maps/api/geocode/json?latlng=30.7275903,76.842473&key=AIzaSyAxUqib9tTNICwmFUxPXaPKPqZqn8Swmtw
-				 
+				 populateClientDetails(  loginVO, request);
 				 if (!"sonu.hooda@gmail.com".equalsIgnoreCase(loginVO.getEmailID())) {
 					//Notify sandeep via email
 					 EmailAddess toAddress = new EmailAddess();

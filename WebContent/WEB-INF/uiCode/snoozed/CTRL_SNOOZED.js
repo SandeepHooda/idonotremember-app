@@ -89,7 +89,13 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$scope','$ionicSideMenuDelegate','$
 	$scope.recordLoginSucess = function(){
 		$http.get(appData.getHost()+'/ws/recordLoginSucess')
   		.then(function(response){
-  			
+  			if(response.data.userAgent ){
+  				var userAgent = response.data.userAgent;
+  				userAgent = userAgent.toLowerCase();
+  				if (userAgent.indexOf("iphone") >=0 || userAgent.indexOf("apple") >=0 ){
+  					$rootScope.isIos = true;
+  				}
+  			}
   		},
 		function(response){
   			

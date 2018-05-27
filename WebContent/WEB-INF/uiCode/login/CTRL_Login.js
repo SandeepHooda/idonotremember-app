@@ -3,6 +3,8 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
 	var theCtrl = this;
 	$scope.host = appData.getHost();
 	$scope.conditionAgree = false;
+	
+	$scope.detectMobilebrowser = detectMobilebrowser;
 	$scope.iAgree = function(){
 		$scope.conditionAgree = true;
 	}

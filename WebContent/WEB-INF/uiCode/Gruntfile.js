@@ -128,6 +128,7 @@ module.exports = function (grunt) {
                     
                     {expand: true,  cwd: '<%= js_src_path %>',src: "shake.js", dest: '<%= js_build_path %>/', filter: 'isFile'},
                     {expand: true,  cwd: '<%= js_src_path %>',src: "lib/ionic/js/ionic.bundle.js", dest: '<%= js_build_path %>/', filter: 'isFile'},
+                    {expand: true,  cwd: '<%= js_src_path %>',src: "lib/detectmobilebrowser.js", dest: '<%= js_build_path %>/', filter: 'isFile'},
                     {expand: true,  cwd: '<%= js_src_path %>',src: "lib/jquery_m.js", dest: '<%= js_build_path %>/', filter: 'isFile'},
                     {expand: true,  cwd: '<%= js_src_path %>',src: "lib/corouselJquery.js", dest: '<%= js_build_path %>/', filter: 'isFile'},
                     {expand: true,  cwd: '<%= js_src_path %>',src: "lib/lodash.min.js", dest: '<%= js_build_path %>/', filter: 'isFile'},

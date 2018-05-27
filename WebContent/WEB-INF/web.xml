@@ -39,7 +39,7 @@
     <servlet-name>Oauth</servlet-name>
     <url-pattern>/Oauth</url-pattern>
   </servlet-mapping>
-   <servlet>
+  <servlet>
     <description></description>
     <display-name>OauthDaddy</display-name>
     <servlet-name>OauthDaddy</servlet-name>

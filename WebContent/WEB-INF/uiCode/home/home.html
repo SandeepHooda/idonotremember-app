@@ -26,33 +26,33 @@
 		<hr/>
 	</div>
 	
-	<div id="filterDiv1" >
-	<span class="userName">Filter reminders</span> 
-	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter(null,null)">
-					"All"
-	</button>
-	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Once')">
-					"Once"
-	</button>
 	
-	
-	
-	</div>
-	
-	
-	<div id="filterDiv2" style="padding-top: 10px;" >
-	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Yearly')">
-					"Yearly"
-	</button> 
-	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Monthly')">
-					"Monthly"
-	</button>
-	<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Day', null)">
-					"Weekly"
-	</button>
-	</div>
-	<div class="fullwidth">
-		<hr/>
+	<div id="filters" ng-if="reminders && reminders.length > 10">
+		<div id="filterDiv1" >
+			<span class="userName">Filter reminders</span> 
+			<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter(null,null)">
+							"All"
+			</button>
+			<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Once')">
+							"Once"
+			</button>
+		</div>
+		
+		
+		<div id="filterDiv2" style="padding-top: 10px;" >
+			<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Yearly')">
+							"Yearly"
+			</button> 
+			<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Date', 'Monthly')">
+							"Monthly"
+			</button>
+			<button class="button button-balanced order-button buttonAnimationSmall" ng-click="filter('Day', null)">
+							"Weekly"
+			</button>
+			</div>
+		<div class="fullwidth">
+			<hr/>
+		</div>
 	</div>
 	
 	</div>
