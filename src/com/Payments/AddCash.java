@@ -42,12 +42,16 @@ public class AddCash extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String user =(String) request.getSession().getAttribute("email");
-		if (null != user) {
+		String amount = request.getParameter("amount");
+		if (null != amount && amount.indexOf(".")>0) {
+			amount = amount.substring(0,amount.indexOf("."));
+		}
+		if (null != user && null !=amount) {
 			TreeMap<String,String> parameters = new TreeMap<String,String>();
 			parameters.put("ORDER_ID",user+"_"+(new Date().getTime()));
 			parameters.put("CUST_ID",user);
 	
-			parameters.put("TXN_AMOUNT",request.getParameter("amount"));
+			parameters.put("TXN_AMOUNT",amount);
 			
 			
 			parameters.put("MID",PaytmConstants.MID);
@@ -103,7 +107,7 @@ public class AddCash extends HttpServlet {
 				
 				EmailAddess toAddress = new EmailAddess();
 				 toAddress.setAddress("sonu.hooda@gmail.com");
-				new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Cash txn initiated  ",	parameters.get("EMAIL") +" Amount "+ parameters.get("TXN_AMOUNT"), null, null));
+				new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Cash txn initiated  ",	parameters.get("EMAIL") +" Amount "+amount, null, null));
 				
 				
 				response.getWriter().println(outputHtml);

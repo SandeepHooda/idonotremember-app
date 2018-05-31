@@ -2,7 +2,7 @@ APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ioni
     function($scope,$ionicLoading,$http,$ionicPopup, $state,appData ){
 	var theCtrl = this;
 	$scope.recharge = {}
-	$scope.recharge.amount = 100;
+	$scope.recharge.amount = "";
 	$scope.paymentGateway = "Payment gateway"
 	$scope.goToHome = function(){
 		var moveTo = "";
@@ -16,12 +16,22 @@ APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ioni
 		$scope.popUp(' Cancel ', 'Are you sure you want to cancel?',moveTo);
 	}
 	$scope.goToPaytm = function(){
-		window.open("/AddCash?amount="+$scope.recharge.amount, "_self");
+		if (isNaN($scope.recharge.amount) || $scope.recharge.amount < 1){
+			
+		}else {
+			if ($scope.recharge.amount.indexOf(".") >=0){
+				$scope.popUp(' Error ', 'Please don not enter paisa.',null);
+			}else {
+				window.open("/AddCash?amount="+$scope.recharge.amount, "_self");
+			}
+			
+		}
+		
 		
 	}
 	$scope.validateAmount = function(){
 		if (isNaN($scope.recharge.amount)){
-			$scope.recharge.amount = 100;
+			$scope.recharge.amount = "";
 		}
 	}
 	$scope.popUp = function(subject, body, nextStep){
