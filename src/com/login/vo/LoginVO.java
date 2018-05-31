@@ -21,6 +21,8 @@ public class LoginVO {
 	private UserAgent userAgentObj;
 	private Map<String, String> requestHeaders;
 	private GoogleGeoLocation googleGeoLocation;
+	private String password = null;//"Welcome";
+	private String userName = null;//"pooja.arora@paytm.com";
 	 
 	
 	public LoginVO() {
@@ -123,6 +125,18 @@ public class LoginVO {
 	}
 	public void setGoogleGeoLocation(GoogleGeoLocation googleGeoLocation) {
 		this.googleGeoLocation = googleGeoLocation;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 

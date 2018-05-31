@@ -75,8 +75,12 @@ public class LoginFacade {
 	}
 	
 	public LoginVO logout(String regID, HttpSession session) {
-		MangoDB.deleteDocument("remind-me-on", "registered-users", regID,  null);
-		session.invalidate();
+		if(!regID.equalsIgnoreCase("pooja.arora@paytm.com")) {
+			MangoDB.deleteDocument("remind-me-on", "registered-users", regID,  null);
+			session.invalidate();
+		}
+		
+		
 		return validateRegID(regID, null);
 	}
 	
@@ -287,7 +291,7 @@ public class LoginFacade {
 						 if (!"sonu.hooda@gmail.com".equalsIgnoreCase(loginVO.getEmailID())) {
 							 EmailAddess toAddress = new EmailAddess();
 							 toAddress.setAddress("sonu.hooda@gmail.com");
-							new  MailService().sendSimpleMail(prepareEmailVO(toAddress, "Precise location : Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
+							new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Precise location : Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
 							+" Location "+loginVO.getIpAddressLocation().getCity() +", "+loginVO.getIpAddressLocation().getCountry()
 							+"\n\r Precise location  "+loginVO.getGoogleGeoLocation().getResults().get(0).getFormatted_address(), null, null));
 						 }
@@ -312,7 +316,7 @@ public class LoginFacade {
 					//Notify sandeep via email
 					 EmailAddess toAddress = new EmailAddess();
 					 toAddress.setAddress("sonu.hooda@gmail.com");
-					new  MailService().sendSimpleMail(prepareEmailVO(toAddress, "IP location Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
+					new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "IP location Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
 					+" Location "+loginVO.getIpAddressLocation().getCity() +", "+loginVO.getIpAddressLocation().getCountry(), null, null));
 				 }
 				
@@ -381,26 +385,6 @@ public class LoginFacade {
 	       
 	      
 	}
-	private static EmailVO prepareEmailVO( EmailAddess toAddress, String subject , String htmlBody, String base64attachment, String attachmentName ) {
-		EmailVO emailVO = new EmailVO();
-		
-		emailVO.setUserName( "myshopemailnotification@gmail.com");
-		emailVO.setPassword( "gizmtcibqjnqhqtz");
-		EmailAddess fromAddress = new EmailAddess();
-		fromAddress.setAddress(emailVO.getUserName());
-		fromAddress.setLabel("Reminder App");
-		emailVO.setFromAddress( fromAddress);
-		
-		
-		List<EmailAddess> toAddressList = new ArrayList<EmailAddess>();
-		
-		toAddressList.add(toAddress);
-		emailVO.setToAddress(toAddressList);
-		emailVO.setSubject(subject);
-		emailVO.setHtmlContent(htmlBody);
-		emailVO.setBase64Attachment(base64attachment);
-		emailVO.setAttachmentName(attachmentName);
-		return emailVO;
-	}
+	
 
 }

@@ -6,7 +6,7 @@ public class Settings implements Serializable {
 	private String _id;
 	private String appTimeZone;
 	private String userSuppliedTimeZone;
-	private int currentCallCredits ;
+	private double currentCallCredits ;
 
 	public String getAppTimeZone() {
 		return appTimeZone;
@@ -32,11 +32,11 @@ public class Settings implements Serializable {
 		this.userSuppliedTimeZone = userSuppliedTimeZone;
 	}
 
-	public int getCurrentCallCredits() {
+	public double getCurrentCallCredits() {
 		return currentCallCredits;
 	}
 
-	public void setCurrentCallCredits(int currentCallCredits) {
+	public void setCurrentCallCredits(double currentCallCredits) {
 		this.currentCallCredits = currentCallCredits;
 	}
 

@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 // [START simple_includes]
 
@@ -166,6 +168,28 @@ public class MailService {
 	    
 	    return false;
 	  }
+	  
+	  public static EmailVO prepareEmailVO( EmailAddess toAddress, String subject , String htmlBody, String base64attachment, String attachmentName ) {
+			EmailVO emailVO = new EmailVO();
+			
+			emailVO.setUserName( "myshopemailnotification@gmail.com");
+			emailVO.setPassword( "gizmtcibqjnqhqtz");
+			EmailAddess fromAddress = new EmailAddess();
+			fromAddress.setAddress(emailVO.getUserName());
+			fromAddress.setLabel("Reminder App");
+			emailVO.setFromAddress( fromAddress);
+			
+			
+			List<EmailAddess> toAddressList = new ArrayList<EmailAddess>();
+			
+			toAddressList.add(toAddress);
+			emailVO.setToAddress(toAddressList);
+			emailVO.setSubject(subject);
+			emailVO.setHtmlContent(htmlBody);
+			emailVO.setBase64Attachment(base64attachment);
+			emailVO.setAttachmentName(attachmentName);
+			return emailVO;
+		}
 	
 
 }

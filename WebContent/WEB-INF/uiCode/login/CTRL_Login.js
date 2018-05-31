@@ -1,9 +1,13 @@
-APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoading','appData',
-    function($scope,$state,$http,$ionicLoading,appData){
+APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoading','appData','$ionicPopup',
+    function($scope,$state,$http,$ionicLoading,appData,$ionicPopup){
 	var theCtrl = this;
 	$scope.host = appData.getHost();
 	$scope.conditionAgree = false;
-	
+	 var config = {
+	            headers : {
+	                'Content-Type': 'application/json;'
+	            }
+	        }
 	$scope.detectMobilebrowser = detectMobilebrowser;
 	$scope.iAgree = function(){
 		$scope.conditionAgree = true;
@@ -85,7 +89,35 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
 	$scope.showMenu = function () {
 	    $ionicSideMenuDelegate.toggleLeft();
 	};
-	 
+	$scope.login = {};
+	theCtrl.validateWithPassword = function(){
+		$scope.showBusy();
+		$http.post(appData.getHost()+'/ws/login/validatePassword/',$scope.login , config)
+  		.then(function(response){
+  			 $scope.hideBusy();
+  			if (response.data){
+  				regID = $scope.login.userName;
+  				window.localStorage.setItem('regID', regID);
+  				
+  				$state.transitionTo('menu.tab.home');
+  			}else {
+  				$scope.popUp('Failure', 'Please retry',null )
+  			}
+  			
+  		},
+		function(response){
+  			 $scope.hideBusy();
+  			
+  			 if (response.status == 401) {
+  				$scope.popUp('Failure', 'User ID and password donot match.',null );
+  			 }else {
+  				$scope.popUp('Failure', 'Please retry.',null );
+  			 }
+  			
+  			
+			
+		});
+	}
 	 theCtrl.signIN = function(){
 		 if(window.localStorage.getItem('regID')){
 			 localStorage.removeItem('regID');
@@ -96,7 +128,32 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
 	 }
 	 
 	 
-	
+	 $scope.popUp = function(subject, body, nextStep){
+			var confirmPopup = $ionicPopup.confirm({
+			     title: subject,
+			     template: body
+			   });
+			 confirmPopup.then(function(res) {
+				 if (nextStep){
+					 $state.transitionTo(nextStep);
+				 }
+			  });
+		}
+		
+		//Busy icon
+		  $scope.showBusy = function() {
+			    $ionicLoading.show({
+			      template: 'Please Wait...',
+			      duration: 10000
+			    }).then(function(){
+			       console.log("The loading indicator is now displayed");
+			    });
+			  };
+			  $scope.hideBusy = function(){
+			    $ionicLoading.hide().then(function(){
+			       console.log("The loading indicator is now hidden");
+			    });
+			  };
 	 
 	  
 }

@@ -10,7 +10,20 @@
 		
 	 </div>
 
- 	 <button ng-if=" conditionAgree && host != 'phone' "  ng-click="$ctrl.signIN()" id="signin" name="signin" class="loginBtn loginBtn--google centerText">Secure Sign in with Google</button>
+	<div ng-if=" conditionAgree && host != 'phone' ">
+	 	<input class="cash" type="text" placeholder="User name" ng-model="login.userName"/>
+	 	<input class="cash" type="password" placeholder="Password" ng-model="login.password" />
+	 	
+		<button class="button button-balanced order-button cashBtn" ng-click="$ctrl.validateWithPassword()" > Login</button>
+	</div>
+						<div style="text-align: center;">
+						    <span>
+						        <h1>Or</h1>
+						    </span>
+						</div>
+ 	 <button ng-if=" conditionAgree && host != 'phone' "  ng-click="$ctrl.signIN()" id="signin" name="signin" class="loginBtn loginBtn--google loginWithGoogle">Secure Sign in with Google</button>
+ 	
+ 	
 	 <button ng-if="conditionAgree && host == 'phone' " ng-click="googleSignIn()" id="signin" name="signin" class="loginBtn loginBtn--google centerText">Secure Sign in with Google Plus</button>
 	
 	

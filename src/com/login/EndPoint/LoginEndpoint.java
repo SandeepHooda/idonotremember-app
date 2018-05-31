@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import com.login.vo.ContactUS;
 import com.login.vo.LatLang;
+import com.login.vo.LoginVO;
 import com.login.vo.Phone;
 
 
@@ -89,6 +90,11 @@ public interface LoginEndpoint {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updatePreciseLocation(LatLang latLang , @Context HttpServletRequest request);
+	
+	@POST
+	@Path("/login/validatePassword")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validatePassword(LoginVO loginVO, @Context HttpServletRequest request);
 	
 
 }

@@ -1,5 +1,5 @@
-APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ionicPopup','$state',
-    function($scope,$ionicLoading,$http,$ionicPopup, $state){
+APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ionicPopup','$state','appData',
+    function($scope,$ionicLoading,$http,$ionicPopup, $state,appData ){
 	var theCtrl = this;
 	$scope.recharge = {}
 	$scope.recharge.amount = 100;
@@ -16,7 +16,8 @@ APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ioni
 		$scope.popUp(' Cancel ', 'Are you sure you want to cancel?',moveTo);
 	}
 	$scope.goToPaytm = function(){
-		$scope.popUp(' Work in progress ', 'Pening Integration',null);
+		window.open("/AddCash?amount="+$scope.recharge.amount, "_self");
+		
 	}
 	$scope.validateAmount = function(){
 		if (isNaN($scope.recharge.amount)){
