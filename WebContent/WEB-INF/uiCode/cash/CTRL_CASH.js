@@ -5,12 +5,18 @@ APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ioni
 	$scope.recharge.amount = 100;
 	$scope.paymentGateway = "Payment gateway"
 	$scope.goToHome = function(){
+		var moveTo = "";
 		if (window.localStorage.getItem('postlogin-moveto')){
-			$state.transitionTo(window.localStorage.getItem('postlogin-moveto'));
+			moveTo = window.localStorage.getItem('postlogin-moveto');
 			
 		}else {
-			$state.transitionTo('menu.tab.home');
+			moveTo = 'menu.tab.home';
 		}
+		
+		$scope.popUp(' Cancel ', 'Are you sure you want to cancel?',moveTo);
+	}
+	$scope.goToPaytm = function(){
+		$scope.popUp(' Work in progress ', 'Pening Integration',null);
 	}
 	$scope.validateAmount = function(){
 		if (isNaN($scope.recharge.amount)){
@@ -23,7 +29,7 @@ APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ioni
 		     template: body
 		   });
 		 confirmPopup.then(function(res) {
-			 if (nextStep){
+			 if (res && nextStep){
 				 $state.transitionTo(nextStep);
 			 }
 		  });

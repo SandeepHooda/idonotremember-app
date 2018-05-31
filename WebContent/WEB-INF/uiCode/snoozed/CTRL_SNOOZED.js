@@ -5,7 +5,7 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$scope','$ionicSideMenuDelegate','$
 	$scope.snoozedReminders = [];
 	$scope.currentCallCredits = 0;
 	if (document.URL.indexOf('localhost')>=0){
-		regID = "258c705e-d877-4a8a-aebf-8e6ce6b77193";
+		regID = "e3d6d2df-7b6c-4f40-b5ae-7d381ad95a3f";
 		 window.localStorage.setItem('regID', regID);
 	}
 	
@@ -102,24 +102,25 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$scope','$ionicSideMenuDelegate','$
 			
 		});
 	}
+	$scope.logOut = function(event){
+			 regIDStorege = window.localStorage.getItem('regID');
+			 $http.get(appData.getHost()+'/ws/logout/'+regIDStorege)
+		  		.then(function(response){
+		  			if (!response.data){//Reg id don't exist in DB - after delete 
+		  				window.localStorage.setItem('regID', 'invalid');
+		  				localStorage.removeItem('name');
+		  				document.cookie = 'regID' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		  				document.cookie = 'name' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		  				$state.transitionTo('menu.login');
+		  			}
+		  		},
+				function(response){
+		  			//Failed to log out
+					
+				});
+	}
 	
-	$rootScope.$on('logOut',function(event){
-		 regIDStorege = window.localStorage.getItem('regID');
-		 $http.get(appData.getHost()+'/ws/logout/'+regIDStorege)
-	  		.then(function(response){
-	  			if (!response.data){//Reg id don't exist in DB - after delete 
-	  				window.localStorage.setItem('regID', 'invalid');
-	  				localStorage.removeItem('name');
-	  				document.cookie = 'regID' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-	  				document.cookie = 'name' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-	  				$state.transitionTo('menu.login');
-	  			}
-	  		},
-			function(response){
-	  			//Failed to log out
-				
-			});
-		});
+	$rootScope.$on('logOut',$scope.logOut);
 	
 	$scope.addCash = function(){
 		$state.transitionTo('menu.addcash');

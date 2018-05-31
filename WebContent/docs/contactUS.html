@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+}
+
+.submit {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit:hover {
+    background-color: #45a049;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+</style>
+<script type="text/javascript">
+function contactUs (){
+	
+	var url = "/ws/contactUS/";
+		
+		var xhttp;
+		if (window.XMLHttpRequest) {
+		    xhttp = new XMLHttpRequest();
+		    } else {
+		    // code for IE6, IE5
+		    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		
+		xhttp.onreadystatechange = function() {
+		    if (xhttp.readyState == 4 && xhttp.status == 200) {
+		    	var obj = JSON.parse(xhttp.responseText.substring(6));
+		    	alert(obj.errorMessage)
+		    }
+		  };
+		xhttp.open("POST", url, true);
+		xhttp.setRequestHeader("Content-type", "application/json");
+		var contact = {};
+		contact.fname = document.getElementById("fname").value;
+		contact.lname = document.getElementById("lname").value;
+	
+		contact.country =  document.getElementById("country").value;
+		contact.feedback = document.getElementById("feedback").value;
+		xhttp.send(JSON.stringify(contact));
+	
+}
+</script>
+</head>
+<body>
+
+<h3>Contact Form</h3>
+
+<div class="container">
+  
+    <label for="fname">First Name</label>
+    <input type="text" id="fname" name="firstname" placeholder="Your name..">
+
+    <label for="lname">Last Name</label>
+    <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+
+    <label for="country">Country</label>
+    <input type="text" id="country" name="country" placeholder="Country..">
+
+    <label for="feedback">Subject</label>
+    <textarea id="feedback" name="feedback" placeholder="Write something.." style="height:200px"></textarea>
+
+  
+ 	<button class="submit" onclick="contactUs()" >Submit</button>
+</div>
+
+</body>
+</html>

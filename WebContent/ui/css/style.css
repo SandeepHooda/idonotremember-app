@@ -262,6 +262,15 @@ display: block;
 	height: 50px;
 	width:650px;
 }
+.cash {
+	
+	background:white;
+	width:100%;
+}
+.cashBtn {
+	display:block;
+	width:100%;
+}
 .verySmallInput {
 	
 	background:white;

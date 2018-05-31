@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.login.vo.ContactUS;
 import com.login.vo.LatLang;
 import com.login.vo.Phone;
 
@@ -68,9 +69,14 @@ public interface LoginEndpoint {
 	
 	@POST
 	@Path("/feedback")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON )
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response feedback( String feedback,  @Context HttpServletRequest request);
+	@POST
+	@Path("/contactUS")
+	@Consumes(MediaType.APPLICATION_JSON )
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response contactUS( ContactUS Contact);
 	
 	@GET
 	@Path("/recordLoginSucess")

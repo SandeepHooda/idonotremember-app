@@ -60,6 +60,10 @@ angular.module('starter', APP.DEPENDENCIES.concat(APP.OTHERDEPENDENCIES))
 					url:'/anexture',
 					templateUrl: 'help/annexure/annexure.html',
 					controller: 'CTRL_help'
+				}).state('menu.logOut',{
+					url:'/logOut',
+					templateUrl: 'home/logOut.html',
+					controller: 'CTRL_logOut'
 				}).state('menu.tab.todo',{
 					url:'/todo',
 					views: {

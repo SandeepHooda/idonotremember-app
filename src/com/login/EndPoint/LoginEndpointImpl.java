@@ -6,6 +6,7 @@ import javax.ws.rs.core.Response;
 
 import com.Constants;
 import com.login.facade.LoginFacade;
+import com.login.vo.ContactUS;
 import com.login.vo.LatLang;
 import com.login.vo.LoginVO;
 import com.login.vo.Phone;
@@ -100,6 +101,7 @@ public class LoginEndpointImpl implements LoginEndpoint {
 	public Response logout(String regID, HttpServletRequest request) {
 		try{
 			HttpSession session = request.getSession();
+			regID = (String)session.getAttribute("regID");
 			return Response.ok().entity(loginFacade.logout(regID, session)).build();
 		}catch(Exception e){
 			e.printStackTrace();
@@ -232,6 +234,9 @@ public class LoginEndpointImpl implements LoginEndpoint {
 			if (null == userName) {
 				userName = "";
 			}
+			if (email == null) {
+				email = "Contact us page: ";
+			}
 			Constants.sendEmail("sonu.hooda@gmail.com", "Feebkack from Reminder app ", userName+" - "+email+" has provided feedback: <br/><br/> "+feedback);
 			LoginVO vo = new LoginVO();
 			vo.setErrorMessage("Feedback received ");
@@ -244,6 +249,25 @@ public class LoginEndpointImpl implements LoginEndpoint {
 			return Response.serverError().entity(vo).build();
 		}
 	}
+	
+	@Override
+	public Response contactUS( ContactUS contact) {
+		try{
+			
+			Constants.sendEmail("sonu.hooda@gmail.com","Contact US from Reminder App", contact.getFname()+" "+ contact.getLname()+" "+contact.getCountry()+": <br/><br/> "+contact.getFeedback());
+			 
+			LoginVO vo = new LoginVO();
+			vo.setErrorMessage("Feedback received ");
+			return Response.ok().entity(vo).build(); 
+		}catch(Exception e){
+			e.printStackTrace();
+			LoginVO vo = new LoginVO();
+			vo.setErrorMessage("Internal Server Error ");
+			
+			return Response.serverError().entity(vo).build();
+		}
+	}
+	
 	
 
 }
