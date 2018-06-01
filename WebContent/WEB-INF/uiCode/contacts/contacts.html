@@ -17,14 +17,17 @@
 		<ion-item class="smallPadding" ng-repeat="phone in userPhonesNotVerified track by $index" >
 		  <div class="productDesc">
 		  		 <b> 	 <span >{{phone.countryCode}} - {{phone.number}} </span></b><br/> &nbsp;&nbsp;&nbsp;
-		  		 <button class="button button-calm order-button buttonSmall" ng-click="deleteContacts(({{$index}}))">Delete </button>&nbsp;&nbsp;&nbsp;
-		  		 <button class="button button-balanced order-button buttonSmall" ng-click="verify(({{$index}}))">Verify </button>
-		  		 
+		  		 <div >
+		  		 	<button class="button button-calm order-button buttonSmall contactPhoneBtn" ng-click="deleteContacts(({{$index}}))">Delete </button>&nbsp;&nbsp;&nbsp;
+		  		 	<button class="button button-balanced order-button buttonSmall contactPhoneBtn" ng-click="verify(({{$index}}))">Verify </button>
+		  		 </div>
 		  		 <!-- confirm otp -->
-		  		 <div class="textBoxSmall paddingCenter paddingTop" ng-show="{{$index}} == verifyOptInpt" >
+		  		 <div class="paddingTop" ng-show="{{$index}} == verifyOptInpt" >
 					<span>
-						<input  type="text" class="phoneNo" style=" display: inline;border: 2px solid red;" placeholder="Phone No *" ng-model="data.otpValue"> &nbsp;&nbsp;&nbsp;
-					 	<button class="button button-assertive order-button buttonSmall" ng-click="confirmOtp(({{$index}}))">Confirm </button>
+						<div>
+						<input  type="text" class="phoneNo contactPhoneOtp" style=" display: inline;border: 2px solid red;" placeholder="OTP *" ng-model="data.otpValue"> &nbsp;&nbsp;&nbsp;
+					 	<button class="button button-assertive order-button buttonSmall contactPhoneOtp" ng-click="confirmOtp(({{$index}}))">Confirm </button>
+					 	</div>
 					</span>
 				</div>
 		   </div>

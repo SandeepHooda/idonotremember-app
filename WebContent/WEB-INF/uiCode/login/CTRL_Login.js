@@ -98,8 +98,8 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
   			if (response.data){
   				regID = $scope.login.userName;
   				window.localStorage.setItem('regID', regID);
-  				
-  				$state.transitionTo('menu.tab.home');
+  				window.open("/ui/index.html#/menu/tab/home", "_self");
+  				//$state.transitionTo('menu.tab.home');
   			}else {
   				$scope.popUp('Failure', 'Please retry',null )
   			}
