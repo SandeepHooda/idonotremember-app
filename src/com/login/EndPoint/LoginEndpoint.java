@@ -91,10 +91,5 @@ public interface LoginEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updatePreciseLocation(LatLang latLang , @Context HttpServletRequest request);
 	
-	@POST
-	@Path("/login/validatePassword")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validatePassword(LoginVO loginVO, @Context HttpServletRequest request);
-	
 
 }

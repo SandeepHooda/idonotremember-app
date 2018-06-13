@@ -29,9 +29,15 @@ APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ioni
 		
 		
 	}
+	$scope.recharge.callValue = 0;
+	$scope.recharge.smsValue =0;
 	$scope.validateAmount = function(){
 		if (isNaN($scope.recharge.amount)){
 			$scope.recharge.amount = "";
+		}else {
+			$scope.recharge.callValue = Math.floor($scope.recharge.amount / 7);
+			$scope.recharge.smsValue = Math.floor($scope.recharge.amount / 1.4);
+			window.localStorage.setItem('rechargeAmount', $scope.recharge.amount);
 		}
 	}
 	$scope.popUp = function(subject, body, nextStep){

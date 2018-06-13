@@ -90,34 +90,7 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
 	    $ionicSideMenuDelegate.toggleLeft();
 	};
 	$scope.login = {};
-	theCtrl.validateWithPassword = function(){
-		$scope.showBusy();
-		$http.post(appData.getHost()+'/ws/login/validatePassword/',$scope.login , config)
-  		.then(function(response){
-  			 $scope.hideBusy();
-  			if (response.data){
-  				regID = $scope.login.userName;
-  				window.localStorage.setItem('regID', regID);
-  				window.open("/ui/index.html#/menu/tab/home", "_self");
-  				//$state.transitionTo('menu.tab.home');
-  			}else {
-  				$scope.popUp('Failure', 'Please retry',null )
-  			}
-  			
-  		},
-		function(response){
-  			 $scope.hideBusy();
-  			
-  			 if (response.status == 401) {
-  				$scope.popUp('Failure', 'User ID and password donot match.',null );
-  			 }else {
-  				$scope.popUp('Failure', 'Please retry.',null );
-  			 }
-  			
-  			
-			
-		});
-	}
+	
 	 theCtrl.signIN = function(){
 		 if(window.localStorage.getItem('regID')){
 			 localStorage.removeItem('regID');
