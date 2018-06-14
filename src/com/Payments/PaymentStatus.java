@@ -134,7 +134,7 @@ public class PaymentStatus extends HttpServlet {
 						sendFailureEmail(mapData);
 					}
 					
-					 response.sendRedirect("/ui/index.html");
+					 response.sendRedirect("/ui/index.html#/menu/addCashSuccess");
 				}else{
 					showFailurePage(mapData, response);
 				}

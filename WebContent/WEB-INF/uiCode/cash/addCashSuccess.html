@@ -6,13 +6,16 @@
 <span class="whitecolor">
 <!--  Recharhe component -->
 <div >
-	<div class="center" style="max-width: 100px;">
-	 	<img src="/ui/img/thumsUp.png" alt="Transaction Successful" width="100" height="100"></img> 
-	 	<br/><br/><br/>{{recharge.amount}}
+	<div class="center" >
+	<div style="max-width: 100px;"><img src="/ui/img/thumsUp.png" alt="Transaction Successful" width="100" height="100"></img> </div>
 	</div>
+	<div><br/><br/>Amount : {{recharge.amount}} , Order reference no : {{recharge.orderID}}</div>
 	
 </div>	
-
+<br/><br/>
+<button class="button button-balanced order-button cashBtn icon ion-home" ng-click="goToHome()" > Go To Home
+				
+			</button>
 </span>
 </ion-content>
 </ion-view>

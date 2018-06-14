@@ -3,17 +3,24 @@ APP.CONTROLLERS.controller ('CTRL_AddCashSuccess',['$scope','$http','$state','ap
 	var theCtrl = this;
 	$scope.recharge = {}
 	$scope.recharge.amount = "";
+	$scope.recharge.orderID = "";
 	$scope.paymentGateway = "Payment gateway"
 	$scope.goToHome = function(){
-		var moveTo = "";
-		if (window.localStorage.getItem('postlogin-moveto')){
-			moveTo = window.localStorage.getItem('postlogin-moveto');
-			
-		}else {
-			moveTo = 'menu.tab.home';
-		}
-		
-		$scope.popUp(' Cancel ', 'Are you sure you want to cancel?',moveTo);
+	
+		$state.transitionTo('menu.tab.home');
 	}
 	$scope.recharge.amount = window.localStorage.getItem('rechargeAmount');
+	
+	$http.get(appData.getHost()+'/RecentOrders')
+		.then(function(response){
+			if (response.data != "null"){
+				$scope.recharge.orderID = response.data ;
+			}
+			
+		},
+	function(response){
+			$scope.recharge.orderID = "";
+			
+	});
+	
 }])
