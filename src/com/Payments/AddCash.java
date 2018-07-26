@@ -49,6 +49,7 @@ public class AddCash extends HttpServlet {
 		if (null != user && null !=amount) {
 			TreeMap<String,String> parameters = new TreeMap<String,String>();
 			parameters.put("ORDER_ID",user+"_"+(new Date().getTime()));
+			request.getSession().setAttribute("ORDER_ID", parameters.get("ORDER_ID"));
 			parameters.put("CUST_ID",user);
 	
 			parameters.put("TXN_AMOUNT",amount);
@@ -58,7 +59,12 @@ public class AddCash extends HttpServlet {
 			parameters.put("CHANNEL_ID",PaytmConstants.CHANNEL_ID);
 			parameters.put("INDUSTRY_TYPE_ID",PaytmConstants.INDUSTRY_TYPE_ID);
 			parameters.put("WEBSITE",PaytmConstants.WEBSITE);
-			//parameters.put("MOBILE_NO","7777777777");
+			String mobile = "";
+			for(int i=0;i<10;i++) {
+				int n1 = (int)(Math.random()*10);
+				mobile += n1;
+			}
+			parameters.put("MOBILE_NO",mobile);
 			parameters.put("EMAIL",user);
 			parameters.put("CALLBACK_URL", "http://www.idonotremember.com/PaymentStatus");
 			
