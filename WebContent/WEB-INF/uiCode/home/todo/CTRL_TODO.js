@@ -11,16 +11,96 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
             }
         }
 	$scope.todos = [];
+	$scope.loginTry = 0;
 	$scope.completedTodos = [];
 	theCtrl.logOut = function(){
 		$scope.$emit('logOut');
 	}
+	$scope.listenToVoice = function(){
+		if (theCtrl.newTodo.length) {
+			theCtrl.newTodo += ' ';
+		  }
+		$scope.recognition.start();
+	}
+	$scope.voiceInit = function(){
+		try {
+			  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+			  $scope.recognition = new SpeechRecognition();
+			  $scope.recognition.continuous = true;
+			  $scope.recognition.onresult = function(event) {
+
+				  // event is a SpeechRecognitionEvent object.
+				  // It holds all the lines we have captured so far. 
+				  // We only need the current one.
+				  var current = event.resultIndex;
+
+				  // Get a transcript of what was said.
+				  var transcript = event.results[current][0].transcript;
+
+				  // Add the current transcript to the contents of our Note.
+				  // There is a weird bug on mobile, where everything is repeated twice.
+				  // There is no official solution so far so we have to handle an edge case.
+				  var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
+
+				  if(!mobileRepeatBug) {
+				    //noteContent += transcript;
+					// Add the current transcript to the contents of our Note.
+					  theCtrl.newTodo += transcript;
+					  $scope.readOutLoud(theCtrl.newTodo);
+					  $scope.addNewTodo();
+				  }
+
+				  
+				  
+				}
+			}
+			catch(e) {
+			  
+			}
+	}
+	 $scope.readToDo = function(){
+		 var message = "";
+		 for (var i=0;i< $scope.todos.length;i++){
+			 message += $scope.todos[i].taskDesc+". ";
+		 }
+		 $scope.readOutLoud(message);
+	 }
+	
+	 $scope.readOutLoud = function(message) {
+		  var speech = new SpeechSynthesisUtterance();
+
+		  // Set the text and voice attributes.
+		  speech.text = message;
+		  speech.volume = 1;
+		  speech.rate = 1;
+		  speech.pitch = 1;
+
+		  window.speechSynthesis.speak(speech);
+		}
+	$scope.voiceInit();
 	
 	$scope.checkEnter = function(){
 		if(event.keyCode == 13){
 			$scope.addNewTodo();
 		}
 	}
+	$scope.login = function (){
+		var regID = window.localStorage.getItem('regID');
+		if (document.URL.indexOf('localhost')>=0){
+			regID = "69905a13-79b9-4314-95fa-17a87a6121b0";
+			 window.localStorage.setItem('regID', regID);
+		}
+		
+		 $http.get(appData.getHost()+'/ws/login/validate/'+regID+'/timeZone/'+Intl.DateTimeFormat().resolvedOptions().timeZone.replace("/", "@"))
+	  		.then(function(response){
+	  			
+	  		});
+	}
+	$scope.LoginAndRetry  = function(){
+		$scope.login();
+		$scope.addNewTodo();
+	}
+	
 	$scope.addNewTodo  = function(){
 		if (!theCtrl.newTodo) return;
 		var toDo = {};
@@ -31,7 +111,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
   		.then(function(response){
   			 $scope.hideBusy();
   			if (response.data){
-  				
+  				$scope.loginTry = 0;
   				$scope.getToDos();
   			}else {
   				$scope.popUp('Failure', 'Please retry',null )
@@ -42,7 +122,13 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
   			 $scope.hideBusy();
   			
   			 if (response.status == 401) {
-  				$scope.popUp('Failure', 'Please login back and then retry.',null );
+  				 if ($scope.loginTry == 0){
+  					$scope.loginTry++;
+  					$scope.LoginAndRetry();
+  				 }else {
+  					$scope.popUp('Failure', 'Please login back and then retry.',null );
+  				 }
+  				
   			 }else {
   				$scope.popUp('Failure', 'Please retry.',null );
   			 }
@@ -83,6 +169,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 				completedTodos.push(data[i]);
 			}else {
 				todos.push(data[i]);
+				
 			}
 		}
 		$scope.todos = todos;

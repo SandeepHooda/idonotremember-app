@@ -14,15 +14,22 @@
 		 <!-- Search bar -->
 		    <div class="list list-inset searchbox">
 			  <label class="item item-input searchboxInput">
-			    <i class="icon ion-android-add"></i>
-			    <input type="text" placeholder="Add new To Do item"  ng-model="$ctrl.newTodo" ng-keyup="checkEnter()"> 
+			    
+			    <input type="text" placeholder="Add new To Do item"  ng-model="$ctrl.newTodo" ng-keyup="checkEnter()" x-webkit-speech> 
+			    
 			  </label>
 			</div>
 		</span>
-		
-		<button ng-click="addNewTodo()" id="floatingBtn" class="floatingBtn top0" name="add new" title="add new todo" >
-			 <i class="icon ion-plus"></i>
+		<button ng-click="listenToVoice()" id="floatingBtnMic" class="floatingBtn top0"  name="add new" title="add new todo" >
+			 <i class="fa fa-microphone"></i>
 		</button>
+		<button ng-click="addNewTodo()" id="floatingBtn" class="floatingBtn top0" name="add new" style="right: 70px;" title="add new todo" >
+			 <i class="icon ion-plus"></i>
+		</button> 
+		
+		<button ng-click="readToDo()" id="floatingBtnMic" class="floatingBtn top0" style="right: 140px;" name="add new" title="add new todo" >
+			 <i class="fa fa-volume-up"></i>
+		</button
 	</div>
 	
 	<!-- Users todos -->

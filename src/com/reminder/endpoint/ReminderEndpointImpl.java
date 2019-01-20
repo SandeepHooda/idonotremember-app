@@ -148,7 +148,7 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 				return Response.ok().entity(reminderFacade.addToDo(todo)).build();
 			}else {
 				LoginVO vo = new LoginVO();
-				vo.setErrorMessage("Please log in to authenticate ");
+				vo.setErrorMessage("Please log in to authenticate");
 				return Response.status(Response.Status.UNAUTHORIZED).entity(vo).build();
 			}
 		}catch(Exception e){
