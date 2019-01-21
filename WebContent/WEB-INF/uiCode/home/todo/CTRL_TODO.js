@@ -27,6 +27,19 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 			  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 			  $scope.recognition = new SpeechRecognition();
 			  $scope.recognition.continuous = true;
+			  $scope.recognition.onstart = function() { 
+				  //alert('Voice recognition activated. Try speaking into the microphone.');
+				}
+
+			  $scope.recognition.onspeechend = function() {
+				  //alert('You were quiet for a while so voice recognition turned itself off.');
+				}
+
+			  $scope.recognition.onerror = function(event) {
+				  /*if(event.error == 'no-speech') {
+				    alert('No speech was detected. Try again.');  
+				  };*/
+				}
 			  $scope.recognition.onresult = function(event) {
 
 				  // event is a SpeechRecognitionEvent object.
@@ -46,7 +59,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 				    //noteContent += transcript;
 					// Add the current transcript to the contents of our Note.
 					  theCtrl.newTodo += transcript;
-					  $scope.readOutLoud(theCtrl.newTodo);
+					  //$scope.readOutLoud(theCtrl.newTodo);
 					  $scope.addNewTodo();
 				  }
 
