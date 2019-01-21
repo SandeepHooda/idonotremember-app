@@ -8,6 +8,7 @@ import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -19,7 +20,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LoginVO;
 import com.reminder.vo.ReminderVO;
+import com.reminder.vo.ReminderVOComparator;
 import com.reminder.vo.ToDO;
+import com.reminder.vo.ToDoVOComparator;
 
 import mangodb.MangoDB;
 
@@ -207,7 +210,7 @@ public class ReminderFacade {
 			 String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "to-dos", email,"email", false, null,order)+"]";
 			 Gson  json = new Gson();
 			 List<ToDO> result  = json.fromJson(data, new TypeToken<List<ToDO>>() {}.getType());
-			 //Collections.sort(result, new ReminderVOComparator());
+			 Collections.sort(result, new ToDoVOComparator());
 			 return result;
 		 }else {
 			 return new ArrayList<ToDO>();
