@@ -114,10 +114,30 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 		$scope.addNewTodo();
 	}
 	
+	$scope.findMaxOrder = function(){
+		var maxID = 0;
+	//completedTodos  todos
+		if ($scope.todos){
+			for (var i=0; i< $scope.todos.length;i++){
+				if (maxID <$scope.todos[i].order){
+					maxID = $scope.todos[i].order
+				}
+			}
+		}
+		if ($scope.completedTodos){
+			for (var i=0; i< $scope.completedTodos.length;i++){
+				if (maxID <$scope.completedTodos[i].order){
+					maxID = $scope.completedTodos[i].order
+				}
+			}
+		}
+		return ++maxID;
+			
+	}
 	$scope.addNewTodo  = function(){
 		if (!theCtrl.newTodo) return;
 		var toDo = {};
-		toDo.order = $scope.todos.length +1;
+		toDo.order = $scope.findMaxOrder();
 		toDo.taskDesc = theCtrl.newTodo;
 		$scope.showBusy();
 		$http.post(appData.getHost()+'/ws/todo/',toDo , config)
