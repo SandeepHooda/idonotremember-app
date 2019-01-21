@@ -259,10 +259,11 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 			todos[index].order = todos[index-1].order;
 			todos[index-1].order = order;
 			$scope.todos = [];
-			todos.sort($scope.compareToDosPending);
+			
 			$scope.todos = todos;
 			$scope.updateToDoOrderInDB(todos[index]);
 			$scope.updateToDoOrderInDB(todos[index-1]);
+			$scope.getToDos();
 		}
 	}
 	$scope.markeComplete = function(index){
