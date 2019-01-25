@@ -237,6 +237,15 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 		function(response){
   			});
 	}
+	$scope.swapToDoOrderInDB = function(toDo1, toDo2){
+		$http.post(appData.getHost()+'/ws/todo/update',toDo1 , config)
+  		.then(function(response){
+  			$http.post(appData.getHost()+'/ws/todo/update',toDo2 , config)
+  	  		.then(function(response){
+  	  		   $scope.getToDos();
+  	  		});
+  		});
+	}
 	$scope.moveDown = function(index){
 		
 		if (index < ($scope.todos.length -1)){
@@ -245,10 +254,11 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 			todos[index].order = todos[index+1].order;
 			todos[index+1].order = order;
 			$scope.todos = [];
-			todos.sort($scope.compareToDosPending);
+			//todos.sort($scope.compareToDosPending);
 			$scope.todos = todos;
-			$scope.updateToDoOrderInDB(todos[index]);
-			$scope.updateToDoOrderInDB(todos[index+1]);
+			//$scope.updateToDoOrderInDB(todos[index]);
+			//$scope.updateToDoOrderInDB(todos[index+1]);
+			$scope.swapToDoOrderInDB(todos[index],todos[index+1]);
 		}
 		
 	}
@@ -261,9 +271,9 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 			$scope.todos = [];
 			
 			$scope.todos = todos;
-			$scope.updateToDoOrderInDB(todos[index]);
-			$scope.updateToDoOrderInDB(todos[index-1]);
-			$scope.getToDos();
+			//$scope.updateToDoOrderInDB(todos[index]);
+			//$scope.updateToDoOrderInDB(todos[index-1]);
+			$scope.swapToDoOrderInDB(todos[index],todos[index-1]);
 		}
 	}
 	$scope.markeComplete = function(index){
