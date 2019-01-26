@@ -51,6 +51,12 @@ public interface ReminderEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updateToDo( ToDO todo,  @Context HttpServletRequest request);
 	
+	@POST
+	@Path("/todo/swapToDoOrderInDB")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response swapToDoOrderInDB( ToDO[] todos,  @Context HttpServletRequest request);
+	
 	@GET
 	@Path("/todo")
 	@Produces({ MediaType.APPLICATION_JSON })

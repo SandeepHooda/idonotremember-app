@@ -180,6 +180,31 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 		}
 	}
 	
+	
+	public Response swapToDoOrderInDB( ToDO[] todos,  HttpServletRequest request) {
+		try{
+			HttpSession session = request.getSession();
+			String email = (String)session.getAttribute("email");
+			if (null != email && todos != null && todos.length == 2) {
+				reminderFacade.updateToDo(todos[0]);
+				reminderFacade.updateToDo(todos[1]);
+				return Response.ok().entity(reminderFacade.getToDos(email)).build();
+			}else {
+				LoginVO vo = new LoginVO();
+				vo.setErrorMessage("Please log in to authenticate ");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(vo).build();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			LoginVO vo = new LoginVO();
+			vo.setErrorMessage("Internal Server Error ");
+			
+			return Response.serverError().entity(vo).build();
+		}
+	}
+	
+	
+	
 	@Override
 	public Response getToDos( HttpServletRequest request) {
 		try{

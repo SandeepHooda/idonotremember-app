@@ -230,6 +230,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 		  return   a.order - b.order;
 	}
 	$scope.updateToDoOrderInDB = function(toDo){
+		
 		$http.post(appData.getHost()+'/ws/todo/update',toDo , config)
   		.then(function(response){
   			
@@ -238,13 +239,21 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
   			});
 	}
 	$scope.swapToDoOrderInDB = function(toDo1, toDo2){
-		$http.post(appData.getHost()+'/ws/todo/update',toDo1 , config)
+		$scope.showBusy();
+		var todos = []
+		todos.push(toDo1)
+		todos.push(toDo2)
+		$http.post(appData.getHost()+'/ws/todo/swapToDoOrderInDB',todos , config)
   		.then(function(response){
-  			$http.post(appData.getHost()+'/ws/todo/update',toDo2 , config)
-  	  		.then(function(response){
-  	  		   $scope.getToDos();
-  	  		});
-  		});
+ 			 	$scope.hideBusy();
+	  			$scope.showToDos(response.data);
+	  			theCtrl.newTodo = "";
+	  			
+	  		},
+			function(response){
+	  			 $scope.hideBusy();
+	  			$scope.popUp('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+			});
 	}
 	$scope.moveDown = function(index){
 		
