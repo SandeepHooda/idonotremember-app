@@ -31,11 +31,16 @@ public class DataService {
 	
 	public Response addToDo( String doDoStr) {
 		try{
+			doDoStr = doDoStr.toLowerCase();
+			doDoStr = doDoStr.replaceAll("add a new to do ", "");
 			doDoStr = doDoStr.replaceAll("add a to do ", "");
-			doDoStr = doDoStr.replaceAll("Please add a new to do ", "");
-			doDoStr = doDoStr.replaceAll("Please add a new task ", "");
-			doDoStr = doDoStr.replaceAll("Please add a new task to my to do list ", "");
-			doDoStr = doDoStr.replaceAll("Please add a task ", "");
+			doDoStr = doDoStr.replaceAll("add a task ", "");
+			doDoStr = doDoStr.replaceAll("add a new task ", "");
+			doDoStr = doDoStr.replaceAll("please add a to do ", "");
+			doDoStr = doDoStr.replaceAll("please add a new to do ", "");
+			doDoStr = doDoStr.replaceAll("please add a new task ", "");
+			doDoStr = doDoStr.replaceAll("please add a new task to my to do list ", "");
+			doDoStr = doDoStr.replaceAll("please add a task ", "");
 			String email = "sonu.hooda@gmail.com";
 			ToDO todo = new ToDO();
 			todo.setTaskDesc(doDoStr);
