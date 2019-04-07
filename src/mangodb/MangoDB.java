@@ -185,6 +185,36 @@ public static void updateData(String dbName,String collection, String data, Stri
         }
 	
 }
+public static void deleteAllDocuments(String dbName,String collection,   String apiKey){
+	if (null == apiKey) {
+		apiKey = mlabKeyReminder;
+	}
+	String httpsURL = "https://api.mlab.com/api/1/databases/"+dbName+"/collections/"+collection+"?apiKey="+apiKey;
+	
+	
+	 try {
+		 	/*URL url = new URL(httpsURL);
+            HTTPRequest req = new HTTPRequest(url, HTTPMethod.PUT, lFetchOptions);
+            HTTPResponse res = fetcher.fetch(req);*/
+           
+		
+	       URL url = new URL(httpsURL);
+            HTTPRequest req = new HTTPRequest(url, HTTPMethod.PUT, lFetchOptions);
+            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
+            
+            req.setHeader(header);
+           
+            req.setPayload("[]".getBytes());
+            fetcher.fetch(req);
+            
+           //log.info("Updated the DB  collection "+collection+data);
+ 
+        } catch (IOException e) {
+        	 log.info("Error while  upfdating DB  collection "+collection+" Message "+e.getMessage());
+        	e.printStackTrace();
+        	
+        }
+}
 	
 public static void deleteDocument(String dbName,String collection,  String dataKeyTobeDeleted, String key){
 	if (null == key) {
