@@ -32,6 +32,10 @@ public class DataService {
 	public Response addToDo( String doDoStr) {
 		try{
 			doDoStr = doDoStr.toLowerCase();
+			doDoStr = doDoStr.replaceAll("add a new reminder to get ", "");
+			doDoStr = doDoStr.replaceAll("add a reminder to get ", "");
+			doDoStr = doDoStr.replaceAll("add a to do to get ", "");
+			doDoStr = doDoStr.replaceAll("add a new to do to get ", "");
 			doDoStr = doDoStr.replaceAll("add a new to do ", "");
 			doDoStr = doDoStr.replaceAll("add a to do ", "");
 			doDoStr = doDoStr.replaceAll("add a task ", "");

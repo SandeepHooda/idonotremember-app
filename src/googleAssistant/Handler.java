@@ -31,10 +31,22 @@ public class Handler extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    
+    private String gettoDoList() {
+    	String response = "";
+    	List<String> pendingDotos = dataService.getToDos(null);
+		if (pendingDotos.size() ==0) {
+			response ="You don't have any pending to tasks.";
+			
+		}else {
+			for (String toDo: pendingDotos) {
+				response+=toDo+". ";
+			}
+			response =   " Your pending task are.  "+response;
+		}
+		return response;
+    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		 StringBuilder sb = new StringBuilder();
@@ -42,27 +54,24 @@ public class Handler extends HttpServlet {
         while ((s = request.getReader().readLine()) != null) {
             sb.append(s);
         }
-
-        GoogleRequest googlerequest = (GoogleRequest) gson.fromJson(sb.toString(), GoogleRequest.class);
+     
+        String intent = "";
+        String queryText = null;
+        try {
+        	GoogleRequest googlerequest = (GoogleRequest) gson.fromJson(sb.toString(), GoogleRequest.class);
+        	intent = googlerequest.getQueryResult().getIntent().getDisplayName();
+        	queryText = googlerequest.getQueryResult().getQueryText();
+        }catch(Exception e) {
+        	e.printStackTrace();
+        }
         
+        System.out.println(" complete request: "+sb.toString());
+        String serviceResponse = "";
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		String serviceResponse = "";
-		if ("GetToDO".equalsIgnoreCase(googlerequest.getQueryResult().getIntent().getDisplayName())) {
-			List<String> pendingDotos = dataService.getToDos(null);
-			if (pendingDotos.size() ==0) {
-				serviceResponse ="You don't have any pending to tasks.";
-				serviceResponse =   "fulfillmentText\": "+serviceResponse+". \",\r\n";
-			}else {
-				for (String toDo: pendingDotos) {
-					serviceResponse+=toDo+". ";
-				}
-				serviceResponse =   "fulfillmentText\": Your pending task are.  "+serviceResponse+". \",\r\n";
-			}
-			
-		}else if ("AddToDo".equalsIgnoreCase(googlerequest.getQueryResult().getIntent().getDisplayName())){
-			dataService.addToDo(googlerequest.getQueryResult().getQueryText()) ;
+		if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
+			dataService.addToDo(queryText) ;
 			List<String> pendingDotos = dataService.getToDos(null);
 			if (pendingDotos.size() ==0) {
 				serviceResponse ="You don't have any pending to tasks.";
@@ -71,18 +80,19 @@ public class Handler extends HttpServlet {
 					serviceResponse+=toDo+". ";
 				}
 			}
-			serviceResponse =   "fulfillmentText\": I have added it to your do do list. Here are your pending to dos. "+serviceResponse+". \",\r\n";
+			serviceResponse =   " I have added it to your do do list. Here are your pending to dos. "+serviceResponse;
 		}else {
-			serviceResponse =   "fulfillmentText\": \"You asked me to,  "+googlerequest.getQueryResult().getQueryText()+". Intent name is  , " +googlerequest.getQueryResult().getIntent().getDisplayName()+". \",\r\n";
+			serviceResponse = gettoDoList();
+			System.out.println(" serviceResponse "+serviceResponse);
 		}
 		String responseStr = "{\r\n" + 
-				serviceResponse + 
+		"  \"fulfillmentText\": \"  "+serviceResponse+". \",\r\n" + 
 		"  \"outputContexts\": []\r\n" + 
 		"}";
        out.print(responseStr );
        out.flush();   
 	}
-
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
