@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class QueryResult {
 	private String queryText;
+	private Intent intent;
 	private String action;
 	private Map<String, String> parameters;
 	public String getQueryText() {
@@ -23,6 +24,12 @@ public class QueryResult {
 	}
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+	public Intent getIntent() {
+		return intent;
+	}
+	public void setIntent(Intent intent) {
+		this.intent = intent;
 	}
 	
 	
