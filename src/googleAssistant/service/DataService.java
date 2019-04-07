@@ -32,10 +32,10 @@ public class DataService {
 	public Response addToDo( String doDoStr) {
 		try{
 			doDoStr = doDoStr.toLowerCase();
-			doDoStr = doDoStr.replaceAll("add a new reminder to get ", "");
-			doDoStr = doDoStr.replaceAll("add a reminder to get ", "");
-			doDoStr = doDoStr.replaceAll("add a to do to get ", "");
-			doDoStr = doDoStr.replaceAll("add a new to do to get ", "");
+			doDoStr = doDoStr.replaceAll("add a new reminder to ", "");
+			doDoStr = doDoStr.replaceAll("add a reminder to ", "");
+			doDoStr = doDoStr.replaceAll("add a to do to ", "");
+			doDoStr = doDoStr.replaceAll("add a new to do to ", "");
 			doDoStr = doDoStr.replaceAll("add a new to do ", "");
 			doDoStr = doDoStr.replaceAll("add a to do ", "");
 			doDoStr = doDoStr.replaceAll("add a task ", "");
@@ -45,6 +45,9 @@ public class DataService {
 			doDoStr = doDoStr.replaceAll("please add a new task ", "");
 			doDoStr = doDoStr.replaceAll("please add a new task to my to do list ", "");
 			doDoStr = doDoStr.replaceAll("please add a task ", "");
+			if (doDoStr.startsWith("get ")) {
+				doDoStr = doDoStr.substring(4);
+			}
 			String email = "sonu.hooda@gmail.com";
 			ToDO todo = new ToDO();
 			todo.setTaskDesc(doDoStr);

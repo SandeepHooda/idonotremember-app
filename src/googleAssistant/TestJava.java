@@ -12,6 +12,9 @@ public class TestJava {
 		Gson gson = new Gson(); 
 		 GoogleRequest googlerequest = (GoogleRequest) gson.fromJson(request, GoogleRequest.class);
 		 System.out.println(googlerequest);
+		 request = "get mango";
+		 request = request.substring(4);
+		 System.out.println(request);
 	}
 
 }

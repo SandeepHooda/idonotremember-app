@@ -36,7 +36,7 @@ public class Handler extends HttpServlet {
     	String response = "";
     	List<String> pendingDotos = dataService.getToDos(null);
 		if (pendingDotos.size() ==0) {
-			response ="You don't have any pending to tasks.";
+			response ="You don't have any pending to tasks. Do you want to add a new one? You can say things like, add a to do to get ";
 			
 		}else {
 			for (String toDo: pendingDotos) {
