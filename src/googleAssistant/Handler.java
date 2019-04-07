@@ -53,11 +53,14 @@ public class Handler extends HttpServlet {
 			List<String> pendingDotos = dataService.getToDos(null);
 			if (pendingDotos.size() ==0) {
 				serviceResponse ="You don't have any pending to tasks.";
+				serviceResponse =   "fulfillmentText\": "+serviceResponse+". \",\r\n";
 			}else {
 				for (String toDo: pendingDotos) {
 					serviceResponse+=toDo+". ";
 				}
+				serviceResponse =   "fulfillmentText\": Your pending task are.  "+serviceResponse+". \",\r\n";
 			}
+			
 		}else if ("AddToDo".equalsIgnoreCase(googlerequest.getQueryResult().getIntent().getDisplayName())){
 			dataService.addToDo(googlerequest.getQueryResult().getQueryText()) ;
 			List<String> pendingDotos = dataService.getToDos(null);
@@ -68,9 +71,12 @@ public class Handler extends HttpServlet {
 					serviceResponse+=toDo+". ";
 				}
 			}
+			serviceResponse =   "fulfillmentText\": I have added it to your do do list. Here are your pending to dos. "+serviceResponse+". \",\r\n";
+		}else {
+			serviceResponse =   "fulfillmentText\": \"You asked me to,  "+googlerequest.getQueryResult().getQueryText()+". Intent name is  , " +googlerequest.getQueryResult().getIntent().getDisplayName()+". \",\r\n";
 		}
 		String responseStr = "{\r\n" + 
-		"  \"fulfillmentText\": \"You asked me to,  "+googlerequest.getQueryResult().getQueryText()+". Intent name is  , " +serviceResponse+". \",\r\n" + 
+				serviceResponse + 
 		"  \"outputContexts\": []\r\n" + 
 		"}";
        out.print(responseStr );
