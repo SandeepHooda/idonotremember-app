@@ -39,6 +39,17 @@
     <servlet-name>Oauth</servlet-name>
     <url-pattern>/Oauth</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>OauthGoogleActions</display-name>
+    <servlet-name>OauthGoogleActions</servlet-name>
+    <servlet-class>com.google.OauthGoogleActions</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>OauthGoogleActions</servlet-name>
+    <url-pattern>/OauthGoogleActions</url-pattern>
+  </servlet-mapping>
   <servlet>
     <description></description>
     <display-name>OauthDaddy</display-name>
