@@ -5,6 +5,7 @@ package com.google;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +35,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LoginVO;
 
+import googleAssistant.Handler;
 import mangodb.MangoDB;
 
 
@@ -46,7 +48,7 @@ public class OauthGoogleActions extends HttpServlet {
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 	
 	private static final Logger log = Logger.getLogger(Oauth.class.getName());
-       
+      private static String refreshToken = "";
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -63,26 +65,46 @@ public class OauthGoogleActions extends HttpServlet {
    private static String client_secret = "JKxIjO-4o7zyPP2Up5Fc4Li2";
    private static String client_id = "880304193567-42sve75pq3vs1h8ivimqmjtn8on2ltk2.apps.googleusercontent.com";
    //Enanle people.googleapis.com from https://console.cloud.google.com/apis/library?project=remind-me-on&authuser=5
-   
-   private static String googleActionsRedirectURI = "https://oauth-redirect.googleusercontent.com/r/reminderapplication-f62aa#access_token=ACCESS_TOKEN_VALUE&token_type=bearer&state=";
+   private static String googleActionsRedirectURI = "https://oauth-redirect.googleusercontent.com/r/reminderapplication-f62aa?code=ACCESS_TOKEN_VALUE&state=";
+   //private static String googleActionsRedirectURI = "https://oauth-redirect.googleusercontent.com/r/reminderapplication-f62aa#access_token=ACCESS_TOKEN_VALUE&token_type=bearer&state=";
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 				
 		String code = request.getParameter("code");
 		String client_id = request.getParameter("client_id");
 		String state = request.getParameter("state");
 		log.info("Oauth called state : "+state +" client_id : "+client_id+" code : "+code);
-		if (null == state ){//Just a safety check - It don't happen
-			state = "1";
-		}
+		
 		if (null == client_id) {//Just a safety check - It don't happen
-			client_id = this.client_id;
+			client_id = OauthGoogleActions.client_id;
 		
 		}
 		 if (null != code) {
+			 
+			if (null != state ) {
+				System.out.println(" Will get access token "+code);
+				Map<String,Object>	map = 	getAccesstoken(request, response, code, client_id);
+				String access_token = (String)map.get("access_token");
+				refreshToken = (String)map.get("id_token");
+				  addCookiedToResponseAndRecordLoginInDB(request, response,  access_token);
+				 String redirectTo = googleActionsRedirectURI.replaceAll("ACCESS_TOKEN_VALUE", access_token)+state;
+				 System.out.println(" being redirected to "+redirectTo);
+				response.sendRedirect(redirectTo);
+			}else {
+				System.out.println(" Just adding the cookies using code "+code);
+				UserObj userObj  = addCookiedToResponseAndRecordLoginInDB(request, response,  code);
+				Handler handler = new Handler();
+				String serviceResponse = userObj.name +", "+handler.gettoDoList(userObj.email);
+				PrintWriter out = response.getWriter();
+				String responseStr = "{\r\n" + 
+						"\"token_type\": \"Bearer\",\r\n" + 
+						"\"access_token\": \""+code+"\",\r\n" + 
+						"\"refresh_token\": \""+refreshToken+"\",\r\n" + 
+						"\"expires_in\": 3599 \r\n" + 
+						"}";
+				       out.print(responseStr );
+				       out.flush(); 
+			}
 			
-			 String access_token = addCookiedToResponseAndRecordLoginInDB(request, response, code);
-			 String redirectTo = googleActionsRedirectURI.replaceAll("ACCESS_TOKEN_VALUE", access_token)+state;
-			response.sendRedirect(redirectTo);
 		}else {
 			//showLoginPage(response,state);
 			getAuthCode(request, response,client_id, state);
@@ -90,12 +112,21 @@ public class OauthGoogleActions extends HttpServlet {
 		
 	}
 	
-	private String addCookiedToResponseAndRecordLoginInDB(HttpServletRequest request, HttpServletResponse response, String code) throws IOException {
-		String access_token = getAccesstoken(request, response, code, client_id);
+	public class UserObj{
+		public String email;
+		public String name;
+	}
+	 
+	
+	private UserObj addCookiedToResponseAndRecordLoginInDB(HttpServletRequest request, HttpServletResponse response,  String access_token) throws IOException {
+		
 		
 		//Set cookies
 		String email = getUserEmail(access_token).get("email");
-		String name = getUserEmail(access_token).get("name");
+		String name  = getUserEmail(access_token).get("name");
+		UserObj userObj = new UserObj();
+		userObj.email = email;
+		userObj.name = name;
 		addCookie("email", email,request, response );
 		addCookie("name" , name,request, response );
 		addCookie("cookieAccess" , access_token,request, response );
@@ -110,8 +141,8 @@ public class OauthGoogleActions extends HttpServlet {
          String data = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
 		
          MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users", data, null);
-		return access_token;
 		
+		return userObj;
 	}
 	private void addCookie(String cookieName, String cookieValue ,HttpServletRequest request, HttpServletResponse response){
 		Cookie cookie = new Cookie(cookieName,cookieValue);
@@ -131,7 +162,7 @@ public class OauthGoogleActions extends HttpServlet {
 		
 	}
 	
-	private String getAccesstoken(HttpServletRequest request, HttpServletResponse res, String code, String client_id) throws IOException{
+	private  Map<String,Object> getAccesstoken(HttpServletRequest request, HttpServletResponse res, String code, String client_id) throws IOException{
 		log.info("Got auth code , now try to get access token  "+code);
 		
 		
@@ -176,7 +207,7 @@ public class OauthGoogleActions extends HttpServlet {
 	      map = (Map<String,Object>) gson.fromJson(json, map.getClass());
 	      
 	      log.info("Extract access token "+map.get("access_token"));
-	     return (String)map.get("access_token");
+	     return map;//(String)map.get("access_token");
 	    }
 	     return null;
 	}

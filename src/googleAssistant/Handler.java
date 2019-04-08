@@ -32,9 +32,9 @@ public class Handler extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    private String gettoDoList() {
+    public String gettoDoList(String email) {
     	String response = "";
-    	List<String> pendingDotos = dataService.getToDos(null);
+    	List<String> pendingDotos = dataService.getToDos(email);
 		if (pendingDotos.size() ==0) {
 			response ="You don't have any pending to tasks. Do you want to add a new one? You can say things like, add a to do to get ";
 			
@@ -82,7 +82,7 @@ public class Handler extends HttpServlet {
 			}
 			serviceResponse =   " I have added it to your do do list. Here are your pending to dos. "+serviceResponse;
 		}else {
-			serviceResponse = gettoDoList();
+			serviceResponse = gettoDoList(null);
 			System.out.println(" serviceResponse "+serviceResponse);
 		}
 		String responseStr = "{\r\n" + 
