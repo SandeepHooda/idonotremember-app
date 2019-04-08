@@ -73,7 +73,7 @@ public class OauthGoogleActions extends HttpServlet {
 		String client_id = request.getParameter("client_id");
 		String state = request.getParameter("state");
 		String refresh_token = request.getParameter("refresh_token");
-		log.info("Oauth called state : "+state +" client_id : "+client_id+" code : "+code);
+		log.info("Oauth called state : "+state +" client_id : "+client_id+" code : "+code+" refresh_token "+refresh_token);
 		
 		if (null == client_id) {//Just a safety check - It don't happen
 			client_id = OauthGoogleActions.client_id;
