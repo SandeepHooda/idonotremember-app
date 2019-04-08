@@ -92,8 +92,9 @@ public class Oauth extends HttpServlet {
 		String access_token = getAccesstoken(request, response, code, client_id);
 		
 		//Set cookies
-		String email = getUserEmail(access_token).get("email");
-		String name = getUserEmail(access_token).get("name");
+		Map<String, String> userData = getUserEmail(access_token);
+		String email = userData.get("email");
+		String name  = userData.get("name");
 		addCookie("email", email,request, response );
 		addCookie("name" , name,request, response );
 		addCookie("cookieAccess" , access_token,request, response );

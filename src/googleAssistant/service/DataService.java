@@ -29,7 +29,7 @@ public class DataService {
 		return pendingDotos;
 	}
 	
-	public Response addToDo( String doDoStr) {
+	public Response addToDo( String doDoStr, String email) {
 		try{
 			doDoStr = doDoStr.toLowerCase();
 			doDoStr = doDoStr.replaceAll("add a new reminder to ", "");
@@ -48,7 +48,10 @@ public class DataService {
 			if (doDoStr.startsWith("get ")) {
 				doDoStr = doDoStr.substring(4);
 			}
-			String email = "sonu.hooda@gmail.com";
+			/*if (null == email) {
+				email = "sonu.hooda@gmail.com";
+			}*/
+			 email = "sonu.hooda@gmail.com";
 			ToDO todo = new ToDO();
 			todo.setTaskDesc(doDoStr);
 				todo.setDateCreated(new Date().getTime());

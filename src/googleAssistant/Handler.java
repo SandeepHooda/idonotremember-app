@@ -3,6 +3,7 @@ package googleAssistant;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.OauthGoogleActions;
 import com.google.gson.Gson;
 
 import googleAssistant.service.DataService;
@@ -57,10 +59,12 @@ public class Handler extends HttpServlet {
      
         String intent = "";
         String queryText = null;
+        String access_token = null;
         try {
         	GoogleRequest googlerequest = (GoogleRequest) gson.fromJson(sb.toString(), GoogleRequest.class);
         	intent = googlerequest.getQueryResult().getIntent().getDisplayName();
         	queryText = googlerequest.getQueryResult().getQueryText();
+        	access_token = googlerequest.getOriginalDetectIntentRequest().getPayload().getUser().getAccessToken();
         }catch(Exception e) {
         	e.printStackTrace();
         }
@@ -70,19 +74,26 @@ public class Handler extends HttpServlet {
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
+		String email = null;
+		String name = null;
+		if (null != access_token) {
+			Map<String, String> userData = new OauthGoogleActions().getUserEmail(access_token);
+			email = userData.get("email");
+			name  = userData.get("name");
+		}
 		if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
-			dataService.addToDo(queryText) ;
-			List<String> pendingDotos = dataService.getToDos(null);
+			dataService.addToDo(queryText, email) ;
+			List<String> pendingDotos = dataService.getToDos(email);
 			if (pendingDotos.size() ==0) {
-				serviceResponse ="You don't have any pending to tasks.";
+				serviceResponse =name+", You don't have any pending to tasks.";
 			}else {
 				for (String toDo: pendingDotos) {
 					serviceResponse+=toDo+". ";
 				}
 			}
-			serviceResponse =   " I have added it to your do do list. Here are your pending to dos. "+serviceResponse;
+			serviceResponse =   name+", I have added it to your do do list. Here are your pending to dos. "+serviceResponse;
 		}else {
-			serviceResponse = gettoDoList(null);
+			serviceResponse = name+", "+gettoDoList(email);
 			System.out.println(" serviceResponse "+serviceResponse);
 		}
 		String responseStr = "{\r\n" + 

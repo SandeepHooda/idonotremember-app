@@ -122,8 +122,9 @@ public class OauthGoogleActions extends HttpServlet {
 		
 		
 		//Set cookies
-		String email = getUserEmail(access_token).get("email");
-		String name  = getUserEmail(access_token).get("name");
+		Map<String, String> userData = getUserEmail(access_token);
+		String email = userData.get("email");
+		String name  = userData.get("name");
 		UserObj userObj = new UserObj();
 		userObj.email = email;
 		userObj.name = name;
@@ -212,7 +213,7 @@ public class OauthGoogleActions extends HttpServlet {
 	     return null;
 	}
 
-	private Map<String, String> getUserEmail(String accessToken) throws IOException{
+	public Map<String, String> getUserEmail(String accessToken) throws IOException{
 		Map<String, String> userProfile = new HashMap<String, String>();
 		log.info("Will get getUserEmail for access token "+accessToken);
 		URL url = new URL("https://people.googleapis.com/v1/people/me?personFields=emailAddresses,names" );
