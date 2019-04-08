@@ -72,13 +72,27 @@ public class OauthGoogleActions extends HttpServlet {
 		String code = request.getParameter("code");
 		String client_id = request.getParameter("client_id");
 		String state = request.getParameter("state");
+		String refresh_token = request.getParameter("refresh_token");
 		log.info("Oauth called state : "+state +" client_id : "+client_id+" code : "+code);
 		
 		if (null == client_id) {//Just a safety check - It don't happen
 			client_id = OauthGoogleActions.client_id;
 		
 		}
-		 if (null != code) {
+		if (null != refresh_token) {//Step 3
+			Map<String,Object>	map  = getAccesstokenFromRefreshToken(request, response,  refresh_token,  client_id);
+			
+			PrintWriter out = response.getWriter();
+			String responseStr = "{\r\n" + 
+					"\"token_type\": \"Bearer\",\r\n" + 
+					"\"access_token\": \""+map.get("access_token")+"\",\r\n" + 
+					"\"refresh_token\": \""+refresh_token+"\",\r\n" + 
+					"\"expires_in\": "+map.get("expires_in")+" \r\n" + 
+					"}";
+			       out.print(responseStr );
+			       out.flush(); 
+		}else
+		 if (null != code) {//Step 2. get access token from auth code
 			 
 			if (null != state ) {
 				System.out.println(" Will get access token "+code);
@@ -106,7 +120,8 @@ public class OauthGoogleActions extends HttpServlet {
 			}
 			
 		}else {
-			//showLoginPage(response,state);
+		
+			//Step 1. get auth code
 			getAuthCode(request, response,client_id, state);
 		}
 		
@@ -161,6 +176,50 @@ public class OauthGoogleActions extends HttpServlet {
 				e.printStackTrace();
 			}
 		
+	}
+	
+	private  Map<String,Object> getAccesstokenFromRefreshToken(HttpServletRequest request, HttpServletResponse res, String refreshToken, String client_id) throws IOException{
+		String urlParameters  = "grant_type=refresh_token&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri=https%3A%2F%2Fidonotremember-app.appspot.com%2FOauthGoogleActions&refresh_token="+refreshToken+"&output=embed";
+		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
+		int    postDataLength = postData.length;
+		
+		
+	    URL url = new URL("https://www.googleapis.com/oauth2/v4/token" );
+	    
+	    HTTPRequest req = new HTTPRequest(url, HTTPMethod.POST, lFetchOptions);
+	    HTTPHeader contentType = new HTTPHeader("Content-type", "application/x-www-form-urlencoded");
+	    HTTPHeader charset = new HTTPHeader("charset", "utf-8");
+	    HTTPHeader contentLength = new HTTPHeader( "Content-Length", Integer.toString( postDataLength ));
+	    req.setHeader(contentType);
+	    req.setHeader(charset);
+	    req.setHeader(contentLength);
+	    req.setPayload(postData);
+	    HTTPResponse resp= fetcher.fetch(req);
+	    
+	    
+	    
+	    
+	        	
+	  
+	    
+	    int respCode = resp.getResponseCode();
+	    log.info("respCode "+respCode);
+	    if (respCode == HttpURLConnection.HTTP_OK || respCode == HttpURLConnection.HTTP_NOT_FOUND ) {
+	    	request.setAttribute("error", "");
+	      String response = new String(resp.getContent());
+	      
+
+	     
+	      log.info("Got access_token response  "+response);
+	      Gson gson = new Gson(); 
+	      String json = response;
+	      Map<String,Object> map = new HashMap<String,Object>();
+	      map = (Map<String,Object>) gson.fromJson(json, map.getClass());
+	      
+	      log.info("Extract access token "+map.get("access_token"));
+	     return map;//(String)map.get("access_token");
+	    }
+	     return null;
 	}
 	
 	private  Map<String,Object> getAccesstoken(HttpServletRequest request, HttpServletResponse res, String code, String client_id) throws IOException{
