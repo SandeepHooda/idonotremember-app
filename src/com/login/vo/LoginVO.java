@@ -5,6 +5,8 @@ import java.util.UUID;
 
 public class LoginVO {
 	
+	private String accessToken;
+	private String refreshToken;
 	private String _id ;
 	private String regID ;
 	private String emailID;
@@ -137,6 +139,18 @@ public class LoginVO {
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	public String getAccessToken() {
+		return accessToken;
+	}
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 	
 

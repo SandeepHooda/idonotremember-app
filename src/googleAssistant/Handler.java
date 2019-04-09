@@ -77,10 +77,11 @@ public class Handler extends HttpServlet {
 		String email = null;
 		String name = null;
 		if (null != access_token) {
-			Map<String, String> userData = new OauthGoogleActions().getUserEmail(access_token);
-			email = userData.get("email");
+			Map<String, String> userData = new OauthGoogleActions().getUserEmailFromMangoD(access_token);
+			email = userData.get("emailID");
 			name  = userData.get("name");
 		}
+		System.out.println(" got email and name from mango DB "+email+" "+name);
 		if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
 			dataService.addToDo(queryText, email) ;
 			List<String> pendingDotos = dataService.getToDos(email);

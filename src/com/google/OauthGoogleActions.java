@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.communication.email.EmailAddess;
-import com.communication.email.EmailVO;
-import com.communication.email.MailService;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -35,7 +31,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LoginVO;
 
-import googleAssistant.Handler;
 import mangodb.MangoDB;
 
 
@@ -48,7 +43,7 @@ public class OauthGoogleActions extends HttpServlet {
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 	
 	private static final Logger log = Logger.getLogger(Oauth.class.getName());
-      private static String refreshToken = "";
+      
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -80,14 +75,14 @@ public class OauthGoogleActions extends HttpServlet {
 		
 		}
 		if (null != refresh_token) {//Step 3
-			Map<String,Object>	map  = getAccesstokenFromRefreshToken(request, response,  refresh_token,  client_id);
+			Map<String,String>	map  = getAccesstokenFromRefreshToken(request, response,  refresh_token,  client_id);
 			
 			PrintWriter out = response.getWriter();
 			String responseStr = "{\r\n" + 
 					"\"token_type\": \"Bearer\",\r\n" + 
 					"\"access_token\": \""+map.get("access_token")+"\",\r\n" + 
 					"\"refresh_token\": \""+refresh_token+"\",\r\n" + 
-					"\"expires_in\": "+map.get("expires_in")+" \r\n" + 
+					"\"expires_in\": 3599 \r\n" + 
 					"}";
 			       out.print(responseStr );
 			       out.flush(); 
@@ -98,21 +93,23 @@ public class OauthGoogleActions extends HttpServlet {
 				System.out.println(" Will get access token "+code);
 				Map<String,Object>	map = 	getAccesstoken(request, response, code, client_id);
 				String access_token = (String)map.get("access_token");
-				refreshToken = (String)map.get("id_token");
-				  addCookiedToResponseAndRecordLoginInDB(request, response,  access_token);
+				String refreshToken = (String)map.get("id_token");
+				log.info("refreshToken :  "+map.get("access_token"));
+				  addCookiedToResponseAndRecordLoginInDB(request, response,  access_token,refreshToken);
 				 String redirectTo = googleActionsRedirectURI.replaceAll("ACCESS_TOKEN_VALUE", access_token)+state;
 				 System.out.println(" being redirected to "+redirectTo);
 				response.sendRedirect(redirectTo);
 			}else {
-				System.out.println(" Just adding the cookies using code "+code);
-				UserObj userObj  = addCookiedToResponseAndRecordLoginInDB(request, response,  code);
-				Handler handler = new Handler();
-				String serviceResponse = userObj.name +", "+handler.gettoDoList(userObj.email);
+				String loginVOStr = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", code, "accessToken", false, null,null);
+				Gson  json = new Gson();
+				LoginVO loginVO = json.fromJson(loginVOStr, new TypeToken<LoginVO>() {}.getType());
 				PrintWriter out = response.getWriter();
+				System.out.println(" code "+code);
+				System.out.println(" loginVO.getRefreshToken() "+loginVO.getRefreshToken());
 				String responseStr = "{\r\n" + 
 						"\"token_type\": \"Bearer\",\r\n" + 
 						"\"access_token\": \""+code+"\",\r\n" + 
-						"\"refresh_token\": \""+refreshToken+"\",\r\n" + 
+						"\"refresh_token\": \""+loginVO.getRefreshToken()+"\",\r\n" + 
 						"\"expires_in\": 3599 \r\n" + 
 						"}";
 				       out.print(responseStr );
@@ -133,7 +130,7 @@ public class OauthGoogleActions extends HttpServlet {
 	}
 	 
 	
-	private UserObj addCookiedToResponseAndRecordLoginInDB(HttpServletRequest request, HttpServletResponse response,  String access_token) throws IOException {
+	private UserObj addCookiedToResponseAndRecordLoginInDB(HttpServletRequest request, HttpServletResponse response,  String access_token, String refreshToken) throws IOException {
 		
 		
 		//Set cookies
@@ -152,6 +149,8 @@ public class OauthGoogleActions extends HttpServlet {
 		LoginVO loginVO = new LoginVO();
 		loginVO.setEmailID(email);
 		loginVO.setName(name);
+		loginVO.setRefreshToken(refreshToken);
+		loginVO.setAccessToken(access_token);
 		addCookie("regID" , loginVO.getRegID(),request, response );
 		 Gson  json = new Gson();
          String data = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
@@ -178,48 +177,13 @@ public class OauthGoogleActions extends HttpServlet {
 		
 	}
 	
-	private  Map<String,Object> getAccesstokenFromRefreshToken(HttpServletRequest request, HttpServletResponse res, String refreshToken, String client_id) throws IOException{
-		String urlParameters  = "grant_type=refresh_token&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri=https%3A%2F%2Fidonotremember-app.appspot.com%2FOauthGoogleActions&refresh_token="+refreshToken+"&output=embed";
-		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
-		int    postDataLength = postData.length;
-		
-		
-	    URL url = new URL("https://www.googleapis.com/oauth2/v4/token" );
-	    
-	    HTTPRequest req = new HTTPRequest(url, HTTPMethod.POST, lFetchOptions);
-	    HTTPHeader contentType = new HTTPHeader("Content-type", "application/x-www-form-urlencoded");
-	    HTTPHeader charset = new HTTPHeader("charset", "utf-8");
-	    HTTPHeader contentLength = new HTTPHeader( "Content-Length", Integer.toString( postDataLength ));
-	    req.setHeader(contentType);
-	    req.setHeader(charset);
-	    req.setHeader(contentLength);
-	    req.setPayload(postData);
-	    HTTPResponse resp= fetcher.fetch(req);
-	    
-	    
-	    
-	    
-	        	
-	  
-	    
-	    int respCode = resp.getResponseCode();
-	    log.info("respCode "+respCode);
-	    if (respCode == HttpURLConnection.HTTP_OK || respCode == HttpURLConnection.HTTP_NOT_FOUND ) {
-	    	request.setAttribute("error", "");
-	      String response = new String(resp.getContent());
-	      
-
-	     
-	      log.info("Got access_token response  "+response);
-	      Gson gson = new Gson(); 
-	      String json = response;
-	      Map<String,Object> map = new HashMap<String,Object>();
-	      map = (Map<String,Object>) gson.fromJson(json, map.getClass());
-	      
-	      log.info("Extract access token "+map.get("access_token"));
-	     return map;//(String)map.get("access_token");
-	    }
-	     return null;
+	private  Map<String,String> getAccesstokenFromRefreshToken(HttpServletRequest request, HttpServletResponse res, String refreshToken, String client_id) throws IOException{
+		Map<String, String > map = new HashMap<String, String>();
+		String loginVOStr = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", refreshToken, "refreshToken", false, null,null);
+		Gson  json = new Gson();
+		LoginVO loginVO = json.fromJson(loginVOStr, new TypeToken<LoginVO>() {}.getType());
+		map.put("access_token", loginVO.getAccessToken());
+		return map;
 	}
 	
 	private  Map<String,Object> getAccesstoken(HttpServletRequest request, HttpServletResponse res, String code, String client_id) throws IOException{
@@ -267,9 +231,20 @@ public class OauthGoogleActions extends HttpServlet {
 	      map = (Map<String,Object>) gson.fromJson(json, map.getClass());
 	      
 	      log.info("Extract access token "+map.get("access_token"));
+	      
 	     return map;//(String)map.get("access_token");
 	    }
 	     return null;
+	}
+	public Map<String, String> getUserEmailFromMangoD(String accessToken) throws IOException{
+		String loginVOStr = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", accessToken, "accessToken", false, null,null);
+		Gson  json = new Gson();
+		LoginVO loginVO = json.fromJson(loginVOStr, new TypeToken<LoginVO>() {}.getType());
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("emailID", loginVO.getEmailID());
+		map.put("name", loginVO.getName());
+		return map;
+		
 	}
 
 	public Map<String, String> getUserEmail(String accessToken) throws IOException{
