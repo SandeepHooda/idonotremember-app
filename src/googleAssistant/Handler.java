@@ -92,7 +92,7 @@ public class Handler extends HttpServlet {
 					serviceResponse+=toDo+". ";
 				}
 			}
-			serviceResponse =   name+", I have added it to your do do list. Here are your pending to dos. "+serviceResponse;
+			serviceResponse =   name+", I have added it to your to do list. Here are your pending to do items. "+serviceResponse;
 		}else {
 			serviceResponse = name+", "+gettoDoList(email);
 			System.out.println(" serviceResponse "+serviceResponse);
