@@ -1,5 +1,6 @@
 package googleAssistant.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -7,16 +8,37 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import com.login.vo.LoginVO;
 import com.reminder.facade.ReminderFacade;
+import com.reminder.vo.Thing;
 import com.reminder.vo.ToDO;
 
 public class DataService {
+	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 	private ReminderFacade reminderFacade  = new ReminderFacade();
+	public boolean putMyThing(String email, String item, String location) {
+		Thing thing = new Thing( email,  item,  location);
+		thing.setDateCreated(new Date().getTime());
+		
+		return reminderFacade.placeAThing(thing);
+		
+	}
+	public String findMyThing(String email, String item) {
+		
+		Thing aThing = reminderFacade.findAThing( email,  item);
+		
+		return "You have kept you "+aThing.getItem() +",  at "+aThing.getLocation()+" as of "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+		
+	}
+	public String forgetMyThing(String email, String item) {
+		
+		 reminderFacade.forgetMything( email+"_"+  item);
+		
+		return "Ok I have removed the location of your "+item+" from my memory.";
+		
+	}
 	public List<String> getToDos(String email) {
 		
 		List<ToDO> toDoList = reminderFacade.getToDos(email);

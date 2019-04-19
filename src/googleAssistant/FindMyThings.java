@@ -2,6 +2,7 @@ package googleAssistant;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -51,11 +52,15 @@ public class FindMyThings extends HttpServlet {
 	        String intent = "";
 	        String queryText = null;
 	        String access_token = null;
+	        String item = null;
+	        String location = null;
 	        try {
 	        	GoogleRequest googlerequest = (GoogleRequest) gson.fromJson(sb.toString(), GoogleRequest.class);
 	        	intent = googlerequest.getQueryResult().getIntent().getDisplayName();
 	        	queryText = googlerequest.getQueryResult().getQueryText();
 	        	access_token = googlerequest.getOriginalDetectIntentRequest().getPayload().getUser().getAccessToken();
+	        	item = googlerequest.getQueryResult().getParameters().get("Item-Name");
+	        	location = googlerequest.getQueryResult().getParameters().get("Item-Location");
 	        }catch(Exception e) {
 	        	e.printStackTrace();
 	        }
@@ -71,7 +76,18 @@ public class FindMyThings extends HttpServlet {
 			}
 			System.out.println(" got email and name from mango DB "+email+" "+name);
 		
-			String serviceResponse = name+" Your intent "+intent+" and query "+queryText;
+			String serviceResponse = name+" Your intent "+intent+" location "+location +" item "+item;
+			if ("Put".equalsIgnoreCase(intent) && null != location && null != item){
+				 if (dataService.putMyThing(email, item, location)) {
+					 serviceResponse = name+"I have placed "+item+" at "+location;
+				 }else {
+					 serviceResponse = " Sorry couldn't help this time.";
+				 }
+			}else if ("Find".equalsIgnoreCase(intent)  && null != item) {
+				serviceResponse = dataService.findMyThing(email, item);
+			}else if ("Remove".equalsIgnoreCase(intent)  && null != item) {
+				serviceResponse = dataService.forgetMyThing(email, item);
+			}
 		
 		String responseStr = "{\r\n" + 
 				"  \"fulfillmentText\": \"  "+serviceResponse+" Anything else I can help you with? \",\r\n" + 

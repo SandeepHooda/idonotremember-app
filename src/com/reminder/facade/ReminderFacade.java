@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 import com.login.vo.LoginVO;
 import com.reminder.vo.ReminderVO;
 import com.reminder.vo.ReminderVOComparator;
+import com.reminder.vo.Thing;
 import com.reminder.vo.ToDO;
 import com.reminder.vo.ToDoVOComparator;
 
@@ -90,6 +91,23 @@ public class ReminderFacade {
          String data = json.toJson(toDO, new TypeToken<ToDO>() {}.getType());
        	 MangoDB.createNewDocumentInCollection("remind-me-on", "to-dos", data, null);
     		return true;
+    }
+	
+	public boolean placeAThing(Thing thing)  {
+		Gson  json = new Gson();
+         String data = json.toJson(thing, new TypeToken<Thing>() {}.getType());
+       	 MangoDB.createNewDocumentInCollection("find-my-things", "things", data, null);
+    		return true;
+    }
+	
+	public Thing findAThing(String email, String item)  {
+		Gson  json = new Gson();
+		
+		 String data = MangoDB.getDocumentWithQuery("find-my-things", "things", email+"_"+item,null, true, null,null);
+		
+		 return json.fromJson(data, new TypeToken<Thing>() {}.getType());
+		
+       	
     }
 	
 	public boolean updateToDo(ToDO toDO) throws ParseException {
@@ -231,6 +249,10 @@ public class ReminderFacade {
 	}
 	public void deleteReminder(String reminderID ) {
 		MangoDB.deleteDocument("remind-me-on", "reminders", reminderID, null);
+    }
+	
+	public void forgetMything(String thingID ) {
+		MangoDB.deleteDocument("find-my-things", "things", thingID, null);
     }
 	
 	public void deleteSnoozedReminder(String reminderID ) {
