@@ -28,8 +28,13 @@ public class DataService {
 	public String findMyThing(String email, String item) {
 		
 		Thing aThing = reminderFacade.findAThing( email,  item);
+		if (null !=aThing) {
+			return "You have kept you "+aThing.getItem() +",  at "+aThing.getLocation()+" as of "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+		}else {
+			return "Sorry you didn't tell me where you have kept you "+aThing.getItem() +". ";
+		}
 		
-		return "You have kept you "+aThing.getItem() +",  at "+aThing.getLocation()+" as of "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+		
 		
 	}
 	public String forgetMyThing(String email, String item) {

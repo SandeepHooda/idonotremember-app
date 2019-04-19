@@ -105,6 +105,9 @@ public class ReminderFacade {
 		
 		 String data = MangoDB.getDocumentWithQuery("find-my-things", "things", email+"_"+item,null, true, null,null);
 		
+		 if (data == null || "".equals(data.trim())) {
+			 return null;
+		 }
 		 return json.fromJson(data, new TypeToken<Thing>() {}.getType());
 		
        	

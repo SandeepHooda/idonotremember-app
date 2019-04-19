@@ -79,14 +79,14 @@ public class FindMyThings extends HttpServlet {
 			String serviceResponse = name+" Your intent "+intent+" location "+location +" item "+item;
 			if ("Put".equalsIgnoreCase(intent) && null != location && null != item){
 				 if (dataService.putMyThing(email, item, location)) {
-					 serviceResponse = name+"I have placed "+item+" at "+location;
+					 serviceResponse = name+", I will remember that you have placed your "+item+", at "+location+". ";
 				 }else {
 					 serviceResponse = " Sorry couldn't help this time.";
 				 }
 			}else if ("Find".equalsIgnoreCase(intent)  && null != item) {
-				serviceResponse = dataService.findMyThing(email, item);
+				serviceResponse =  name+", "+ dataService.findMyThing(email, item);
 			}else if ("Remove".equalsIgnoreCase(intent)  && null != item) {
-				serviceResponse = dataService.forgetMyThing(email, item);
+				serviceResponse =  dataService.forgetMyThing(email, item);
 			}
 		
 		String responseStr = "{\r\n" + 
