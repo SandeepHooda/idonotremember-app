@@ -39,7 +39,6 @@
     <servlet-name>Oauth</servlet-name>
     <url-pattern>/Oauth</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <description></description>
     <display-name>OauthGoogleActions</display-name>
