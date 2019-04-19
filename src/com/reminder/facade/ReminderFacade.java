@@ -238,6 +238,9 @@ public class ReminderFacade {
     }
 	
 	public void markComplete(String todoID ) {
+		markComplete( todoID, false );
+	}
+	public void markComplete(String todoID ,  boolean force) {
 		String data = MangoDB.getDocumentWithQuery("remind-me-on", "to-dos", todoID, null,true, null, null);
 		 Gson  json = new Gson();
 		 ToDO toDo  = json.fromJson(data, new TypeToken<ToDO>() {}.getType());

@@ -75,11 +75,9 @@ public class LoginFacade {
 	}
 	
 	public LoginVO logout(String regID, HttpSession session) {
-		if(!regID.equalsIgnoreCase("pooja.arora@paytm.com")) {
+		
 			MangoDB.deleteDocument("remind-me-on", "registered-users", regID,  null);
 			session.invalidate();
-		}
-		
 		
 		return validateRegID(regID, null);
 	}

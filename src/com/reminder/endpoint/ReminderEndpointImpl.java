@@ -227,12 +227,11 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 		}
 	}
 	
-	@Override
-	public Response markComplete( String toDoID, HttpServletRequest request) {
+	public Response markComplete( String toDoID, HttpServletRequest request, boolean force) {
 		try{
 			HttpSession session = request.getSession();
 			String regID = (String)session.getAttribute("regID");
-			if (null != regID) {
+			if (null != regID || force) {
 				reminderFacade.markComplete(toDoID);
 				return getToDos(request);
 			}else {
@@ -248,6 +247,11 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 			
 			return Response.serverError().entity(vo).build();
 		}
+	}
+	
+	@Override
+	public Response markComplete( String toDoID, HttpServletRequest request) {
+		return markComplete( toDoID, request, false);
 	}
 	
 	public ReminderFacade getReminderFacade() {

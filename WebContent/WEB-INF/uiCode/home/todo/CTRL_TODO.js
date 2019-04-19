@@ -10,6 +10,12 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
                 'Content-Type': 'application/json;'
             }
         }
+	var name = window.localStorage.getItem('name');
+	if (name ){
+		$scope.userName = "Welcome "+name;
+	}else {
+		$scope.userName ="Hello Guest";
+	}
 	$scope.todos = [];
 	$scope.loginTry = 0;
 	$scope.completedTodos = [];

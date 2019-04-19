@@ -38,7 +38,7 @@ public class Handler extends HttpServlet {
     	String response = "";
     	List<String> pendingDotos = dataService.getToDos(email);
 		if (pendingDotos.size() ==0) {
-			response ="You don't have any pending to tasks. Do you want to add a new one? You can say things like, add a to do to get ";
+			response ="You don't have any pending tasks. Do you want to add a new one? You can say things like, add a to do to get Milk";
 			
 		}else {
 			for (String toDo: pendingDotos) {
@@ -86,19 +86,28 @@ public class Handler extends HttpServlet {
 			dataService.addToDo(queryText, email) ;
 			List<String> pendingDotos = dataService.getToDos(email);
 			if (pendingDotos.size() ==0) {
-				serviceResponse =name+", You don't have any pending to tasks.";
+				serviceResponse =name+", You don't have any pending tasks.";
 			}else {
 				for (String toDo: pendingDotos) {
 					serviceResponse+=toDo+". ";
 				}
 			}
 			serviceResponse =   name+", I have added it to your to do list. Here are your pending to do items. "+serviceResponse;
-		}else {
+		}else if ("DeleteToDo".equalsIgnoreCase(intent) && null != queryText) {
+			String todoDeleted = dataService.deleteToDo(queryText, email) ;
+			if ("".equals(todoDeleted) ){
+				serviceResponse =   name+", I couldn't recognize what task you want to delete. Please try again. "+serviceResponse;
+			}else {
+				serviceResponse =   name+", I have deleted "+todoDeleted+" from your to do items. "+serviceResponse;
+			}
+			
+		}
+			else {
 			serviceResponse = name+", "+gettoDoList(email);
 			System.out.println(" serviceResponse "+serviceResponse);
 		}
 		String responseStr = "{\r\n" + 
-		"  \"fulfillmentText\": \"  "+serviceResponse+". \",\r\n" + 
+		"  \"fulfillmentText\": \"  "+serviceResponse+" Anything else I can help you with? \",\r\n" + 
 		"  \"outputContexts\": []\r\n" + 
 		"}";
        out.print(responseStr );
