@@ -102,13 +102,25 @@ public class ReminderFacade {
 	
 	public Thing findAThing(String email, String item)  {
 		Gson  json = new Gson();
-		
+		item = item.replaceAll(" ", "_").toLowerCase();
 		 String data = MangoDB.getDocumentWithQuery("find-my-things", "things", email+"_"+item,null, true, null,null);
 		
 		 if (data == null || "".equals(data.trim())) {
 			 return null;
 		 }
 		 return json.fromJson(data, new TypeToken<Thing>() {}.getType());
+		
+       	
+    }
+	public List<Thing> findEveryThing(String email)  {
+		Gson  json = new Gson();
+		
+		 String data = "["+MangoDB.getDocumentWithQuery("find-my-things", "things",  email,"email", false, null,null)+"]";
+		
+		 if (data == null || "".equals(data.trim())) {
+			 return null;
+		 }
+		 return json.fromJson(data, new TypeToken<List<Thing>>() {}.getType());
 		
        	
     }
@@ -254,7 +266,8 @@ public class ReminderFacade {
 		MangoDB.deleteDocument("remind-me-on", "reminders", reminderID, null);
     }
 	
-	public void forgetMything(String thingID ) {
+	public void forgetMything(String email , String thing ) {
+		String thingID = email+"_"+thing.toLowerCase().replaceAll(" ", "_");
 		MangoDB.deleteDocument("find-my-things", "things", thingID, null);
     }
 	

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.Constants;
 import com.google.OauthGoogleActions;
 import com.google.gson.Gson;
 
@@ -54,13 +55,32 @@ public class FindMyThings extends HttpServlet {
 	        String access_token = null;
 	        String item = null;
 	        String location = null;
+	        String query_lower = null;
+	        Double number = 0.0;
 	        try {
 	        	GoogleRequest googlerequest = (GoogleRequest) gson.fromJson(sb.toString(), GoogleRequest.class);
 	        	intent = googlerequest.getQueryResult().getIntent().getDisplayName();
 	        	queryText = googlerequest.getQueryResult().getQueryText();
+	        	query_lower = queryText.toLowerCase();
 	        	access_token = googlerequest.getOriginalDetectIntentRequest().getPayload().getUser().getAccessToken();
-	        	item = googlerequest.getQueryResult().getParameters().get("Item-Name");
-	        	location = googlerequest.getQueryResult().getParameters().get("Item-Location");
+	        	item = (String)googlerequest.getQueryResult().getParameters().get("Item-Name");
+	        	location = (String)googlerequest.getQueryResult().getParameters().get("Item-Location");
+	        	try {
+	        		number =(Double) googlerequest.getQueryResult().getParameters().get("number");
+	        	}catch(Exception e) {
+	        		
+	        	}
+	        	
+	        	System.out.println(" location "+location);
+	        	if ("Slot number".equalsIgnoreCase(location)) {
+	        		System.out.println(" getting slot from query  "+query_lower);
+	        		location += queryText.substring(query_lower.indexOf("slot number")+11);
+	        	}
+	        	
+	        	if (number> 0 && location.indexOf(""+number.intValue()) <0) {
+	        		location += " "+number.intValue();
+	        	}
+	        	
 	        }catch(Exception e) {
 	        	e.printStackTrace();
 	        }
@@ -75,18 +95,28 @@ public class FindMyThings extends HttpServlet {
 				name  = userData.get("name");
 			}
 			System.out.println(" got email and name from mango DB "+email+" "+name);
+			
+			if ("Find".equalsIgnoreCase(intent)  && (null == item || "".equals(item.trim()))) {
+				query_lower = query_lower.replaceAll("find my ", "").replaceAll("where is my ", "").replaceAll("where are my ", "");
+				item = query_lower;
+			}
 		
-			String serviceResponse = name+" Your intent "+intent+" location "+location +" item "+item;
-			if ("Put".equalsIgnoreCase(intent) && null != location && null != item){
-				 if (dataService.putMyThing(email, item, location)) {
+			System.out.println(" intent "+intent+" location "+location +" item "+item);
+			String serviceResponse = "Can you please repeat what you just said?";
+			if ("Put".equalsIgnoreCase(intent) && null != location && null != item && !"".equals(item.trim()) && !"".equals(location.trim())){
+				
+				 if (dataService.putMyThing(email, item, location,queryText)) {
 					 serviceResponse = name+", I will remember that you have placed your "+item+", at "+location+". ";
 				 }else {
 					 serviceResponse = " Sorry couldn't help this time.";
 				 }
-			}else if ("Find".equalsIgnoreCase(intent)  && null != item) {
+			}else if ("Find".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim())) {
 				serviceResponse =  name+", "+ dataService.findMyThing(email, item);
-			}else if ("Remove".equalsIgnoreCase(intent)  && null != item) {
+			}else if ("Remove".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim()) ) {
 				serviceResponse =  dataService.forgetMyThing(email, item);
+			}else {
+				Constants.sendEmail("sonu.hooda@gmail.com","Find my things ", "queryText: "+queryText+" <br/> intent "+intent+"<br/> location "+location +"<br/> item "+item);
+				
 			}
 		
 		String responseStr = "{\r\n" + 

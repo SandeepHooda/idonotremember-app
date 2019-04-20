@@ -5,12 +5,16 @@ public class Thing {
 	public Thing() {
 		
 	}
-	public Thing (String email, String item, String location) {
+	public Thing (String email, String item, String location, String quertText) {
 		this.email = email;
 		this.location = location;
 		this.item = item;
 		this._id = email +"_"+item;
+		this._id = this._id.replaceAll(" ", "_").toLowerCase();
+		this.quertText = quertText;
+		
 	}
+	private String quertText;
 	private String _id;
 	private long dateCreated;
 	private String email;
@@ -45,5 +49,11 @@ public class Thing {
 	}
 	public void setItem(String item) {
 		this.item = item;
+	}
+	public String getQuertText() {
+		return quertText;
+	}
+	public void setQuertText(String quertText) {
+		this.quertText = quertText;
 	}
 }

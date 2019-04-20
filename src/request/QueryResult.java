@@ -5,7 +5,7 @@ import java.util.Map;
 public class QueryResult {
 	private String queryText;
 	private Intent intent;
-	private Map<String, String> parameters;
+	private Map<String, Object> parameters;
 	public String getQueryText() {
 		return queryText;
 	}
@@ -13,10 +13,10 @@ public class QueryResult {
 		this.queryText = queryText;
 	}
 	
-	public Map<String, String> getParameters() {
+	public Map<String, Object> getParameters() {
 		return parameters;
 	}
-	public void setParameters(Map<String, String> parameters) {
+	public void setParameters(Map<String, Object> parameters) {
 		this.parameters = parameters;
 	}
 	public Intent getIntent() {

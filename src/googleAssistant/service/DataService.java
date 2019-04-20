@@ -18,30 +18,55 @@ import com.reminder.vo.ToDO;
 public class DataService {
 	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 	private ReminderFacade reminderFacade  = new ReminderFacade();
-	public boolean putMyThing(String email, String item, String location) {
-		Thing thing = new Thing( email,  item,  location);
+	public boolean putMyThing(String email, String item, String location, String quertText) {
+		Thing thing = new Thing( email,  item,  location,quertText);
 		thing.setDateCreated(new Date().getTime());
 		
 		return reminderFacade.placeAThing(thing);
 		
 	}
 	public String findMyThing(String email, String item) {
-		
-		Thing aThing = reminderFacade.findAThing( email,  item);
-		if (null !=aThing) {
-			return "You have kept you "+aThing.getItem() +",  at "+aThing.getLocation()+" as of "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+		if ("everything".equalsIgnoreCase(item.toLowerCase()) || "all my things".equalsIgnoreCase(item.toLowerCase())) {
+			List<Thing> allThings = reminderFacade.findEveryThing( email);
+			StringBuilder response = new StringBuilder();
+			if (null != allThings && allThings.size() >0) {
+				for (Thing aThing: allThings) {
+					response.append("You have kept you <break time=\"3\" /> "+aThing.getItem() +" at <break time=\"3\" />   "+aThing.getLocation()+" <break time=\"3\" /> as of "+formatter.format(new Date(aThing.getDateCreated()))+". ");
+				}
+			}else {
+				response.append("You haven't told me location of any of your things yet.");
+			}
+			return response.toString();
 		}else {
-			return "Sorry you didn't tell me where you have kept you "+aThing.getItem() +". ";
+			Thing aThing = reminderFacade.findAThing( email,  item);
+			if (null !=aThing) {
+				return "You have kept you <break time=\"3\" /> "+aThing.getItem() +"  at <break time=\"3\" /> "+aThing.getLocation()+" <break time=\"3\" /> as of "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+			}else {
+				return "Sorry, but  you never told me that where have you kept your "+item +". ";
+			}
 		}
+		
 		
 		
 		
 	}
 	public String forgetMyThing(String email, String item) {
-		
-		 reminderFacade.forgetMything( email+"_"+  item);
-		
-		return "Ok I have removed the location of your "+item+" from my memory.";
+		if ("everything".equalsIgnoreCase(item.toLowerCase()) || "all my things".equalsIgnoreCase(item.toLowerCase())) {
+			List<Thing> allThings = reminderFacade.findEveryThing( email);
+			StringBuilder response = new StringBuilder();
+			if (null != allThings && allThings.size() >0) {
+				for (Thing aThing: allThings) {
+					reminderFacade.forgetMything( email,  aThing.getItem());
+					response.append("I have removed the location of your <break time=\"2\" /> "+aThing.getItem() +" <break time=\"2\" /> from my memory. ");
+				}
+			}
+			return response.toString();
+		}else {
+			reminderFacade.forgetMything( email,  item);
+			
+			return "Ok I have removed the location of your <break time=\"2\" /> "+item+" <break time=\"2\" /> from my memory.";
+		}
+		 
 		
 	}
 	public List<String> getToDos(String email) {

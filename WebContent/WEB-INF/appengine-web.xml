@@ -8,4 +8,7 @@
   <sessions-enabled>true</sessions-enabled>
   <runtime>java8</runtime>
 
+<staging>
+<enable-jar-classes>true</enable-jar-classes>
+</staging>
 </appengine-web-app>
