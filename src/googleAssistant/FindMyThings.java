@@ -126,20 +126,23 @@ public class FindMyThings extends HttpServlet {
 			}
 		
 			System.out.println(" intent "+intent+" location "+location +" item "+item);
+			ItemLocation itemLocation = findItemLocation(query_lower);
+			if (null != itemLocation) {
+				if (itemLocation.getLocation() != null ) {
+					location = itemLocation.getLocation();
+				}
+				if (null != itemLocation.getItem() ) {
+					item = itemLocation.getItem();
+				}
+			}
 			String serviceResponse = "Can you please repeat what you just said?";
+			if (query_lower.startsWith("where") || query_lower.startsWith("find") ) {
+				intent = "Find";
+			}else if (location != null ) {
+				intent = "Put";
+			}
 			if ("Put".equalsIgnoreCase(intent) ){
-				//if( null == location || "".equals(location.trim()) || null == item || "".equals(item.trim())) {
-					ItemLocation itemLocation = findItemLocation(query_lower);
-					if (null != itemLocation) {
-						if (itemLocation.getLocation() != null ) {
-							location = itemLocation.getLocation();
-						}
-						if (null != itemLocation.getItem() ) {
-							item = itemLocation.getItem();
-						}
-					}
-					
-				//}
+				
 				
 				if (null != location && null != item && !"".equals(item.trim()) && !"".equals(location.trim())) {
 					if (dataService.putMyThing(email, item, location,queryText)) {
@@ -150,15 +153,7 @@ public class FindMyThings extends HttpServlet {
 				}
 				 
 			}else if ("Find".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim())) {
-				ItemLocation itemLocation = findItemLocation(query_lower);
-				if (null != itemLocation) {
-					if (itemLocation.getLocation() != null ) {
-						location = itemLocation.getLocation();
-					}
-					if (null != itemLocation.getItem() ) {
-						item = itemLocation.getItem();
-					}
-				}
+				
 				serviceResponse =  name+", "+ dataService.findMyThing(email, item);
 				System.out.println(" serviceResponse "+serviceResponse);
 			}else if ("Remove".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim()) ) {
