@@ -1,5 +1,8 @@
 package googleAssistant;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.google.gson.Gson;
 
 import request.GoogleRequest;
@@ -7,14 +10,27 @@ import request.GoogleRequest;
 public class TestJava {
 
 	public static void main(String[] args) {
-		String request = "{  \"responseId\": \"531eebf5-5553-44f0-a219-69ef82b6ab5f\",  \"queryResult\": {    \"queryText\": \"what is my to do list\",    \"parameters\": {    },    \"allRequiredParamsPresent\": true,    \"fulfillmentText\": \"Sure I can help you with that.\",    \"fulfillmentMessages\": [{      \"text\": {        \"text\": [\"Sure I can help you with that.\"]      }    }],    \"outputContexts\": [{      \"name\": \"projects/oauth-googl-sign-in/agent/sessions/ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q/contexts/actions_capability_screen_output\"    }, {      \"name\": \"projects/oauth-googl-sign-in/agent/sessions/ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q/contexts/actions_capability_account_linking\"    }, {      \"name\": \"projects/oauth-googl-sign-in/agent/sessions/ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q/contexts/actions_capability_audio_output\"    }, {      \"name\": \"projects/oauth-googl-sign-in/agent/sessions/ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q/contexts/google_assistant_input_type_keyboard\"    }, {      \"name\": \"projects/oauth-googl-sign-in/agent/sessions/ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q/contexts/actions_capability_media_response_audio\"    }, {      \"name\": \"projects/oauth-googl-sign-in/agent/sessions/ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q/contexts/actions_capability_web_browser\"    }],    \"intent\": {      \"name\": \"projects/oauth-googl-sign-in/agent/intents/fdcb8258-d8cb-42af-96d5-afda795b7ae4\",      \"displayName\": \"GetToDO\"    },    \"intentDetectionConfidence\": 1.0,    \"languageCode\": \"en-us\"  },  \"originalDetectIntentRequest\": {    \"source\": \"google\",    \"version\": \"2\",    \"payload\": {      \"isInSandbox\": true,      \"surface\": {        \"capabilities\": [{          \"name\": \"actions.capability.AUDIO_OUTPUT\"        }, {          \"name\": \"actions.capability.ACCOUNT_LINKING\"        }, {          \"name\": \"actions.capability.WEB_BROWSER\"        }, {          \"name\": \"actions.capability.SCREEN_OUTPUT\"        }, {          \"name\": \"actions.capability.MEDIA_RESPONSE_AUDIO\"        }]      },      \"requestType\": \"SIMULATOR\",      \"inputs\": [{        \"rawInputs\": [{          \"query\": \"what is my to do list\",          \"inputType\": \"KEYBOARD\"        }],        \"arguments\": [{          \"rawText\": \"what is my to do list\",          \"textValue\": \"what is my to do list\",          \"name\": \"text\"        }],        \"intent\": \"actions.intent.TEXT\"      }],      \"user\": {        \"lastSeen\": \"2019-04-07T12:20:36Z\",        \"locale\": \"en-US\",        \"userId\": \"ABwppHENPY-Xt-DnhJx2Kh_PIfD8Asnl4cZPBBIS1W1AoN0IdyjaGOu81Fi5FnsBfQK2RcNfa4FeYtYfoy7dTV5hhQ\"      },      \"conversation\": {        \"conversationId\": \"ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q\",        \"type\": \"ACTIVE\",        \"conversationToken\": \"[]\"      },      \"availableSurfaces\": [{        \"capabilities\": [{          \"name\": \"actions.capability.AUDIO_OUTPUT\"        }, {          \"name\": \"actions.capability.SCREEN_OUTPUT\"        }, {          \"name\": \"actions.capability.WEB_BROWSER\"        }]      }]    }  },  \"session\": \"projects/oauth-googl-sign-in/agent/sessions/ABwppHHg3HwnoJic4K6P8S6GMwK7PWfpYBOAHL_UtRxMY6GW7fKZLkrKDZiJR3yx5BYzT51wWGWbOe-A1jKKeGYV7Q\"}";
-
-		Gson gson = new Gson(); 
-		 GoogleRequest googlerequest = (GoogleRequest) gson.fromJson(request, GoogleRequest.class);
-		 System.out.println(googlerequest);
-		 request = "get mango";
-		 request = request.substring(4);
-		 System.out.println(request);
+		 Pattern itemPattern1 = Pattern.compile("(put|placed|parked) my (.*?) (on|at|under|in) (.*?)");
+		 Pattern itemPattern2 = Pattern.compile("(put|placed|parked|park) (.*?) (on|at|under|in) (.*?)");
+		 Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
+	
+		 String query = "I have tany garbaheo parked my note book under the garden beautiful";
+		Matcher itemMatcher1 = itemPattern1.matcher(query);  
+		Matcher itemMatcher2 = itemPattern2.matcher(query);  
+		Matcher locationMatcher1 = locationPattern1.matcher(query); 
+		 if (itemMatcher1.find()) {
+			 System.out.println("1->"+itemMatcher1.group(2)+" # "+itemMatcher1.group(4));
+		 }else if (itemMatcher2.find()) {
+			 System.out.println("2->"+itemMatcher2.group(2));
+		 }else{
+			 System.out.println(" Not found");
+		 }
+		 
+		 if (locationMatcher1.find()) {
+			 System.out.println(locationMatcher1.group(2));
+		 }else {
+			 System.out.println(" Not found");
+		 }
 	}
 
 }

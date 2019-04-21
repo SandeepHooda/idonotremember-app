@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,6 +28,9 @@ public class FindMyThings extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	 private Gson gson = new Gson(); 
 	 private DataService dataService = new DataService();
+	 private final Pattern itemPattern1 = Pattern.compile("(put|placed|parked) my (.*?) (on|at|under|in) (.*?)");
+	 private final Pattern itemPattern2 = Pattern.compile("(put|placed|parked|park) (.*?) (on|at|under|in) (.*?)");
+	 private final Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -33,6 +38,22 @@ public class FindMyThings extends HttpServlet {
     public FindMyThings() {
         super();
         // TODO Auto-generated constructor stub
+    }
+    private class ItemLocation{
+    	private String item;
+    	private String location;
+		public String getItem() {
+			return item;
+		}
+		public void setItem(String item) {
+			this.item = item;
+		}
+		public String getLocation() {
+			return location;
+		}
+		public void setLocation(String location) {
+			this.location = location;
+		}
     }
 
 	/**
@@ -75,9 +96,12 @@ public class FindMyThings extends HttpServlet {
 	        	if ("Slot number".equalsIgnoreCase(location)) {
 	        		System.out.println(" getting slot from query  "+query_lower);
 	        		location += queryText.substring(query_lower.indexOf("slot number")+11);
+	        	}else if ("Slot".equalsIgnoreCase(location)) {
+	        		System.out.println(" getting slot from query  "+query_lower);
+	        		location += queryText.substring(query_lower.indexOf("slot")+4);
 	        	}
 	        	
-	        	if (number> 0 && location.indexOf(""+number.intValue()) <0) {
+	        	if (null != number && number> 0 && location.indexOf(""+number.intValue()) <0) {
 	        		location += " "+number.intValue();
 	        	}
 	        	
@@ -103,15 +127,32 @@ public class FindMyThings extends HttpServlet {
 		
 			System.out.println(" intent "+intent+" location "+location +" item "+item);
 			String serviceResponse = "Can you please repeat what you just said?";
-			if ("Put".equalsIgnoreCase(intent) && null != location && null != item && !"".equals(item.trim()) && !"".equals(location.trim())){
+			if ("Put".equalsIgnoreCase(intent) ){
+				if( null == location || "".equals(location.trim()) || null == item || "".equals(item.trim())) {
+					ItemLocation itemLocation = findItemLocation(query_lower);
+					if (null != itemLocation) {
+						if (null == location || "".equals(location.trim()) ) {
+							location = itemLocation.getLocation();
+						}
+						if (null == item || "".equals(item.trim()) ) {
+							item = itemLocation.getItem();
+						}
+					}
+					
+				}
 				
-				 if (dataService.putMyThing(email, item, location,queryText)) {
-					 serviceResponse = name+", I will remember that you have placed your "+item+", at "+location+". ";
-				 }else {
-					 serviceResponse = " Sorry couldn't help this time.";
-				 }
+				if (null != location && null != item && !"".equals(item.trim()) && !"".equals(location.trim())) {
+					if (dataService.putMyThing(email, item, location,queryText)) {
+						 serviceResponse = name+", I will remember that you have placed your "+item+", at "+location+". ";
+					 }else {
+						 serviceResponse = " Sorry couldn't help this time.";
+					 }
+				}
+				 
 			}else if ("Find".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim())) {
+				System.out.println(" find car");
 				serviceResponse =  name+", "+ dataService.findMyThing(email, item);
+				System.out.println(" serviceResponse "+serviceResponse);
 			}else if ("Remove".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim()) ) {
 				serviceResponse =  dataService.forgetMyThing(email, item);
 			}else {
@@ -127,6 +168,47 @@ public class FindMyThings extends HttpServlet {
 		       out.flush(); 
 	}
 
+	private ItemLocation findItemLocation(String query_lower) {
+		Matcher itemMatcher1 = itemPattern1.matcher(query_lower);  
+		Matcher itemMatcher2 = itemPattern2.matcher(query_lower);  
+		Matcher locationMatcher1 = locationPattern1.matcher(query_lower);
+		ItemLocation itemLocation = new ItemLocation();
+		try {
+			
+			 if (itemMatcher1.find()) {
+				 itemLocation.setItem(itemMatcher1.group(2));
+			 }else if (itemMatcher2.find()) {
+				 itemLocation.setItem(itemMatcher2.group(2));
+			 }
+			 
+			 if (locationMatcher1.find()) {
+				 itemLocation.setLocation(locationMatcher1.group(2));
+			 }
+			 return itemLocation;
+		}catch(Exception e) {
+			
+		}
+		return null;
+	}
+	private String findLocation(String query_lower) {
+		if (query_lower.indexOf(" on ") > 0 ) {
+			return query_lower.substring(query_lower.indexOf(" on ") +4);
+		}else if (query_lower.indexOf(" at ") > 0 ) {
+			return query_lower.substring(query_lower.indexOf(" at ") +4);
+		}else if (query_lower.indexOf(" under ") > 0 ) {
+			return query_lower.substring(query_lower.indexOf(" under ") +6);
+		}else if (query_lower.indexOf(" in ") > 0 ) {
+			return query_lower.substring(query_lower.indexOf(" in ") +4);
+		}else if (query_lower.indexOf(" below ") > 0 ) {
+			return query_lower.substring(query_lower.indexOf(" below ") +6);
+		}
+		return null;
+	}
+	
+	private String findItem(String query_lower) {
+		
+		return null;
+	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

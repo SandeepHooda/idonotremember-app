@@ -31,7 +31,7 @@ public class DataService {
 			StringBuilder response = new StringBuilder();
 			if (null != allThings && allThings.size() >0) {
 				for (Thing aThing: allThings) {
-					response.append("You have kept you <break time=\"3\" /> "+aThing.getItem() +" at <break time=\"3\" />   "+aThing.getLocation()+" <break time=\"3\" /> as of "+formatter.format(new Date(aThing.getDateCreated()))+". ");
+					response.append("You have kept your , "+aThing.getItem() +" at ,   "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ");
 				}
 			}else {
 				response.append("You haven't told me location of any of your things yet.");
@@ -40,7 +40,7 @@ public class DataService {
 		}else {
 			Thing aThing = reminderFacade.findAThing( email,  item);
 			if (null !=aThing) {
-				return "You have kept you <break time=\"3\" /> "+aThing.getItem() +"  at <break time=\"3\" /> "+aThing.getLocation()+" <break time=\"3\" /> as of "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+				return "You have kept your , "+aThing.getItem() +"  at , "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ";
 			}else {
 				return "Sorry, but  you never told me that where have you kept your "+item +". ";
 			}
@@ -55,16 +55,18 @@ public class DataService {
 			List<Thing> allThings = reminderFacade.findEveryThing( email);
 			StringBuilder response = new StringBuilder();
 			if (null != allThings && allThings.size() >0) {
+				response.append("I have removed the location of your , ");
 				for (Thing aThing: allThings) {
 					reminderFacade.forgetMything( email,  aThing.getItem());
-					response.append("I have removed the location of your <break time=\"2\" /> "+aThing.getItem() +" <break time=\"2\" /> from my memory. ");
+					response.append(aThing.getItem() +" , ");
 				}
+				response.append(" , from my memory. ");
 			}
 			return response.toString();
 		}else {
 			reminderFacade.forgetMything( email,  item);
 			
-			return "Ok I have removed the location of your <break time=\"2\" /> "+item+" <break time=\"2\" /> from my memory.";
+			return "Ok I have removed the location of your , "+item+" , from my memory.";
 		}
 		 
 		
