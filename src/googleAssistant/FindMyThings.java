@@ -150,6 +150,15 @@ public class FindMyThings extends HttpServlet {
 				}
 				 
 			}else if ("Find".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim())) {
+				ItemLocation itemLocation = findItemLocation(query_lower);
+				if (null != itemLocation) {
+					if (itemLocation.getLocation() != null ) {
+						location = itemLocation.getLocation();
+					}
+					if (null != itemLocation.getItem() ) {
+						item = itemLocation.getItem();
+					}
+				}
 				serviceResponse =  name+", "+ dataService.findMyThing(email, item);
 				System.out.println(" serviceResponse "+serviceResponse);
 			}else if ("Remove".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim()) ) {
