@@ -14,7 +14,7 @@ public class TestJava {
 		 Pattern itemPattern2 = Pattern.compile("(put|placed|parked|park) (.*?) (on|at|under|in) (.*?)");
 		 Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
 	
-		 String query = "park my coin in bucket";
+		 String query = "park my coin in the bucket";
 		Matcher itemMatcher1 = itemPattern1.matcher(query);  
 		Matcher itemMatcher2 = itemPattern2.matcher(query);  
 		Matcher locationMatcher1 = locationPattern1.matcher(query); 
@@ -27,7 +27,7 @@ public class TestJava {
 		 }
 		 
 		 if (locationMatcher1.find()) {
-			 System.out.println(locationMatcher1.group(2));
+			 System.out.println(locationMatcher1.group(1)+" "+locationMatcher1.group(2));
 		 }else {
 			 System.out.println(" Not found");
 		 }

@@ -101,9 +101,10 @@ public class ReminderFacade {
     }
 	
 	public Thing findAThing(String email, String item)  {
-		System.out.println(" finding "+item);
+		
 		Gson  json = new Gson();
 		item = item.replaceAll(" ", "_").toLowerCase();
+		System.out.println(" finding "+ email+"_"+item);
 		 String data = MangoDB.getDocumentWithQuery("find-my-things", "things", email+"_"+item,null, true, null,null);
 		
 		 if (data == null || "".equals(data.trim())) {

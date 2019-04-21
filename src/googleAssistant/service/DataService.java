@@ -31,7 +31,7 @@ public class DataService {
 			StringBuilder response = new StringBuilder();
 			if (null != allThings && allThings.size() >0) {
 				for (Thing aThing: allThings) {
-					response.append("You have kept your , "+aThing.getItem() +" at ,   "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ");
+					response.append("You have kept your , "+aThing.getItem() +" , "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ");
 				}
 			}else {
 				response.append("You haven't told me location of any of your things yet.");
@@ -40,7 +40,7 @@ public class DataService {
 		}else {
 			Thing aThing = reminderFacade.findAThing( email,  item);
 			if (null !=aThing) {
-				return "You have kept your , "+aThing.getItem() +"  at , "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+				return "You have kept your , "+aThing.getItem() +" , "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ";
 			}else {
 				return "Sorry, but  you never told me that where have you kept your "+item +". ";
 			}

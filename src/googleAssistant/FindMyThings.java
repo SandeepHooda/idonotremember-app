@@ -128,7 +128,7 @@ public class FindMyThings extends HttpServlet {
 			System.out.println(" intent "+intent+" location "+location +" item "+item);
 			String serviceResponse = "Can you please repeat what you just said?";
 			if ("Put".equalsIgnoreCase(intent) ){
-				if( null == location || "".equals(location.trim()) || null == item || "".equals(item.trim())) {
+				//if( null == location || "".equals(location.trim()) || null == item || "".equals(item.trim())) {
 					ItemLocation itemLocation = findItemLocation(query_lower);
 					if (null != itemLocation) {
 						if (itemLocation.getLocation() != null ) {
@@ -139,18 +139,17 @@ public class FindMyThings extends HttpServlet {
 						}
 					}
 					
-				}
+				//}
 				
 				if (null != location && null != item && !"".equals(item.trim()) && !"".equals(location.trim())) {
 					if (dataService.putMyThing(email, item, location,queryText)) {
-						 serviceResponse = name+", I will remember that you have placed your "+item+", at "+location+". ";
+						 serviceResponse = name+", I will remember that you have placed your "+item+",  "+location+". ";
 					 }else {
 						 serviceResponse = " Sorry couldn't help this time.";
 					 }
 				}
 				 
 			}else if ("Find".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim())) {
-				System.out.println(" find car");
 				serviceResponse =  name+", "+ dataService.findMyThing(email, item);
 				System.out.println(" serviceResponse "+serviceResponse);
 			}else if ("Remove".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim()) ) {
@@ -182,7 +181,7 @@ public class FindMyThings extends HttpServlet {
 			 }
 			 
 			 if (locationMatcher1.find()) {
-				 itemLocation.setLocation(locationMatcher1.group(2));
+				 itemLocation.setLocation(locationMatcher1.group(1)+" "+locationMatcher1.group(2));
 			 }
 			 return itemLocation;
 		}catch(Exception e) {
