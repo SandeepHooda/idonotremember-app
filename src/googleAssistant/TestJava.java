@@ -10,11 +10,11 @@ import request.GoogleRequest;
 public class TestJava {
 
 	public static void main(String[] args) {
-		 Pattern itemPattern1 = Pattern.compile("(put|placed|parked) my (.*?) (on|at|under|in) (.*?)");
+		 Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park) my (.*?) (on|at|under|in) (.*?)");
 		 Pattern itemPattern2 = Pattern.compile("(put|placed|parked|park) (.*?) (on|at|under|in) (.*?)");
 		 Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
 	
-		 String query = "I have tany garbaheo parked my note book under the garden beautiful";
+		 String query = "park my coin in bucket";
 		Matcher itemMatcher1 = itemPattern1.matcher(query);  
 		Matcher itemMatcher2 = itemPattern2.matcher(query);  
 		Matcher locationMatcher1 = locationPattern1.matcher(query); 

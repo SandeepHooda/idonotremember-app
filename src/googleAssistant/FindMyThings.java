@@ -28,7 +28,7 @@ public class FindMyThings extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	 private Gson gson = new Gson(); 
 	 private DataService dataService = new DataService();
-	 private final Pattern itemPattern1 = Pattern.compile("(put|placed|parked) my (.*?) (on|at|under|in) (.*?)");
+	 private final Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park) my (.*?) (on|at|under|in) (.*?)");
 	 private final Pattern itemPattern2 = Pattern.compile("(put|placed|parked|park) (.*?) (on|at|under|in) (.*?)");
 	 private final Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
        
@@ -131,10 +131,10 @@ public class FindMyThings extends HttpServlet {
 				if( null == location || "".equals(location.trim()) || null == item || "".equals(item.trim())) {
 					ItemLocation itemLocation = findItemLocation(query_lower);
 					if (null != itemLocation) {
-						if (null == location || "".equals(location.trim()) ) {
+						if (itemLocation.getLocation() != null ) {
 							location = itemLocation.getLocation();
 						}
-						if (null == item || "".equals(item.trim()) ) {
+						if (null != itemLocation.getItem() ) {
 							item = itemLocation.getItem();
 						}
 					}
