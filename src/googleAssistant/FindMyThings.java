@@ -28,9 +28,10 @@ public class FindMyThings extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	 private Gson gson = new Gson(); 
 	 private DataService dataService = new DataService();
-	 private final Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park) my (.*?) (on|at|under|in) (.*?)");
-	 private final Pattern itemPattern2 = Pattern.compile("(put|placed|parked|park) (.*?) (on|at|under|in) (.*?)");
+	 Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park|keep|kept) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?) (on|at|under|in) (.*?)");
+	 Pattern itemPattern2 = Pattern.compile("[m]{0,1}[y]{0,1}[ ]{0,1}(.*?) [ia]{0,1}[sr]{0,1}[ e]{0,1}[ ]{0,1}(on|at|under|in) (.*?)");
 	 private final Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
+	 private final Pattern itemPatternWhere1 = Pattern.compile("(where is|where are|find) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?)$");
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -175,17 +176,23 @@ public class FindMyThings extends HttpServlet {
 		Matcher itemMatcher1 = itemPattern1.matcher(query_lower);  
 		Matcher itemMatcher2 = itemPattern2.matcher(query_lower);  
 		Matcher locationMatcher1 = locationPattern1.matcher(query_lower);
+		Matcher itemMatcherWhere1 = itemPatternWhere1.matcher(query_lower); 
 		ItemLocation itemLocation = new ItemLocation();
 		try {
 			
 			 if (itemMatcher1.find()) {
 				 itemLocation.setItem(itemMatcher1.group(2));
 			 }else if (itemMatcher2.find()) {
-				 itemLocation.setItem(itemMatcher2.group(2));
+				 itemLocation.setItem(itemMatcher2.group(1));
 			 }
-			 
+			 System.out.println(" You want to Put item : "+itemLocation.getItem());
 			 if (locationMatcher1.find()) {
 				 itemLocation.setLocation(locationMatcher1.group(1)+" "+locationMatcher1.group(2));
+			 }
+			 System.out.println(" Location : "+itemLocation.getLocation());
+			 if (itemMatcherWhere1.find()) {
+				 itemLocation.setItem(itemMatcherWhere1.group(2));
+				 System.out.println(" You want to find : "+itemLocation.getItem());
 			 }
 			 return itemLocation;
 		}catch(Exception e) {
