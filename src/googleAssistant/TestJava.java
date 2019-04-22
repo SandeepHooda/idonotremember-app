@@ -16,7 +16,7 @@ public class TestJava {
 		  Pattern itemPatternWhere1 = Pattern.compile("(where is|where are|find) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?)$");
 	
 		 String[] queryArray = new String[] {"I have kept my toy under table","my toy under table","my toys are on table","toy is on table","keep toy on table","toy on table",
-				 "find toy"};
+				"my pen is in my pocket", "find toy"};
 		 for (String query:queryArray ) {
 			 Matcher itemMatcher1 = itemPattern1.matcher(query);  
 				Matcher itemMatcher2 = itemPattern2.matcher(query);  

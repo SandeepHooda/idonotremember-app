@@ -193,6 +193,10 @@ public class FindMyThings extends HttpServlet {
 			 System.out.println(" You want to Put item : "+itemLocation.getItem());
 			 if (locationMatcher1.find()) {
 				 itemLocation.setLocation(locationMatcher1.group(1)+" "+locationMatcher1.group(2));
+				 if (null != itemLocation.getLocation()) {
+					 itemLocation.setLocation(itemLocation.getLocation().replaceAll(" my ", " your "));
+				 }
+				 
 			 }
 			 System.out.println(" Location : "+itemLocation.getLocation());
 			 if (itemMatcherWhere1.find()) {
