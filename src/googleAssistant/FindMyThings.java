@@ -28,6 +28,11 @@ public class FindMyThings extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	 private Gson gson = new Gson(); 
 	 private DataService dataService = new DataService();
+	 /**
+	  * (put|keep) -> means either put or keep
+	  * [ia]{0,1}[sr]{0,1}[ e]{0,1}[ ]{0,1} -> means "is " or "are " [ia]-> means "i" or "a"
+	  * (.*?) -> ".*" meany any character. "?" means lazy search i.e. ends at the first match https://www.regular-expressions.info/repeat.html
+	  */
 	 Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park|keep|kept) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?) (on|at|under|in) (.*?)");
 	 Pattern itemPattern2 = Pattern.compile("[m]{0,1}[y]{0,1}[ ]{0,1}(.*?) [ia]{0,1}[sr]{0,1}[ e]{0,1}[ ]{0,1}(on|at|under|in) (.*?)");
 	 private final Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
