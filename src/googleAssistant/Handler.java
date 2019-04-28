@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.OauthGoogleActions;
 import com.google.OauthGoogleActionsFindMyStuff;
 import com.google.gson.Gson;
 
@@ -82,7 +83,7 @@ public class Handler extends HttpServlet {
 		String email = null;
 		String name = null;
 		if (null != access_token) {
-			Map<String, String> userData = new OauthGoogleActionsFindMyStuff().getUserEmailFromMangoD(access_token);
+			Map<String, String> userData = new OauthGoogleActions().getUserEmailFromMangoD(access_token);
 			email = userData.get("emailID");
 			name  = userData.get("name");
 		}
