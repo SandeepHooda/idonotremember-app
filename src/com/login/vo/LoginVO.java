@@ -22,7 +22,7 @@ public class LoginVO {
 	private String completeHeaders;
 	private UserAgent userAgentObj;
 	private Map<String, String> requestHeaders;
-	private GoogleGeoLocation googleGeoLocation;
+	
 	private String password = null;//"Welcome";
 	private String userName = null;//"pooja.arora@paytm.com";
 	 
@@ -122,12 +122,7 @@ public class LoginVO {
 	public void setIpAddressLocation(IPtoLocation ipAddressLocation) {
 		this.ipAddressLocation = ipAddressLocation;
 	}
-	public GoogleGeoLocation getGoogleGeoLocation() {
-		return googleGeoLocation;
-	}
-	public void setGoogleGeoLocation(GoogleGeoLocation googleGeoLocation) {
-		this.googleGeoLocation = googleGeoLocation;
-	}
+	
 	public String getPassword() {
 		return password;
 	}

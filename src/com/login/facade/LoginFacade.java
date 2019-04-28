@@ -41,7 +41,7 @@ public class LoginFacade {
 	
 	public LoginVO validateRegID(String regID, String appTimeZone) {
 		log.info("regID logged into system "+regID);
-		String data = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", regID, null,true, null, null);
+		String data = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", regID, null,true, null, null);
 		 Gson  json = new Gson();
 		 LoginVO result  = json.fromJson(data, new TypeToken<LoginVO>() {}.getType());
 		 String email = null;
@@ -54,8 +54,8 @@ public class LoginFacade {
 			 result.setAppTimeZone(appTimeZone);
 			 result.setLoginTime(new Date().getTime());
 			 data = json.toJson(result, new TypeToken<LoginVO>() {}.getType());
-			 //MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users", data,null);//Insert loging time stamp
-			 MangoDB.updateData("remind-me-on", "registered-users", data, result.get_id(),null);//Insert loging time stamp
+	
+			 MangoDB.updateData("idonot-remember", "registered-users", data, result.get_id(),null);//Insert loging time stamp
 			 //Update settings 
 			 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
 			 Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
@@ -76,7 +76,7 @@ public class LoginFacade {
 	
 	public LoginVO logout(String regID, HttpSession session) {
 		
-			MangoDB.deleteDocument("remind-me-on", "registered-users", regID,  null);
+			MangoDB.deleteDocument("idonot-remember", "registered-users", regID,  null);
 			session.invalidate();
 		
 		return validateRegID(regID, null);
@@ -265,7 +265,7 @@ public class LoginFacade {
 		HttpSession session = request.getSession();
 		String regID = (String)session.getAttribute("regID");
 		
-		  String loginVOJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", regID,null, true, null, null);
+		  String loginVOJson = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", regID,null, true, null, null);
 			 Gson  json = new Gson();
 			 LoginVO loginVO  = json.fromJson(loginVOJson, new TypeToken<LoginVO>() {}.getType());
 			 if (null != loginVO) {
@@ -279,19 +279,19 @@ public class LoginFacade {
 			       String jsonData = MangoDB.makeExternalRequest(httpsURL,method,null,headers);
 			       json = new Gson();
 			       GoogleGeoLocation googleGeoLocation  = json.fromJson(jsonData, new TypeToken<GoogleGeoLocation>() {}.getType());
-			       loginVO.setGoogleGeoLocation(googleGeoLocation);
+			       //loginVO.setGoogleGeoLocation(googleGeoLocation);
 			       
 			       if (null != googleGeoLocation && "OK".equals(googleGeoLocation.getStatus())) {
 			    	  
 				       String loginVOStr = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
-						 MangoDB.updateData("remind-me-on", "registered-users", loginVOStr, loginVO.get_id(),null);
+						 MangoDB.updateData("idonot-remember", "registered-users", loginVOStr, loginVO.get_id(),null);
 			    	 //Notify sandeep via email
 						 if (!"sonu.hooda@gmail.com".equalsIgnoreCase(loginVO.getEmailID())) {
 							 EmailAddess toAddress = new EmailAddess();
 							 toAddress.setAddress("sonu.hooda@gmail.com");
 							new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Precise location : Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
 							+" Location "+loginVO.getIpAddressLocation().getCity() +", "+loginVO.getIpAddressLocation().getCountry()
-							+"\n\r Precise location  "+loginVO.getGoogleGeoLocation().getResults().get(0).getFormatted_address(), null, null));
+							+"\n\r   ", null, null));
 						 }
 						
 			       }
@@ -304,7 +304,7 @@ public class LoginFacade {
 		HttpSession session = request.getSession();
 		String regID = (String)session.getAttribute("regID");
 		
-		  String loginVOJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", regID,null, true, null, null);
+		  String loginVOJson = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", regID,null, true, null, null);
 			 Gson  json = new Gson();
 			 LoginVO loginVO  = json.fromJson(loginVOJson, new TypeToken<LoginVO>() {}.getType());
 			 if (null != loginVO) {
@@ -377,7 +377,7 @@ public class LoginFacade {
 		        
 		       loginVO.setRequestHeaders(requestHeaders);
 		       String loginVOStr = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
-				 MangoDB.updateData("remind-me-on", "registered-users", loginVOStr, loginVO.get_id(),null);
+				 MangoDB.updateData("idonot-remember", "registered-users", loginVOStr, loginVO.get_id(),null);
 	       }
 	       
 	       

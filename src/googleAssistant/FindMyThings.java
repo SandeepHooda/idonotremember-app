@@ -2,7 +2,6 @@ package googleAssistant;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.Constants;
-import com.google.OauthGoogleActions;
+import com.google.OauthGoogleActionsFindMyStuff;
+import com.google.OauthGoogleActionsFindMyThings;
 import com.google.gson.Gson;
 
 import googleAssistant.service.DataService;
@@ -33,10 +33,10 @@ public class FindMyThings extends HttpServlet {
 	  * [ia]{0,1}[sr]{0,1}[ e]{0,1}[ ]{0,1} -> means "is " or "are " [ia]-> means "i" or "a"
 	  * (.*?) -> ".*" meany any character. "?" means lazy search i.e. ends at the first match https://www.regular-expressions.info/repeat.html
 	  */
-	 Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park|keep|kept) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?) (on|at|under|in) (.*?)");
+	 Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park|keep|kept|left|lost) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?) (on|at|under|in) (.*?)");
 	 Pattern itemPattern2 = Pattern.compile("[m]{0,1}[y]{0,1}[ ]{0,1}(.*?) [ia]{0,1}[sr]{0,1}[ e]{0,1}[ ]{0,1}(on|at|under|in) (.*?)");
 	 private final Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
-	 private final Pattern itemPatternWhere1 = Pattern.compile("(where is|where are|find) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?)$");
+	 private final Pattern itemPatternWhere1 = Pattern.compile("(where is|where are|find|when is|when are) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?)$");
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -120,7 +120,14 @@ public class FindMyThings extends HttpServlet {
 	        String email = null;
 			String name = null;
 			if (null != access_token) {
-				Map<String, String> userData = new OauthGoogleActions().getUserEmailFromMangoD(access_token);
+				Map<String, String> userData = new OauthGoogleActionsFindMyStuff().getUserEmailFromMangoD(access_token);
+				if (null == userData) {
+					userData = new OauthGoogleActionsFindMyThings().getUserEmailFromMangoD(access_token);
+				}
+				if (null == userData) {
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					return;
+				}
 				email = userData.get("emailID");
 				name  = userData.get("name");
 			}
@@ -141,14 +148,17 @@ public class FindMyThings extends HttpServlet {
 					item = itemLocation.getItem();
 				}
 			}
+			boolean didnotunderstand = true;
 			String serviceResponse = "Can you please repeat what you just said?";
-			if (query_lower.startsWith("where") || query_lower.startsWith("find") ) {
+			if (query_lower.startsWith("where") || query_lower.startsWith("find") || query_lower.startsWith("when") ) {
 				intent = "Find";
+				System.out.println(" You want to find : "+itemLocation.getItem());
 			}else if (location != null ) {
 				intent = "Put";
+				 System.out.println(" You want to Put item : "+itemLocation.getItem());
 			}
 			if ("Put".equalsIgnoreCase(intent) ){
-				
+				didnotunderstand = false;
 				
 				if (null != location && null != item && !"".equals(item.trim()) && !"".equals(location.trim())) {
 					if (dataService.putMyThing(email, item, location,queryText)) {
@@ -159,18 +169,22 @@ public class FindMyThings extends HttpServlet {
 				}
 				 
 			}else if ("Find".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim())) {
-				
+				didnotunderstand = false;
 				serviceResponse =  name+", "+ dataService.findMyThing(email, item);
 				System.out.println(" serviceResponse "+serviceResponse);
 			}else if ("Remove".equalsIgnoreCase(intent)  && null != item && !"".equals(item.trim()) ) {
+				didnotunderstand = false;
 				serviceResponse =  dataService.forgetMyThing(email, item);
 			}else {
 				Constants.sendEmail("sonu.hooda@gmail.com","Find my things ", "queryText: "+queryText+" <br/> intent "+intent+"<br/> location "+location +"<br/> item "+item);
 				
 			}
-		
+			String contunueText =  " Anything else I can help you with?";
+		if (didnotunderstand ) {
+			contunueText = "";
+		}
 		String responseStr = "{\r\n" + 
-				"  \"fulfillmentText\": \"  "+serviceResponse+" Anything else I can help you with? \",\r\n" + 
+				"  \"fulfillmentText\": \"  "+serviceResponse+contunueText+"  \",\r\n" + 
 				"  \"outputContexts\": []\r\n" + 
 				"}";
 		       out.print(responseStr );
@@ -190,7 +204,7 @@ public class FindMyThings extends HttpServlet {
 			 }else if (itemMatcher2.find()) {
 				 itemLocation.setItem(itemMatcher2.group(1));
 			 }
-			 System.out.println(" You want to Put item : "+itemLocation.getItem());
+			 //System.out.println(" You want to Put item : "+itemLocation.getItem());
 			 if (locationMatcher1.find()) {
 				 itemLocation.setLocation(locationMatcher1.group(1)+" "+locationMatcher1.group(2));
 				 if (null != itemLocation.getLocation()) {
@@ -201,7 +215,7 @@ public class FindMyThings extends HttpServlet {
 			 System.out.println(" Location : "+itemLocation.getLocation());
 			 if (itemMatcherWhere1.find()) {
 				 itemLocation.setItem(itemMatcherWhere1.group(2));
-				 System.out.println(" You want to find : "+itemLocation.getItem());
+				 //System.out.println(" You want to find : "+itemLocation.getItem());
 			 }
 			 return itemLocation;
 		}catch(Exception e) {
@@ -209,25 +223,7 @@ public class FindMyThings extends HttpServlet {
 		}
 		return null;
 	}
-	private String findLocation(String query_lower) {
-		if (query_lower.indexOf(" on ") > 0 ) {
-			return query_lower.substring(query_lower.indexOf(" on ") +4);
-		}else if (query_lower.indexOf(" at ") > 0 ) {
-			return query_lower.substring(query_lower.indexOf(" at ") +4);
-		}else if (query_lower.indexOf(" under ") > 0 ) {
-			return query_lower.substring(query_lower.indexOf(" under ") +6);
-		}else if (query_lower.indexOf(" in ") > 0 ) {
-			return query_lower.substring(query_lower.indexOf(" in ") +4);
-		}else if (query_lower.indexOf(" below ") > 0 ) {
-			return query_lower.substring(query_lower.indexOf(" below ") +6);
-		}
-		return null;
-	}
 	
-	private String findItem(String query_lower) {
-		
-		return null;
-	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

@@ -108,7 +108,7 @@ public class Oauth extends HttpServlet {
 		 Gson  json = new Gson();
          String data = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
 		
-         MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users", data, null);
+         MangoDB.createNewDocumentInCollection("idonot-remember", "registered-users", data, null);
 		
 		
 	}

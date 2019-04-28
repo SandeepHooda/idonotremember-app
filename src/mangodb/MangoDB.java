@@ -22,6 +22,7 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
 public class MangoDB {
 	public static final String mlabKeyReminder = "oEEHExhtLS3QShn3Y2Kl4_a4nampQKj9";
+	public static final String mlabKeySonu = "soblgT7uxiAE6RsBOGwI9ZuLmcCgcvh_";
 	public static final String noCollection = "";
 	private static final Logger log = Logger.getLogger(MangoDB.class.getName());
 	private static FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate().setDeadline(300d);

@@ -76,7 +76,10 @@ public class OauthGoogleActions extends HttpServlet {
 		}
 		if (null != refresh_token) {//Step 3
 			Map<String,String>	map  = getAccesstokenFromRefreshToken(request, response,  refresh_token,  client_id);
-			
+			if (null == map.get("access_token")) {
+		    	   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		    	   return;
+		     }
 			PrintWriter out = response.getWriter();
 			String responseStr = "{\r\n" + 
 					"\"token_type\": \"Bearer\",\r\n" + 
@@ -100,7 +103,7 @@ public class OauthGoogleActions extends HttpServlet {
 				 System.out.println(" being redirected to "+redirectTo);
 				response.sendRedirect(redirectTo);
 			}else {
-				String loginVOStr = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", code, "accessToken", false, null,null);
+				String loginVOStr = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", code, "accessToken", false, null,null);
 				Gson  json = new Gson();
 				LoginVO loginVO = json.fromJson(loginVOStr, new TypeToken<LoginVO>() {}.getType());
 				PrintWriter out = response.getWriter();
@@ -155,7 +158,7 @@ public class OauthGoogleActions extends HttpServlet {
 		 Gson  json = new Gson();
          String data = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
 		
-         MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users", data, null);
+         MangoDB.createNewDocumentInCollection("idonot-remember", "registered-users", data, null);
 		
 		return userObj;
 	}
@@ -179,10 +182,12 @@ public class OauthGoogleActions extends HttpServlet {
 	
 	private  Map<String,String> getAccesstokenFromRefreshToken(HttpServletRequest request, HttpServletResponse res, String refreshToken, String client_id) throws IOException{
 		Map<String, String > map = new HashMap<String, String>();
-		String loginVOStr = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", refreshToken, "refreshToken", false, null,null);
+		String loginVOStr = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", refreshToken, "refreshToken", false, null,null);
 		Gson  json = new Gson();
 		LoginVO loginVO = json.fromJson(loginVOStr, new TypeToken<LoginVO>() {}.getType());
-		map.put("access_token", loginVO.getAccessToken());
+		if (null != loginVO) {
+			map.put("access_token", loginVO.getAccessToken());
+		}
 		return map;
 	}
 	
@@ -237,13 +242,18 @@ public class OauthGoogleActions extends HttpServlet {
 	     return null;
 	}
 	public Map<String, String> getUserEmailFromMangoD(String accessToken) throws IOException{
-		String loginVOStr = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users", accessToken, "accessToken", false, null,null);
+		String loginVOStr = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", accessToken, "accessToken", false, null,null);
 		Gson  json = new Gson();
 		LoginVO loginVO = json.fromJson(loginVOStr, new TypeToken<LoginVO>() {}.getType());
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("emailID", loginVO.getEmailID());
-		map.put("name", loginVO.getName());
-		return map;
+		if (null != loginVO) {
+			map.put("emailID", loginVO.getEmailID());
+			map.put("name", loginVO.getName());
+			return map;
+		}else {
+			return null;
+		}
+		
 		
 	}
 
