@@ -115,8 +115,8 @@ public class Handler extends HttpServlet {
 			   try {
 				   String dateStr =(String) googlerequest.getQueryResult().getParameters().get("date");
 				   String timeStr =(String) googlerequest.getQueryResult().getParameters().get("time");
-				   String dateTimeStr = dateStr.substring(0, 10) +timeStr.substring(10, 19) ;
-				
+				   String dateTimeStr = dateStr.substring(0, 10) +timeStr.substring(10) ;
+				System.out.println("dateTimeStr "+dateTimeStr);
 				cal = javax.xml.bind.DatatypeConverter.parseDateTime(dateTimeStr);
 				TimeZone userTimeZone	=	cal.getTimeZone();
 				 TimeZone tz=TimeZone.getDefault();
@@ -130,7 +130,7 @@ public class Handler extends HttpServlet {
 			  if (null != timeZones) {
 				  timeZone =  timeZones[0];
 			  }
-				serviceResponse =   name+", Reminder about  "+googlerequest.getQueryResult().getParameters().get("Reminde-Content")+" date & time "+new Date(cal.getTimeInMillis()+" Time zone "+timeZone);
+				serviceResponse =   name+", Reminder about  "+googlerequest.getQueryResult().getParameters().get("Reminde-Content")+" date & time "+new Date(cal.getTimeInMillis())+" Time zone "+timeZone;
 				 
 				
 			
