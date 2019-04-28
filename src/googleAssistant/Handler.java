@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -82,6 +83,7 @@ public class Handler extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		String email = null;
 		String name = null;
+		String timeZones[] = null;
 		if (null != access_token) {
 			Map<String, String> userData = new OauthGoogleActions().getUserEmailFromMangoD(access_token);
 			email = userData.get("emailID");
@@ -116,12 +118,19 @@ public class Handler extends HttpServlet {
 				   String dateTimeStr = dateStr.substring(0, 10) +timeStr.substring(10, 19) ;
 				
 				cal = javax.xml.bind.DatatypeConverter.parseDateTime(dateTimeStr);
+				TimeZone userTimeZone	=	cal.getTimeZone();
+				 TimeZone tz=TimeZone.getDefault();
+			      timeZones=tz.getAvailableIDs(userTimeZone.getRawOffset());
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-				serviceResponse =   name+", Reminder about  "+googlerequest.getQueryResult().getParameters().get("Reminde-Content")+" date & time "+new Date(cal.getTimeInMillis());
+			   String timeZone = "Asia/Kolkata";
+			  if (null != timeZones) {
+				  timeZone =  timeZones[0];
+			  }
+				serviceResponse =   name+", Reminder about  "+googlerequest.getQueryResult().getParameters().get("Reminde-Content")+" date & time "+new Date(cal.getTimeInMillis()+" Time zone "+timeZone);
 				 
 				
 			
