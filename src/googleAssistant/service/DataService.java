@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import com.login.vo.LoginVO;
 import com.reminder.facade.ReminderFacade;
+import com.reminder.vo.ReminderVO;
 import com.reminder.vo.Thing;
 import com.reminder.vo.ToDO;
 
@@ -71,11 +72,59 @@ public class DataService {
 		 
 		
 	}
+	public List<String> getTodaysReminders(String email) {
+		List<ToDO> toDoList = new ArrayList<ToDO>();
+		List<ReminderVO> activeReminders = reminderFacade.getReminders(null,  email);
+		Date today = new Date();
+		if (null != activeReminders) {
+			for (ReminderVO reminder : activeReminders) {
+				if (reminder.getNextExecutionTime() - today.getTime() <= 3600000 * 24 *5) {//5 days
+					ToDO todo = new ToDO();
+					todo.setTaskDesc(reminder.getReminderSubject() +" "+reminder.getReminderText() );
+					toDoList.add(todo);
+				}
+				
+			}
+		}
+		List<String> pendingDotos = new ArrayList<String>();
+		if ( toDoList.size() > 0) {
+			for (ToDO aToDo: toDoList) {
+				if (!aToDo.isComplete()) {
+					pendingDotos.add(aToDo.getTaskDesc());
+				}
+			}
+		}
+		
+		return pendingDotos;
+	}
 	public List<String> getToDos(String email) {
 		
 		List<ToDO> toDoList = reminderFacade.getToDos(email);
+		List<ReminderVO> snoozedReminder = reminderFacade.getSnoozedReminders( email);
+		if (null == toDoList) {
+			toDoList = new ArrayList<ToDO>();
+		}
+		if (null != snoozedReminder) {
+			for (ReminderVO reminder : snoozedReminder) {
+				ToDO todo = new ToDO();
+				todo.setTaskDesc(reminder.getReminderSubject() +" "+reminder.getReminderText() );
+				toDoList.add(todo);
+			}
+		}
+		List<ReminderVO> activeReminders = reminderFacade.getReminders(null,  email);
+		Date today = new Date();
+		if (null != activeReminders) {
+			for (ReminderVO reminder : activeReminders) {
+				if (reminder.getNextExecutionTime() - today.getTime() <= 3600000 * 24 *5) {//5 days
+					ToDO todo = new ToDO();
+					todo.setTaskDesc(reminder.getReminderSubject() +" "+reminder.getReminderText() );
+					toDoList.add(todo);
+				}
+				
+			}
+		}
 		List<String> pendingDotos = new ArrayList<String>();
-		if (null != toDoList && toDoList.size() > 0) {
+		if ( toDoList.size() > 0) {
 			for (ToDO aToDo: toDoList) {
 				if (!aToDo.isComplete()) {
 					pendingDotos.add(aToDo.getTaskDesc());
@@ -86,7 +135,32 @@ public class DataService {
 		return pendingDotos;
 	}
 	
-	public String deleteToDo( String doDoStr, String email) {
+	public String deleteReminder (String doDoStr, String email, boolean actualDelete) {
+		List<ReminderVO> activeReminders = reminderFacade.getReminders(null,  email);
+		Set<String> wordsInTodo = new HashSet<String>();
+		StringTokenizer tokenizer = new StringTokenizer( doDoStr, " ");
+		while (tokenizer.hasMoreTokens()) {
+			wordsInTodo.add(tokenizer.nextToken().toLowerCase());
+		}
+		String response = "";
+		for (ReminderVO aTodo: activeReminders) {
+			for (String aToken: wordsInTodo) {
+				String taskDesc = aTodo.getReminderSubject()+ " "+aTodo.getReminderText();
+				if (taskDesc.contains(aToken) ) {
+					response += taskDesc +" ";
+					if(actualDelete) {
+						reminderFacade.deleteReminder( aTodo.get_id() );
+					}
+					
+					break;
+				}
+			}
+		}
+		
+		
+		return response;
+	}
+	public String deleteToDo( String doDoStr, String email, boolean actualDelete) {
 		
 		List<ToDO> toDoList = reminderFacade.getToDos(email);
 		Set<String> wordsInTodo = new HashSet<String>();
@@ -100,7 +174,10 @@ public class DataService {
 				String taskDesc = aTodo.getTaskDesc().toLowerCase();
 				if (taskDesc.contains(aToken) && !aTodo.isComplete()) {
 					response += taskDesc +" ";
-					reminderFacade.markComplete( aTodo.get_id() , true);
+					if(actualDelete) {
+						reminderFacade.markComplete( aTodo.get_id() , true);
+					}
+					
 					break;
 				}
 			}

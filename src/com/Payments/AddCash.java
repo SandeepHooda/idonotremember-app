@@ -66,7 +66,7 @@ public class AddCash extends HttpServlet {
 			}
 			parameters.put("MOBILE_NO",mobile);
 			parameters.put("EMAIL",user);
-			parameters.put("CALLBACK_URL", "http://www.idonotremember.com/PaymentStatus");
+			parameters.put("CALLBACK_URL", "https://idonotremember-app.appspot.com/PaymentStatus");
 			
 			try {
 				//1. Get check sum

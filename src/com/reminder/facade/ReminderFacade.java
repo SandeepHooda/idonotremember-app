@@ -58,12 +58,16 @@ public class ReminderFacade {
 		
 		 Gson  json = new Gson();
          
-         String email = getEmail(reminderVO.getRegID());
+         String email = reminderVO.getEmail();
+         if (null == email) {
+        	 email = getEmail(reminderVO.getRegID());
+         }
          if (null != email) {
         	 reminderVO.setEmail(email);
         	 
      		Date reminderDate = nextReminder(reminderVO, timeZone);
      		reminderVO.setNextExecutionTime(reminderDate.getTime());
+     		adjustTimeIfPast(reminderVO, timeZone);
      		if (reminderVO.get_id() == null) {
      			reminderVO.set_id(""+reminderVO.getNextExecutionTime()+Math.random());
      		}
@@ -135,7 +139,21 @@ public class ReminderFacade {
     		return true;
     }
 	
-	
+	private static void adjustTimeIfPast(ReminderVO reminderVO, String timeZone) {
+		SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
+	   	 TimeZone userTimeZone	=	TimeZone.getTimeZone(timeZone);
+	   	
+		sdf.setTimeZone(userTimeZone);
+		
+		Calendar cal = new GregorianCalendar();
+		Calendar today = new GregorianCalendar();
+		today.setTimeZone(userTimeZone);
+		cal.setTimeZone(userTimeZone);
+		if (reminderVO.getNextExecutionTime() < today.getTimeInMillis()) {
+			reminderVO.setNextExecutionTime(reminderVO.getNextExecutionTime()+ (60000 *60*12)); //+ 12 hours
+		}
+		
+	}
 	public static Date nextReminder(ReminderVO reminderVO, String timeZone) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
 	   	 TimeZone userTimeZone	=	TimeZone.getTimeZone(timeZone);
@@ -224,7 +242,14 @@ public class ReminderFacade {
 		return sdf.parse(reminderVO.getDate()+" "+reminderVO.getTime());
 	}
 	public List<ReminderVO> getReminders(String regID) {
-		 String email = getEmail(regID);
+		return getReminders( regID,  null);
+	}
+	public List<ReminderVO> getReminders(String regID, String emailStr) {
+		 String email = emailStr ;
+		if (null == emailStr) {
+			email = getEmail(regID);
+		}
+		
 		 if (null != email) {
 			 String sortByExecutionTimeAsc =  "&s=%7B%22nextExecutionTime%22%3A%201%7D";
 			 String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "reminders", email,"email", false, null,sortByExecutionTimeAsc)+"]";

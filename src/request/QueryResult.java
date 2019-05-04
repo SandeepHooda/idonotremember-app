@@ -1,10 +1,12 @@
 package request;
 
+import java.util.List;
 import java.util.Map;
 
 public class QueryResult {
 	private String queryText;
 	private Intent intent;
+	private List<OutputContexts> outputContexts;
 	private Map<String, Object> parameters;
 	public String getQueryText() {
 		return queryText;
@@ -24,6 +26,12 @@ public class QueryResult {
 	}
 	public void setIntent(Intent intent) {
 		this.intent = intent;
+	}
+	public List<OutputContexts> getOutputContexts() {
+		return outputContexts;
+	}
+	public void setOutputContexts(List<OutputContexts> outputContexts) {
+		this.outputContexts = outputContexts;
 	}
 	
 	

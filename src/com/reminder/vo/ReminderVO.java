@@ -1,5 +1,13 @@
 package com.reminder.vo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
 public class ReminderVO {
 	private String _id;
 	private String regID;
@@ -17,6 +25,32 @@ public class ReminderVO {
 	private String displayTime ;
 	private long nextExecutionTime;
 	private String selectedPhone;
+	private static Map<String, String> monthMap = new HashMap<String, String>();
+	static {
+		monthMap.put("01", " Jan ");
+		monthMap.put("02", " Feb ");
+		monthMap.put("03", " Mar ");
+		monthMap.put("04", " Apr ");
+		monthMap.put("05", " May ");
+		monthMap.put("06", " Jun ");
+		monthMap.put("07", " Jul ");
+		monthMap.put("08", " Aug ");
+		monthMap.put("09", " Sep ");
+		monthMap.put("10", " Oct ");
+		monthMap.put("11", " Nov ");
+		monthMap.put("12", " Dec ");
+		
+		
+	}
+	public String formatDisplayTime(long dateTimeStr, String timeZone ) {
+		SimpleDateFormat sdfDiaplay = new SimpleDateFormat("dd MMM yyyy hh:mm a");
+		
+		TimeZone userTimeZone = TimeZone.getTimeZone(timeZone);
+		sdfDiaplay.setTimeZone(userTimeZone);
+		
+		
+		return sdfDiaplay.format(dateTimeStr);
+	}
 
 	public String getRegID() {
 		return regID;

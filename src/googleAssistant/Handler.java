@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -15,12 +16,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.communication.email.EmailAddess;
+import com.communication.email.MailService;
 import com.google.OauthGoogleActions;
 import com.google.OauthGoogleActionsFindMyStuff;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.login.facade.LoginFacade;
+import com.login.vo.Settings;
+import com.reminder.facade.ReminderFacade;
+import com.reminder.vo.ReminderVO;
 
 import googleAssistant.service.DataService;
+import mangodb.MangoDB;
 import request.GoogleRequest;
+import request.OutputContexts;
 
 /**
  * Servlet implementation class Handler
@@ -55,8 +65,22 @@ public class Handler extends HttpServlet {
 		return response;
     }
 
+    public String getTodaysReminders(String email) {
+    	String response = "";
+    	List<String> pendingDotos = dataService.getTodaysReminders(email);
+		if (pendingDotos.size() ==0) {
+			response ="Great! You don't have any Reminder for today. ";
+			
+		}else {
+			for (String toDo: pendingDotos) {
+				response+=toDo+". ";
+			}
+			response =   " Your pending reminders for next 24 hours are.  "+response;
+		}
+		return response;
+    }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		boolean needLocation = false;
 		 StringBuilder sb = new StringBuilder();
         String s;
         while ((s = request.getReader().readLine()) != null) {
@@ -84,11 +108,25 @@ public class Handler extends HttpServlet {
 		String email = null;
 		String name = null;
 		String timeZones[] = null;
+		boolean continueConversation = true;
 		if (null != access_token) {
 			Map<String, String> userData = new OauthGoogleActions().getUserEmailFromMangoD(access_token);
 			email = userData.get("emailID");
 			name  = userData.get("name");
 		}
+        if ("DeleteToDo".equalsIgnoreCase(intent) && (null == queryText || queryText.toLowerCase().indexOf("delete") <0)) {
+        	if (null == queryText ) {
+        		intent = "GetToDO";
+        	}else if (queryText.toLowerCase().indexOf("add a new to do") >=0 || 
+        			queryText.toLowerCase().indexOf("add a to do") >=0 ||
+        			queryText.toLowerCase().indexOf("add a new task") >=0 ||
+        			queryText.toLowerCase().indexOf("add a  task") >=0){
+        		intent = "AddToDo";
+        	}else {
+        		intent = "GetToDO";
+        	}
+        	
+        }
 		System.out.println(" got email and name from mango DB "+email+" "+name);
 		if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
 			dataService.addToDo(queryText, email) ;
@@ -102,49 +140,118 @@ public class Handler extends HttpServlet {
 			}
 			serviceResponse =   name+", I have added it to your to do list. Here are your pending to do items. "+serviceResponse;
 		}else if ("DeleteToDo".equalsIgnoreCase(intent) && null != queryText) {
-			String todoDeleted = dataService.deleteToDo(queryText, email) ;
+			String itemtoBeDelete = (String) googlerequest.getQueryResult().getParameters().get("any");
+			String todoDeleted = dataService.deleteToDo(itemtoBeDelete, email, false) ;
+			if ("".equals(todoDeleted) ){
+				todoDeleted = dataService.deleteReminder(itemtoBeDelete, email, false) ;
+			}
+			System.out.println(" Query text "+queryText +" : Slot value "+itemtoBeDelete);
+			 
 			if ("".equals(todoDeleted) ){
 				serviceResponse =   name+", I couldn't recognize what task you want to delete. Please try again. "+serviceResponse;
 			}else {
-				serviceResponse =   name+", I have deleted "+todoDeleted+" from your to do items. "+serviceResponse;
+				serviceResponse =   name+", Do you want to delete "+todoDeleted+serviceResponse;
+				continueConversation = false;
+			}
+			
+		}else if ("DeleteToDo - yes".equalsIgnoreCase(intent) && null != queryText) {
+			String itemtoBeDelete = null;
+			if (null != googlerequest.getQueryResult().getOutputContexts()) {
+				for (OutputContexts context : googlerequest.getQueryResult().getOutputContexts()) {
+					if (context.getName().endsWith("deletetodo-followup")) {
+						itemtoBeDelete = (String) context.getParameters().get("any");
+					}
+				}
+			}
+			String todoDeleted = "";
+			if (null != itemtoBeDelete) {
+				todoDeleted  = dataService.deleteToDo(itemtoBeDelete, email, true) ;
+				if ("".equals(todoDeleted) ){
+					todoDeleted = dataService.deleteReminder(itemtoBeDelete, email, true) ;
+				}
+			}
+			
+			if ("".equals(todoDeleted) ){
+				serviceResponse =   name+", I couldn't recognize what task you want to delete. Please try again. "+serviceResponse;
+			}else {
+				serviceResponse =   name+", I have deleted "+todoDeleted+serviceResponse;
 			}
 			
 		}else if ("NewReminder".equalsIgnoreCase(intent) && null != queryText) {
 			//String todoDeleted = dataService.deleteToDo(queryText, email) ;
-			Calendar cal = null;
-			   try {
+			  try {
 				   String dateStr =(String) googlerequest.getQueryResult().getParameters().get("date");
 				   String timeStr =(String) googlerequest.getQueryResult().getParameters().get("time");
 				   String dateTimeStr = dateStr.substring(0, 10) +timeStr.substring(10) ;
-				System.out.println("dateTimeStr "+dateTimeStr);
-				cal = javax.xml.bind.DatatypeConverter.parseDateTime(dateTimeStr);
-				TimeZone userTimeZone	=	cal.getTimeZone();
-				 TimeZone tz=TimeZone.getDefault();
-			      timeZones=tz.getAvailableIDs(userTimeZone.getRawOffset());
-				
-			} catch (Exception e) {
+				    
+				    Gson  json = new Gson();
+					String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
+					Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
+					if (null == settings) {
+						settings = new Settings();
+						settings.setAppTimeZone("Asia/Calcutta");
+						needLocation = true;
+					}
+					
+					ReminderVO reminder = new ReminderVO();
+					
+					reminder.setReminderSubject(""+googlerequest.getQueryResult().getParameters().get("any"));
+					reminder.setReminderText(" ");
+					reminder.setFrequencyType("Date");
+					reminder.setFrequencyWithDate("Once");
+					List<String> phoneNumbers = new LoginFacade(). getPhoneViaStatus(email,  true);
+					if (null != phoneNumbers && phoneNumbers.size() > 0) {
+						reminder.setSelectedPhone(phoneNumbers.get(0));
+						reminder.setMakeACall(true);
+					}
+					
+					reminder.setDate(dateTimeStr.substring(0, 10).replaceAll("-", "_"));
+					reminder.setTime(dateTimeStr.substring(11, 16).replaceAll(":", "_"));
+					reminder.setEmail(email);
+					if (new ReminderFacade().addReminder(reminder,settings.getAppTimeZone() )) {
+						reminder.setDisplayTime(reminder.formatDisplayTime(reminder.getNextExecutionTime(), settings.getAppTimeZone()));
+						serviceResponse =   name+", I have set the reminder,  "+googlerequest.getQueryResult().getParameters().get("any")+", Date "+reminder.getDisplayTime().replace("@", ", Time ") ;
+						
+					}else {
+						serviceResponse = " There was some error. Please try at some time later.";
+					}
+					
+						 
+				} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			   String timeZone = "Asia/Kolkata";
-			  if (null != timeZones) {
-				  timeZone =  timeZones[0];
-			  }
-				serviceResponse =   name+", Reminder about  "+googlerequest.getQueryResult().getParameters().get("Reminde-Content")+" date & time "+new Date(cal.getTimeInMillis())+" Time zone "+timeZone;
-				 
+			   
 				
 			
 			
+		}else if ("RemoveTaskHelp".equalsIgnoreCase(intent) ) {
+			serviceResponse = "If you want to delete a task that you set to get bread, Say delete bread. If you want to delete a reminder then login to I do not remember hyphen app.appspot.com website and delete by left swipe on that reminder. Please check your email  "+email+" , for details about these steps.";
+		
+			new  MailService().sendSimpleMail(MailService.prepareEmailVO(new EmailAddess(email, ""), "Steps to delete a task/Reminder.",	"If you want to delete a task that you set to get bread, Say delete bread. If you want to delete a reminder then login to https://idonotremember-app.appspot.com website and delete by left swipe on that reminder. ", null, null));
+		}else if ("GetRecentAppointments".equalsIgnoreCase(intent) ) {
+			serviceResponse = name+", "+getTodaysReminders(email);
 		}
 			else {
 			serviceResponse = name+", "+gettoDoList(email);
 			System.out.println(" serviceResponse "+serviceResponse);
 		}
+		
+		String continueStr  = "";
+				if (continueConversation) {
+					continueStr  = ". Anything else I can help you with?";
+				}
 		String responseStr = "{\r\n" + 
-		"  \"fulfillmentText\": \"  "+serviceResponse+" Anything else I can help you with? \",\r\n" + 
+		"  \"fulfillmentText\": \"  "+serviceResponse+continueStr+"  \",\r\n" + 
 		"  \"outputContexts\": []\r\n" + 
 		"}";
-       out.print(responseStr );
+		needLocation = false;
+		if (needLocation) {
+			out.print(location );
+		}else {
+			out.print(responseStr );
+		}
+       
        out.flush();   
 	}
 	
@@ -155,5 +262,42 @@ public class Handler extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+	private static final String location = "{\r\n" + 
+			"  \"payload\": {\r\n" + 
+			"    \"google\": {\r\n" + 
+			"      \"expectUserResponse\": true,\r\n" + 
+			"      \"richResponse\": {\r\n" + 
+			"        \"items\": [\r\n" + 
+			"          {\r\n" + 
+			"            \"simpleResponse\": {\r\n" + 
+			"              \"textToSpeech\": \"PLACEHOLDER\"\r\n" + 
+			"            }\r\n" + 
+			"          }\r\n" + 
+			"        ]\r\n" + 
+			"      },\r\n" + 
+			"      \"userStorage\": \"{\\\"data\\\":{}}\",\r\n" + 
+			"      \"systemIntent\": {\r\n" + 
+			"        \"intent\": \"actions.intent.PLACE\",\r\n" + 
+			"        \"data\": {\r\n" + 
+			"          \"@type\": \"type.googleapis.com/google.actions.v2.PermissionValueSpec\",\r\n" + 
+			"          \"optContext\": \"To set reminder at correct time zone.\",\r\n" + 
+			"          \"permissions\": [\r\n" + 
+			"            \"NAME\",\r\n" + 
+			"            \"DEVICE_PRECISE_LOCATION\"\r\n" + 
+			"          ]\r\n" + 
+			"        }\r\n" + 
+			"      }\r\n" + 
+			"    }\r\n" + 
+			"  },\r\n" + 
+			"  \"outputContexts\": [\r\n" + 
+			"    {\r\n" + 
+			"      \"name\": \"/contexts/_actions_on_google\",\r\n" + 
+			"      \"lifespanCount\": 99,\r\n" + 
+			"      \"parameters\": {\r\n" + 
+			"        \"data\": \"{}\"\r\n" + 
+			"      }\r\n" + 
+			"    }\r\n" + 
+			"  ]\r\n" + 
+			"}";
 
 }
