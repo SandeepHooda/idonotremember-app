@@ -204,6 +204,8 @@ public class Handler extends HttpServlet {
 					if (null != phoneNumbers && phoneNumbers.size() > 0) {
 						reminder.setSelectedPhone(phoneNumbers.get(0));
 						reminder.setMakeACall(true);
+					}else {
+						remindToAddNewPhone(email);
 					}
 					
 					reminder.setDate(dateTimeStr.substring(0, 10).replaceAll("-", "_"));
@@ -212,7 +214,7 @@ public class Handler extends HttpServlet {
 					if (new ReminderFacade().addReminder(reminder,settings.getAppTimeZone() )) {
 						reminder.setDisplayTime(reminder.formatDisplayTime(reminder.getNextExecutionTime(), settings.getAppTimeZone()));
 						serviceResponse =   name+", I have set the reminder,  "+googlerequest.getQueryResult().getParameters().get("any")+", Date "+reminder.getDisplayTime().replace("@", ", Time ") ;
-						
+						checkCallCredits(email,settings);
 					}else {
 						serviceResponse = " There was some error. Please try at some time later.";
 					}
@@ -255,6 +257,23 @@ public class Handler extends HttpServlet {
        
        out.flush();   
 	}
+    private void checkCallCredits(String email, Settings settings) {
+    	try {
+    		if (settings.getCurrentCallCredits() <=10) {
+    			new  MailService().sendSimpleMail(MailService.prepareEmailVO(new EmailAddess(email, ""), "Please add a phone number.",	"I can remind you about your appointments by call you on your phone. For that please add cash to your account via Paytm secure payment gateway. You may also use your credit/debit card as well. Please visit the link to complete the process : https://idonotremember-app.appspot.com/ui/index.html#/menu/addcash ", null, null));
+    		}
+    		
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    private void remindToAddNewPhone(String email) {
+    	try {
+    		new  MailService().sendSimpleMail(MailService.prepareEmailVO(new EmailAddess(email, ""), "Please add a phone number.",	"I can remind you about your appointments by calling you on your phone. For that please add your phone number and verify that with OPT message on your phone. Please visit the link to complete the process : https://idonotremember-app.appspot.com/ui/index.html#/menu/contacts ", null, null));
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
