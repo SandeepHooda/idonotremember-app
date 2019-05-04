@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,46 @@ public class MailService {
 	private static FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate().setDeadline(300d);
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 	
-	
+   public static String questionMatchFromHerokuAI(String userQuestion, List<String> allQuestions) {
+		
+		
+		String httpsURL  = "https://ai-chat-bot-help.herokuapp.com/questionMatch";
+		
+		 try {
+			
+		        URL url = new URL(httpsURL);
+		        
+		        HTTPRequest req = new HTTPRequest(url, HTTPMethod.POST, lFetchOptions);
+	            HTTPHeader header = new HTTPHeader("Content-type", "application/x-www-form-urlencoded");
+	            req.setHeader(header);
+	           
+	            header = new HTTPHeader("Accept", "*/*");
+	            req.setHeader(header);
+	           
+	            StringBuilder sb = new StringBuilder("[");
+	            for (String aQuestion : allQuestions) {
+	            	sb.append("\"").append(aQuestion.trim()).append("\",");
+	            }
+	            String allQuestionsStr = sb.toString();
+	            allQuestionsStr = allQuestionsStr.substring(0,allQuestionsStr.length()-1)+"]";//Remove last comma
+	            String data = "a_question="+userQuestion.trim()+"&all_question="+allQuestionsStr;
+	            byte[] postData = data.getBytes( StandardCharsets.UTF_8 );
+	            req.setPayload(postData);
+	            com.google.appengine.api.urlfetch.HTTPResponse res = fetcher.fetch(req);
+	            if (res.getResponseCode() == 200 ){
+	            	return new String(res.getContent());
+	            }else {
+	            	
+	            	return "Response code "+res.getResponseCode();
+	            }
+	            
+	            
+	        } catch (Exception e) {
+	        	e.printStackTrace();
+	        	log.warning("Error sending request for AI processing : "+e.getLocalizedMessage());
+	        	return "";
+	        }
+	  }
 	public static boolean sendSimpleMail(EmailVO emailVO ) {
 		
 		

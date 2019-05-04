@@ -3,6 +3,7 @@ package googleAssistant;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -80,6 +81,7 @@ public class Handler extends HttpServlet {
 		return response;
     }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
 		boolean needLocation = false;
 		 StringBuilder sb = new StringBuilder();
         String s;
@@ -234,6 +236,10 @@ public class Handler extends HttpServlet {
 			new  MailService().sendSimpleMail(MailService.prepareEmailVO(new EmailAddess(email, ""), "Steps to delete a task/Reminder.",	"If you want to delete a task that you set to get bread, Say delete bread. If you want to delete a reminder then login to https://idonotremember-app.appspot.com website and delete by left swipe on that reminder. ", null, null));
 		}else if ("GetRecentAppointments".equalsIgnoreCase(intent) ) {
 			serviceResponse = name+", "+getTodaysReminders(email);
+		}else if ("WhenIsMyAppointment".equalsIgnoreCase(intent) ) {
+			String appointmentQuestion = (String)googlerequest.getQueryResult().getParameters().get("any");
+			List<String> allReminders = dataService.getAllReminders(email);
+			serviceResponse = MailService.questionMatchFromHerokuAI(appointmentQuestion,allReminders);
 		}
 			else {
 			serviceResponse = name+", "+gettoDoList(email);
