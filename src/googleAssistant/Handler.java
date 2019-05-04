@@ -141,6 +141,7 @@ public class Handler extends HttpServlet {
 			serviceResponse =   name+", I have added it to your to do list. Here are your pending to do items. "+serviceResponse;
 		}else if ("DeleteToDo".equalsIgnoreCase(intent) && null != queryText) {
 			String itemtoBeDelete = (String) googlerequest.getQueryResult().getParameters().get("any");
+			String userQuery = (String) googlerequest.getQueryResult().getParameters().get("any");
 			String todoDeleted = dataService.deleteToDo(itemtoBeDelete, email, false) ;
 			if ("".equals(todoDeleted) ){
 				todoDeleted = dataService.deleteReminder(itemtoBeDelete, email, false) ;
@@ -148,7 +149,7 @@ public class Handler extends HttpServlet {
 			System.out.println(" Query text "+queryText +" : Slot value "+itemtoBeDelete);
 			 
 			if ("".equals(todoDeleted) ){
-				serviceResponse =   name+", I couldn't recognize what task you want to delete. Please try again. "+serviceResponse;
+				serviceResponse =   name+", I couldn't Find, "+userQuery+" in your to do list or in reminders. Please try again. "+serviceResponse;
 			}else {
 				serviceResponse =   name+", Do you want to delete "+todoDeleted+serviceResponse;
 				continueConversation = false;
