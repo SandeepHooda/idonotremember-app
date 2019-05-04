@@ -70,21 +70,21 @@ public class MailService {
 	            }
 	            String allQuestionsStr = sb.toString();
 	            allQuestionsStr = allQuestionsStr.substring(0,allQuestionsStr.length()-1)+"]";//Remove last comma
-	            String data = "a_question="+userQuestion.trim()+"&all_question="+allQuestionsStr;
+	            String data = "a_question="+userQuestion.trim().toLowerCase()+"&all_question="+allQuestionsStr;
 	            byte[] postData = data.getBytes( StandardCharsets.UTF_8 );
 	            req.setPayload(postData);
 	            com.google.appengine.api.urlfetch.HTTPResponse res = fetcher.fetch(req);
 	            if (res.getResponseCode() == 200 ){
 	            	return new String(res.getContent());
 	            }else {
-	            	
-	            	return "Response code "+res.getResponseCode();
+	            	System.out.println(" error code from heroku AI match "+res.getResponseCode());
+	            	return "";
 	            }
 	            
 	            
 	        } catch (Exception e) {
 	        	e.printStackTrace();
-	        	log.warning("Error sending request for AI processing : "+e.getLocalizedMessage());
+	        	log.warning("Error sending request for heroku AI processing : "+e.getLocalizedMessage());
 	        	return "";
 	        }
 	  }

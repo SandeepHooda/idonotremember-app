@@ -238,8 +238,29 @@ public class Handler extends HttpServlet {
 			serviceResponse = name+", "+getTodaysReminders(email);
 		}else if ("WhenIsMyAppointment".equalsIgnoreCase(intent) ) {
 			String appointmentQuestion = (String)googlerequest.getQueryResult().getParameters().get("any");
-			List<String> allReminders = dataService.getAllReminders(email);
-			serviceResponse = MailService.questionMatchFromHerokuAI(appointmentQuestion,allReminders);
+			List<String> allRemindersText = dataService.getAllRemindersString(email);
+			serviceResponse = MailService.questionMatchFromHerokuAI(appointmentQuestion,allRemindersText);
+			 
+			if ("".equals(serviceResponse)) {
+				serviceResponse = " Sorry, I didn't find the reminder for "+appointmentQuestion;
+			}else {
+				List<ReminderVO>  allReminders = dataService.getAllReminders(email);
+				for (ReminderVO reminder: allReminders) {
+					String reminderText = (reminder.getReminderSubject() +" "+reminder.getReminderText()).trim().toLowerCase();
+					if (reminderText.equalsIgnoreCase(serviceResponse)) {
+						 Gson  json = new Gson();
+							String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
+							Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
+							if (null == settings) {
+								settings = new Settings();
+								settings.setAppTimeZone("Asia/Calcutta");
+							}
+							
+						reminder.setDisplayTime(reminder.formatDisplayTime(reminder.getNextExecutionTime(), settings.getAppTimeZone()));
+						serviceResponse = "You appointment with "+reminderText+" is on "+reminder.getDisplayTime();
+					}
+				}
+			}
 		}
 			else {
 			serviceResponse = name+", "+gettoDoList(email);

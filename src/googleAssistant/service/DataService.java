@@ -97,16 +97,21 @@ public class DataService {
 		
 		return pendingDotos;
 	}
-	public List<String> getAllReminders(String email){
+	public List<String> getAllRemindersString(String email){
 		List<String> allReminders = new ArrayList<String>();
 		List<ReminderVO> activeReminders = reminderFacade.getReminders(null,  email);
-		Date today = new Date();
+		
 		if (null != activeReminders) {
 			for (ReminderVO reminder : activeReminders) {
-				allReminders.add(reminder.getReminderSubject() +" "+reminder.getReminderText() );
+				allReminders.add((reminder.getReminderSubject() +" "+reminder.getReminderText()).trim().toLowerCase() );
 			}
 		}
 		return allReminders;
+	}
+	public List<ReminderVO> getAllReminders(String email){
+		
+		return reminderFacade.getReminders(null,  email);
+		
 	}
 	public List<String> getToDos(String email) {
 		
