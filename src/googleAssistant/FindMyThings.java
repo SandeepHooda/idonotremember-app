@@ -161,7 +161,7 @@ public class FindMyThings extends HttpServlet {
 				didnotunderstand = false;
 				
 				if (null != location && null != item && !"".equals(item.trim()) && !"".equals(location.trim())) {
-					if (dataService.putMyThing(email, item, location,queryText)) {
+					if (noBadWords(item+location)&&dataService.putMyThing(email, item, location,queryText)) {
 						 serviceResponse = name+", I will remember that you have placed your "+item+",  "+location+". ";
 					 }else {
 						 serviceResponse = " Sorry couldn't help this time.";
@@ -191,6 +191,13 @@ public class FindMyThings extends HttpServlet {
 		       out.flush(); 
 	}
 
+	private boolean noBadWords(String query) {
+		query = query.toLowerCase();
+		if (query.indexOf("fuck") >=0 || query.indexOf("dick") >=0|| query.indexOf("pussy") >=0|| query.indexOf("asshole") >=0) {
+			return false;
+		}
+		return true;
+	}
 	private ItemLocation findItemLocation(String query_lower) {
 		Matcher itemMatcher1 = itemPattern1.matcher(query_lower);  
 		Matcher itemMatcher2 = itemPattern2.matcher(query_lower);  
