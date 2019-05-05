@@ -193,7 +193,9 @@ public class FindMyThings extends HttpServlet {
 
 	private boolean noBadWords(String query) {
 		query = query.toLowerCase();
-		if (query.indexOf("fuck") >=0 || query.indexOf("dick") >=0|| query.indexOf("pussy") >=0|| query.indexOf("asshole") >=0) {
+		if (query.indexOf("fuck") >=0 || query.indexOf("dick") >=0 || query.indexOf("penis") >=0 || query.indexOf("pussy") >=0 || query.indexOf("asshole") >=0 || 
+				query.indexOf("butt") >=0 ||  query.indexOf("cock") >=0 
+				) {
 			return false;
 		}
 		return true;
