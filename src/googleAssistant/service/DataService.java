@@ -20,6 +20,9 @@ public class DataService {
 	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 	private ReminderFacade reminderFacade  = new ReminderFacade();
 	public boolean putMyThing(String email, String item, String location, String quertText) {
+		if (item.startsWith("the ")) {
+			item = item.substring(4);
+		}
 		Thing thing = new Thing( email,  item,  location,quertText);
 		thing.setDateCreated(new Date().getTime());
 		
@@ -40,6 +43,10 @@ public class DataService {
 			}
 			return response.toString();
 		}else {
+			Thing thingFound = reminderFacade.findAThing( email,  item);
+			if (null !=thingFound) {
+				return "You have kept your , "+thingFound.getItem() +" , "+thingFound.getLocation()+" , on "+formatter.format(new Date(thingFound.getDateCreated()))+". ";
+			}
 			String itemLocation = "";
 			List<Thing> allThings = reminderFacade.findEveryThing( email);
 			String[] itemWords = item.split(" ");
