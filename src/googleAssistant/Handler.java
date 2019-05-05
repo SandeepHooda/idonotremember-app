@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -70,7 +71,7 @@ public class Handler extends HttpServlet {
     	String response = "";
     	List<String> pendingDotos = dataService.getTodaysReminders(email);
 		if (pendingDotos.size() ==0) {
-			response ="Great! You don't have any Reminder for today. ";
+			response ="Today is a relax day! You don't have any Reminders for today. ";
 			
 		}else {
 			for (String toDo: pendingDotos) {
@@ -238,29 +239,45 @@ public class Handler extends HttpServlet {
 			serviceResponse = name+", "+getTodaysReminders(email);
 		}else if ("WhenIsMyAppointment".equalsIgnoreCase(intent) ) {
 			String appointmentQuestion = (String)googlerequest.getQueryResult().getParameters().get("any");
-			List<String> allRemindersText = dataService.getAllRemindersString(email);
-			serviceResponse = MailService.questionMatchFromHerokuAI(appointmentQuestion,allRemindersText);
+			appointmentQuestion = appointmentQuestion.trim().toLowerCase();
+			//List<String> allRemindersText = dataService.getAllRemindersString(email);
+			//serviceResponse = MailService.questionMatchFromHerokuAI(appointmentQuestion,allRemindersText);
 			 
-			if ("".equals(serviceResponse)) {
+			/*if ("".equals(serviceResponse)) {
 				serviceResponse = " Sorry, I didn't find the reminder for "+appointmentQuestion;
-			}else {
+			}else {*/
 				List<ReminderVO>  allReminders = dataService.getAllReminders(email);
+				Map<String, ReminderVO> reminderMap = new HashMap<String, ReminderVO>();
 				for (ReminderVO reminder: allReminders) {
 					String reminderText = (reminder.getReminderSubject() +" "+reminder.getReminderText()).trim().toLowerCase();
-					if (reminderText.equalsIgnoreCase(serviceResponse)) {
-						 Gson  json = new Gson();
-							String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
-							Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
-							if (null == settings) {
-								settings = new Settings();
-								settings.setAppTimeZone("Asia/Calcutta");
-							}
-							
-						reminder.setDisplayTime(reminder.formatDisplayTime(reminder.getNextExecutionTime(), settings.getAppTimeZone()));
-						serviceResponse = "You appointment with "+reminderText+" is on "+reminder.getDisplayTime();
+					if (null == reminderMap.get(reminderText)) {//So that monthly/quaterly reminders only the first one goes in
+						reminderMap.put(reminderText, reminder);
+					}
+					
+					
+				}
+				Gson  json = new Gson();
+				String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
+				Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
+				if (null == settings) {
+					settings = new Settings();
+					settings.setAppTimeZone("Asia/Calcutta");
+				}
+				String[] queryWords  = appointmentQuestion.split(" ");
+				for (String aReminderText: reminderMap.keySet()) {
+					for (String queryWord: queryWords) {
+						if (aReminderText.indexOf(queryWord) >=0 ) {
+							ReminderVO reminder = reminderMap.get(aReminderText);
+							reminder.setDisplayTime(reminder.formatDisplayTime(reminder.getNextExecutionTime(), settings.getAppTimeZone()));
+							serviceResponse += "You appointment with "+aReminderText+" is on "+reminder.getDisplayTime()+". ";
+							break;//so that same items don't get added twice 
+						}
 					}
 				}
-			}
+				if ("".equals(serviceResponse)) {
+					serviceResponse = "I couldn't find you appointment for "+appointmentQuestion;
+				}
+			//}
 		}
 			else {
 			serviceResponse = name+", "+gettoDoList(email);

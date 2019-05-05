@@ -27,6 +27,7 @@ public class DataService {
 		
 	}
 	public String findMyThing(String email, String item) {
+		item = item.toLowerCase().trim();
 		if ("everything".equalsIgnoreCase(item.toLowerCase()) || "all my things".equalsIgnoreCase(item.toLowerCase())) {
 			List<Thing> allThings = reminderFacade.findEveryThing( email);
 			StringBuilder response = new StringBuilder();
@@ -39,9 +40,20 @@ public class DataService {
 			}
 			return response.toString();
 		}else {
-			Thing aThing = reminderFacade.findAThing( email,  item);
-			if (null !=aThing) {
-				return "You have kept your , "+aThing.getItem() +" , "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+			String itemLocation = "";
+			List<Thing> allThings = reminderFacade.findEveryThing( email);
+			String[] itemWords = item.split(" ");
+			for (Thing aThing :allThings ) {
+				for (String itemWord: itemWords) {
+					if (null != aThing && null != aThing.getItem() && aThing.getItem().indexOf(itemWord) >=0 ) {
+						itemLocation +="You have kept your , "+aThing.getItem() +" , "+aThing.getLocation()+" , on "+formatter.format(new Date(aThing.getDateCreated()))+". ";
+						break;//so that same items don't get added twice 
+					}
+				}
+				
+			}
+			if (!"".equals(itemLocation)) {
+				return itemLocation;
 			}else {
 				return "Sorry, but  you never told me that where have you kept your "+item +". ";
 			}
