@@ -142,6 +142,11 @@
 	margin-right: 15px;
 	color :white;
 }
+.infoText {
+	font: italic bold 12px/30px Georgia, serif;
+	margin-right: 15px;
+	color :orange;
+}
 .italicBlue {
 	font: italic bold 12px/5px Georgia, serif;
 	margin-right: 15px;

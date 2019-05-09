@@ -74,7 +74,9 @@ public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
 			if (!CollectionUtils.isEmpty(emailIds)){
 				for (String email: emailIds) {
 					Constants.sendEmail(email,"Pending task", soozedRemindersMap.get(email)+" <br/><br/> You will get one consolidated email daily to remind you about your pending tasks that you might not have completed. "
-							+ "If you have completed them please delete them from \"Snoozed\" section of the \"Reminder app\".  <br/></br/>Regards");
+							+ "If you have completed them please delete them from \"Snoozed\" section of the \"Reminder app\".  <br/></br/>"
+							+ "https://idonotremember-app.appspot.com/ui/index.html#/menu/snoozed <br/></br/> Regards");
+					
 				}
 			}
 			

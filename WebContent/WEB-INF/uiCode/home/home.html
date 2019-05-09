@@ -58,7 +58,7 @@
 	</div>
 	<div>
 		<span class="whitecolor ">
-		<div><span class="userName">Swipe left to delete an item.</span></div>
+		
 		 <!-- Search bar -->
 		    <div class="list list-inset searchbox">
 			  <label class="item item-input searchboxInput">
@@ -66,6 +66,7 @@
 			    <input type="text" placeholder="Search" ng-change="filterByText()" ng-model="$ctrl.searchInput">
 			  </label>
 			</div>
+			<div><span class="infoText">Swipe left to delete an item.</span></div>
 		</span>
 		
 		<button ng-click="$ctrl.addNewReminder()" id="floatingBtn" class="floatingBtn top0" name="add new" title="add new reminder" ng-click="newReminder()">

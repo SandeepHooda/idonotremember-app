@@ -6,7 +6,7 @@
 	<!-- Users reminder -->
 	<div class="topSpace"	>
 	<div ng-if="snoozedReminders.length <= 0"><span class="userName">Great you have acted on all you reminders so far! </span></div>
-	<div ng-if="snoozedReminders.length > 0"><span class="userName">Swipe left to delete an item. </span></div>
+	<div ng-if="snoozedReminders.length > 0"><span class="infoText">Swipe left to delete an item. </span></div>
 		<ion-item class="smallPadding" ng-repeat="reminder in snoozedReminders track by $index" on-swipe-left="deleteReminder({{$index}})">
 		  <div class="productDesc">
 		  		 <b>{{reminder.reminderSubject}} - {{reminder.reminderText}}</b> <br/>

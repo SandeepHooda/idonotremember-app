@@ -132,7 +132,7 @@ public class Handler extends HttpServlet {
         }
 		System.out.println(" got email and name from mango DB "+email+" "+name);
 		if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
-			dataService.addToDo(queryText, email) ;
+			String toDoAdded = dataService.addToDo(queryText, email) ;
 			List<String> pendingDotos = dataService.getToDos(email);
 			if (pendingDotos.size() ==0) {
 				serviceResponse =name+", You don't have any pending tasks.";
@@ -141,7 +141,7 @@ public class Handler extends HttpServlet {
 					serviceResponse+=toDo+". ";
 				}
 			}
-			serviceResponse =   name+", I have added it to your to do list. Here are your pending to do items. "+serviceResponse;
+			serviceResponse =   name+", I have added "+toDoAdded+" to your to do list. Here are your pending to do items. "+serviceResponse;
 		}else if ("DeleteToDo".equalsIgnoreCase(intent) && null != queryText) {
 			String itemtoBeDelete = (String) googlerequest.getQueryResult().getParameters().get("any");
 			String userQuery = (String) googlerequest.getQueryResult().getParameters().get("any");

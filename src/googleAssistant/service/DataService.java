@@ -180,7 +180,7 @@ public class DataService {
 		String response = "";
 		for (ReminderVO aTodo: activeReminders) {
 			for (String aToken: wordsInTodo) {
-				String taskDesc = aTodo.getReminderSubject()+ " "+aTodo.getReminderText();
+				String taskDesc = (aTodo.getReminderSubject()+ " "+aTodo.getReminderText()).toLowerCase();
 				if (taskDesc.contains(aToken) ) {
 					response += taskDesc +" ";
 					if(actualDelete) {
@@ -222,7 +222,7 @@ public class DataService {
 		return response;
 	}
 	
-	public Response addToDo( String doDoStr, String email) {
+	public String addToDo( String doDoStr, String email) {
 		try{
 			doDoStr = doDoStr.toLowerCase();
 			doDoStr = doDoStr.replaceAll("add a new reminder to ", "");
@@ -230,6 +230,8 @@ public class DataService {
 			doDoStr = doDoStr.replaceAll("add a to do to ", "");
 			doDoStr = doDoStr.replaceAll("add a new to do to ", "");
 			doDoStr = doDoStr.replaceAll("add a new to do ", "");
+			doDoStr = doDoStr.replaceAll("add new to do to ", "");
+			doDoStr = doDoStr.replaceAll("add new to do ", "");
 			doDoStr = doDoStr.replaceAll("add a to do ", "");
 			doDoStr = doDoStr.replaceAll("add a task ", "");
 			doDoStr = doDoStr.replaceAll("add a new task ", "");
@@ -251,14 +253,15 @@ public class DataService {
 				todo.setDateCreated(new Date().getTime());
 				todo.set_id(""+todo.getDateCreated()+"_"+email);
 				todo.setEmail(email);
-				return Response.ok().entity(reminderFacade.addToDo(todo)).build();
+				reminderFacade.addToDo(todo);
+				return doDoStr;
 			
 		}catch(Exception e){
 			e.printStackTrace();
 			LoginVO vo = new LoginVO();
 			vo.setErrorMessage("Internal Server Error ");
 			
-			return Response.serverError().entity(vo).build();
+			return null;
 		}
 	}
 
