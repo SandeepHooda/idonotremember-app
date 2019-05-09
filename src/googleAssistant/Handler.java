@@ -199,10 +199,10 @@ public class Handler extends HttpServlet {
 					
 					ReminderVO reminder = new ReminderVO();
 					
+					
 					reminder.setReminderSubject(""+googlerequest.getQueryResult().getParameters().get("any"));
 					reminder.setReminderText(" ");
-					reminder.setFrequencyType("Date");
-					reminder.setFrequencyWithDate("Once");
+					
 					List<String> phoneNumbers = new LoginFacade(). getPhoneViaStatus(email,  true);
 					if (null != phoneNumbers && phoneNumbers.size() > 0) {
 						reminder.setSelectedPhone(phoneNumbers.get(0));
@@ -214,6 +214,30 @@ public class Handler extends HttpServlet {
 					reminder.setDate(dateTimeStr.substring(0, 10).replaceAll("-", "_"));
 					reminder.setTime(dateTimeStr.substring(11, 16).replaceAll(":", "_"));
 					reminder.setEmail(email);
+					
+					String frequency= (String) googlerequest.getQueryResult().getParameters().get("frequency");
+					String frequencyType = "Date";
+					if ("weekly".equalsIgnoreCase(frequency) ) {
+						try {
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
+							Date date = sdf.parse(reminder.getDate());
+							Calendar cal = new GregorianCalendar();
+							cal.setTime(date);
+							
+							String[] days = {"","Sunday", "Monday", "Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday","Sunday"};
+							reminder.setDayRepeatFrequency("Every "+days[cal.get(Calendar.DAY_OF_WEEK)]);
+							frequencyType = "Day";
+							reminder.setDisplayTime(reminder.getDayRepeatFrequency()+" of every month @ "+(reminder.getTime().replaceAll("_", ":")));
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
+						
+						
+					}else {
+						reminder.setFrequencyWithDate("Once");
+					}
+					reminder.setFrequencyType(frequencyType);
+					
 					if (new ReminderFacade().addReminder(reminder,settings.getAppTimeZone() )) {
 						reminder.setDisplayTime(reminder.formatDisplayTime(reminder.getNextExecutionTime(), settings.getAppTimeZone()));
 						serviceResponse =   name+", I have set the reminder,  "+googlerequest.getQueryResult().getParameters().get("any")+", Date "+reminder.getDisplayTime().replace("@", ", Time ") ;

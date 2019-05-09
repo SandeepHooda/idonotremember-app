@@ -159,6 +159,7 @@ public class ReminderFacade {
 	   	 TimeZone userTimeZone	=	TimeZone.getTimeZone(timeZone);
 	   	 System.out.println(" User timezone "+timeZone);
 		sdf.setTimeZone(userTimeZone);
+		System.out.println(" Freq Type : "+reminderVO.getFrequencyType());
 		if ("Day".equalsIgnoreCase(reminderVO.getFrequencyType())) {
 			String[] split = reminderVO.getDayRepeatFrequency().split(" ");
 			String[] timeSplit = reminderVO.getTime().split("_");
@@ -170,6 +171,7 @@ public class ReminderFacade {
 			
 			cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeSplit[0]));
 			cal.set(Calendar.MINUTE, Integer.parseInt(timeSplit[1]));
+			System.out.println("split[0] : "+split[0] +" "+split[1]);
 			if ("Every".equals(split[0])){//Every sunday/monday
 				LocalDate ld =  LocalDate.now();
 				ld = ld.with(TemporalAdjusters.nextOrSame(dayToLocal.get(split[1])));
