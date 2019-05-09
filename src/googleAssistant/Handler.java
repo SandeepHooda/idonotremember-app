@@ -217,23 +217,32 @@ public class Handler extends HttpServlet {
 					
 					String frequency= (String) googlerequest.getQueryResult().getParameters().get("frequency");
 					String frequencyType = "Date";
+					Calendar cal = new GregorianCalendar();
+					try {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
+						Date date = sdf.parse(reminder.getDate());
+						cal.setTime(date);
+					}catch (Exception e) {
+						e.printStackTrace();
+					}
 					if ("weekly".equalsIgnoreCase(frequency) ) {
-						try {
-							SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
-							Date date = sdf.parse(reminder.getDate());
-							Calendar cal = new GregorianCalendar();
-							cal.setTime(date);
-							
-							String[] days = {"","Sunday", "Monday", "Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday","Sunday"};
-							reminder.setDayRepeatFrequency("Every "+days[cal.get(Calendar.DAY_OF_WEEK)]);
-							frequencyType = "Day";
-							reminder.setDisplayTime(reminder.getDayRepeatFrequency()+" of every month @ "+(reminder.getTime().replaceAll("_", ":")));
-						}catch(Exception e) {
-							e.printStackTrace();
-						}
+						String[] days = {"","Sunday", "Monday", "Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday","Sunday"};
+						reminder.setDayRepeatFrequency("Every "+days[cal.get(Calendar.DAY_OF_WEEK)]);
+						frequencyType = "Day";
+						reminder.setDisplayTime(reminder.getDayRepeatFrequency()+" of every month @ "+(reminder.getTime().replaceAll("_", ":")));
 						
 						
-					}else {
+					}else if ("Monthly".equalsIgnoreCase(frequency) ) {
+						
+						reminder.setDisplayTime("Every month "+cal.get(Calendar.DAY_OF_MONTH)+" @ "+(reminder.getTime().replaceAll("_", ":")));
+						reminder.setFrequencyWithDate("Monthly");
+					}else if ("Yearly".equalsIgnoreCase(frequency) ) {
+						String[] months = {"January","February", "March", "April", "May", "June", "July", "August","September","October", "November", "December"};
+						reminder.setDisplayTime("Every year "+cal.get(Calendar.DAY_OF_MONTH)+" "+months[cal.get(Calendar.MONTH)]+" @ "+(reminder.getTime().replaceAll("_", ":")));
+						reminder.setFrequencyWithDate("Yearly");
+					}
+						
+						else {
 						reminder.setFrequencyWithDate("Once");
 					}
 					reminder.setFrequencyType(frequencyType);
