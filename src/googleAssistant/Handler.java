@@ -325,7 +325,7 @@ public class Handler extends HttpServlet {
 		"  \"fulfillmentText\": \"  "+serviceResponse+continueStr+"  \",\r\n" + 
 		"  \"outputContexts\": []\r\n" + 
 		"}";*/
-		String responseStr = getCompleteResponse( serviceResponse+continueStr);
+		String responseStr =  getCompleteResponse( serviceResponse+continueStr);
 		needLocation = false;
 		if (needLocation) {
 			out.print(location );
@@ -337,23 +337,8 @@ public class Handler extends HttpServlet {
 	}
     
     private String getCompleteResponse(String textToSpeak) {
-    	String response = "{\r\n" + 
-    			"  \"payload\": {\r\n" + 
-    			"    \"google\": {\r\n" + 
-    			"      \"expectUserResponse\": true,\r\n" + 
-    			"      \"richResponse\": {\r\n" + 
-    			"        \"items\": [\r\n" + 
-    			"          {\r\n" + 
-    			"            \"simpleResponse\": {\r\n" + 
-    			"              \"textToSpeech\": \""+textToSpeak+"\"\r\n" + 
-    			"            }\r\n" + 
-    			"          }\r\n" + 
-    			"        ]\r\n" + 
-    			"      }\r\n" + 
-    			"    }\r\n" + 
-    			"  }\r\n" + 
-    			"}";
-    	return response;
+    	return responsePre+textToSpeak+responsePost;
+    	
     }
     private void checkCallCredits(String email, Settings settings) {
     	try {
@@ -380,6 +365,23 @@ public class Handler extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+	private static final String responsePre = "{\r\n" + 
+			"  \"payload\": {\r\n" + 
+			"    \"google\": {\r\n" + 
+			"      \"expectUserResponse\": true,\r\n" + 
+			"      \"richResponse\": {\r\n" + 
+			"        \"items\": [\r\n" + 
+			"          {\r\n" + 
+			"            \"simpleResponse\": {\r\n" + 
+			"              \"textToSpeech\": \"";
+	private static final String responsePost ="\"\r\n" + 
+			"            }\r\n" + 
+			"          }\r\n" + 
+			"        ]\r\n" + 
+			"      }\r\n" + 
+			"    }\r\n" + 
+			"  }\r\n" + 
+			"}";
 	private static final String location = "{\r\n" + 
 			"  \"payload\": {\r\n" + 
 			"    \"google\": {\r\n" + 
