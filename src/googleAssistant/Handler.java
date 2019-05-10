@@ -25,13 +25,17 @@ import com.google.OauthGoogleActionsFindMyStuff;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.facade.LoginFacade;
+import com.login.vo.LoginVO;
+import com.login.vo.PushNotifyUser;
 import com.login.vo.Settings;
 import com.reminder.facade.ReminderFacade;
 import com.reminder.vo.ReminderVO;
 
 import googleAssistant.service.DataService;
 import mangodb.MangoDB;
+import request.Argument;
 import request.GoogleRequest;
+import request.Input;
 import request.OutputContexts;
 
 /**
@@ -311,10 +315,25 @@ public class Handler extends HttpServlet {
 					serviceResponse = "I couldn't find you appointment for "+appointmentQuestion;
 				}
 			//}
+		} else  if ("finish_push_setup".equalsIgnoreCase(intent) ) {
+			for (Input input : googlerequest.getOriginalDetectIntentRequest().getPayload().getInputs()) {
+				for (Argument argument: input.getArguments()) {
+					System.out.println(argument.getName() +" = "+argument.getTextValue());
+					PushNotifyUser notifyUser = new PushNotifyUser();
+					notifyUser.set_id(argument.getTextValue());
+					notifyUser.setEmail(email);
+					 Gson  json = new Gson();
+			         String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
+					
+			         MangoDB.createNewDocumentInCollection("idonot-remember-g-push-notification", "users", data, null);
+			         serviceResponse = name+" You have been registered for notifications now. ";
+				}
+			}
+			
 		}
 			else {
 			serviceResponse = name+", "+gettoDoList(email);
-			System.out.println(" serviceResponse "+serviceResponse);
+			
 		}
 		
 		String continueStr  = "";
@@ -326,6 +345,14 @@ public class Handler extends HttpServlet {
 		"  \"outputContexts\": []\r\n" + 
 		"}";*/
 		String responseStr =  getCompleteResponse( serviceResponse+continueStr);
+		 if ("PushNotification".equalsIgnoreCase(intent) ) {
+			 responseStr =  pushNotification;
+			 if ("Alert me of my reminders".equalsIgnoreCase(queryText)) {
+				 responseStr =  pushNotificationPermision;
+			 }
+			 
+		 } 
+		 System.out.println("intent "+intent+" queryText "+queryText+" serviceResponse "+responseStr);
 		needLocation = false;
 		if (needLocation) {
 			out.print(location );
@@ -378,6 +405,57 @@ public class Handler extends HttpServlet {
 			"            }\r\n" + 
 			"          }\r\n" + 
 			"        ]\r\n" + 
+			"      }\r\n" + 
+			"    }\r\n" + 
+			"  }\r\n" + 
+			"}";
+	
+	private static final String pushNotification = "{\r\n" + 
+			"  \"payload\": {\r\n" + 
+			"    \"google\": {\r\n" + 
+			"      \"expectUserResponse\": true,\r\n" + 
+			"      \"richResponse\": {\r\n" + 
+			"        \"items\": [\r\n" + 
+			"          {\r\n" + 
+			"            \"simpleResponse\": {\r\n" + 
+			"              \"textToSpeech\": \"Never miss an reminder.\"\r\n" + 
+			"            }\r\n" + 
+			"          }\r\n" + 
+			"        ],\r\n" + 
+			"        \"suggestions\": [\r\n" + 
+			"          {\r\n" + 
+			"            \"title\": \"Alert me of my reminders\"\r\n" + 
+			"          }\r\n" + 
+			"        ]\r\n" + 
+			"      }\r\n" + 
+			"    }\r\n" + 
+			"  }\r\n" + 
+			"}";
+	
+	private static final String pushNotificationPermision = "{\r\n" + 
+			"  \"payload\": {\r\n" + 
+			"    \"google\": {\r\n" + 
+			"      \"expectUserResponse\": true,\r\n" + 
+			"\"richResponse\": {\r\n" + 
+			"        \"items\": [\r\n" + 
+			"          {\r\n" + 
+			"            \"simpleResponse\": {\r\n" + 
+			"              \"textToSpeech\": \"Give permissions\"\r\n" + 
+			"            }\r\n" + 
+			"          }\r\n" + 
+			"        ]\r\n" + 
+			"      },\r\n" + 
+			"      \"systemIntent\": {\r\n" + 
+			"        \"intent\": \"actions.intent.PERMISSION\",\r\n" + 
+			"        \"data\": {\r\n" + 
+			"          \"@type\": \"type.googleapis.com/google.actions.v2.PermissionValueSpec\",\r\n" + 
+			"          \"permissions\": [\r\n" + 
+			"            \"UPDATE\"\r\n" + 
+			"          ],\r\n" + 
+			"          \"updatePermissionValueSpec\": {\r\n" + 
+			"            \"intent\": \"GetToDo\"\r\n" + 
+			"          }\r\n" + 
+			"        }\r\n" + 
 			"      }\r\n" + 
 			"    }\r\n" + 
 			"  }\r\n" + 
