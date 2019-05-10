@@ -321,10 +321,11 @@ public class Handler extends HttpServlet {
 				if (continueConversation) {
 					continueStr  = ". Anything else I can help you with?";
 				}
-		String responseStr = "{\r\n" + 
+		/*String responseStr = "{\r\n" + 
 		"  \"fulfillmentText\": \"  "+serviceResponse+continueStr+"  \",\r\n" + 
 		"  \"outputContexts\": []\r\n" + 
-		"}";
+		"}";*/
+		String responseStr = getCompleteResponse( serviceResponse+continueStr);
 		needLocation = false;
 		if (needLocation) {
 			out.print(location );
@@ -334,6 +335,26 @@ public class Handler extends HttpServlet {
        
        out.flush();   
 	}
+    
+    private String getCompleteResponse(String textToSpeak) {
+    	String response = "{\r\n" + 
+    			"  \"payload\": {\r\n" + 
+    			"    \"google\": {\r\n" + 
+    			"      \"expectUserResponse\": true,\r\n" + 
+    			"      \"richResponse\": {\r\n" + 
+    			"        \"items\": [\r\n" + 
+    			"          {\r\n" + 
+    			"            \"simpleResponse\": {\r\n" + 
+    			"              \"textToSpeech\": \""+textToSpeak+"\"\r\n" + 
+    			"            }\r\n" + 
+    			"          }\r\n" + 
+    			"        ]\r\n" + 
+    			"      }\r\n" + 
+    			"    }\r\n" + 
+    			"  }\r\n" + 
+    			"}";
+    	return response;
+    }
     private void checkCallCredits(String email, Settings settings) {
     	try {
     		if (settings.getCurrentCallCredits() <=10) {
