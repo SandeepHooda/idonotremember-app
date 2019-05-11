@@ -504,7 +504,7 @@ public class Handler extends HttpServlet {
 			"          \"permissions\": [\r\n" + 
 			"            \"UPDATE\" \r\n" + 
 			"          ], \"updatePermissionValueSpec\": {\r\n" + 
-			"            \"intent\": \"GetToDoPushNotification_4\"\r\n" + 
+			"            \"intent\": \"GetToDoPushNotification_5\"\r\n" + 
 			"          }\r\n" + 
 			"        }\r\n" + 
 			"      }\r\n" + 

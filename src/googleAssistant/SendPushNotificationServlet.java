@@ -40,6 +40,7 @@ public class SendPushNotificationServlet extends HttpServlet {
 				 PushNotificationSender sender = new PushNotificationSender();
 				 sender.sendNotification( "A test", user.get_id(), "GetToDoPushNotification_1");
 				 System.out.println(" push notification sent to "+user.getEmail());
+				 response.getWriter().println(" push notification sent to "+user.getEmail());
 			 }
 			
 		}
