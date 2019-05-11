@@ -316,19 +316,36 @@ public class Handler extends HttpServlet {
 				}
 			//}
 		} else  if ("finish_push_setup".equalsIgnoreCase(intent) ) {
+			PushNotifyUser user =  getNotififationUser( email) ; 
+			PushNotifyUser notifyUser =user;
+			boolean firstTimeUser = false;
+			if (null == notifyUser) {
+				firstTimeUser = true;
+				notifyUser = new PushNotifyUser();
+				notifyUser.setEmail(email);
+			}
+			
+			notifyUser.setSendUpdates(true);
 			for (Input input : googlerequest.getOriginalDetectIntentRequest().getPayload().getInputs()) {
 				for (Argument argument: input.getArguments()) {
 					System.out.println(argument.getName() +" = "+argument.getTextValue());
-					PushNotifyUser notifyUser = new PushNotifyUser();
-					notifyUser.set_id(argument.getTextValue());
-					notifyUser.setEmail(email);
-					 Gson  json = new Gson();
-			         String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
-					
-			         MangoDB.createNewDocumentInCollection("idonot-remember-g-push-notification", "users", data, null);
-			         serviceResponse = name+" You have been registered for notifications now. ";
+					 
+					if (notifyUser.get_id() == null && "UPDATES_USER_ID".equalsIgnoreCase(argument.getName())) {
+						notifyUser.set_id(argument.getTextValue());
+						
+				  }
 				}
 			}
+			Gson  json = new Gson();
+	         String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
+			if (firstTimeUser) {
+				MangoDB.createNewDocumentInCollection("idonot-remember-g-push-notification", "users", data, null);
+			}else {
+				 MangoDB.updateData("idonot-remember-g-push-notification", "users",data, user.get_id(), null);
+			}
+			serviceResponse = name+" You have been registered for notifications now. ";
+		} else if ("DeletePushNotification".equalsIgnoreCase(intent)  ){
+			serviceResponse = "";
 			
 		}
 			else {
@@ -345,13 +362,26 @@ public class Handler extends HttpServlet {
 		"  \"outputContexts\": []\r\n" + 
 		"}";*/
 		String responseStr =  getCompleteResponse( serviceResponse+continueStr);
-		 if ("PushNotification".equalsIgnoreCase(intent) ) {
+		 if ("PushNotification".equalsIgnoreCase(intent)  ) {
 			 responseStr =  pushNotification;
 			 if ("Alert me of my reminders".equalsIgnoreCase(queryText)) {
 				 responseStr =  pushNotificationPermision;
 			 }
 			 
-		 } 
+		 }else if ("DeletePushNotification".equalsIgnoreCase(intent)  ){
+			 serviceResponse = name+", You won't receive notifications";
+			 responseStr =  getClearUserStorageResponse( serviceResponse+continueStr);
+			 PushNotifyUser user =  getNotififationUser( email) ; 
+			 if (null != user) {
+				 user.setSendUpdates(false);
+				 Gson  json = new Gson();
+		         String data = json.toJson(user, new TypeToken<PushNotifyUser>() {}.getType());
+				 MangoDB.updateData("idonot-remember-g-push-notification", "users",data, user.get_id(), null);
+			 }
+			
+			 
+			
+		 }
 		 System.out.println("intent "+intent+" queryText "+queryText+" serviceResponse "+responseStr);
 		needLocation = false;
 		if (needLocation) {
@@ -362,9 +392,19 @@ public class Handler extends HttpServlet {
        
        out.flush();   
 	}
+    public PushNotifyUser getNotififationUser(String email) {
+    	Gson  json = new Gson();
+		String jsonText = MangoDB.getDocumentWithQuery("idonot-remember-g-push-notification", "users", email, "email",false, null, null);
+		PushNotifyUser user = json.fromJson(jsonText, new TypeToken<PushNotifyUser>() {}.getType());
+		return user;
+    }
     
     private String getCompleteResponse(String textToSpeak) {
     	return responsePre+textToSpeak+responsePost;
+    	
+    }
+    private String getClearUserStorageResponse(String textToSpeak) {
+    	return clearUserStorage_Pre+textToSpeak+responsePost;
     	
     }
     private void checkCallCredits(String email, Settings settings) {
@@ -409,6 +449,16 @@ public class Handler extends HttpServlet {
 			"    }\r\n" + 
 			"  }\r\n" + 
 			"}";
+	private static final String clearUserStorage_Pre = "{\r\n" + 
+			"  \"payload\": {\r\n" + 
+			"    \"google\": {\r\n" + 
+			" \"resetUserStorage\": true, "+
+			"      \"expectUserResponse\": true,\r\n" + 
+			"      \"richResponse\": {\r\n" + 
+			"        \"items\": [\r\n" + 
+			"          {\r\n" + 
+			"            \"simpleResponse\": {\r\n" + 
+			"              \"textToSpeech\": \"";
 	
 	private static final String pushNotification = "{\r\n" + 
 			"  \"payload\": {\r\n" + 
@@ -418,7 +468,7 @@ public class Handler extends HttpServlet {
 			"        \"items\": [\r\n" + 
 			"          {\r\n" + 
 			"            \"simpleResponse\": {\r\n" + 
-			"              \"textToSpeech\": \"Never miss an reminder.\"\r\n" + 
+			"              \"textToSpeech\": \"Great decision. Say it as,  Alert me of my reminders \"\r\n" + 
 			"            }\r\n" + 
 			"          }\r\n" + 
 			"        ],\r\n" + 
@@ -445,15 +495,16 @@ public class Handler extends HttpServlet {
 			"          }\r\n" + 
 			"        ]\r\n" + 
 			"      },\r\n" + 
+			"\"userStorage\": \"{\\\"data\\\":{}}\",\r\n" + 
 			"      \"systemIntent\": {\r\n" + 
 			"        \"intent\": \"actions.intent.PERMISSION\",\r\n" + 
 			"        \"data\": {\r\n" + 
 			"          \"@type\": \"type.googleapis.com/google.actions.v2.PermissionValueSpec\",\r\n" + 
+			"          \"optContext\": \"Please grant us the permisison to notify you when you have a reminder event. \",\r\n" + 
 			"          \"permissions\": [\r\n" + 
-			"            \"UPDATE\"\r\n" + 
-			"          ],\r\n" + 
-			"          \"updatePermissionValueSpec\": {\r\n" + 
-			"            \"intent\": \"GetToDo\"\r\n" + 
+			"            \"UPDATE\" \r\n" + 
+			"          ], \"updatePermissionValueSpec\": {\r\n" + 
+			"            \"intent\": \"GetToDoPushNotification_4\"\r\n" + 
 			"          }\r\n" + 
 			"        }\r\n" + 
 			"      }\r\n" + 

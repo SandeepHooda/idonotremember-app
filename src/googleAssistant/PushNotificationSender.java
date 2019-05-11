@@ -43,9 +43,12 @@ public class PushNotificationSender {
 		}
 
 		private ServiceAccountCredentials loadCredentials() throws IOException {
-		  String actionsApiServiceAccountFile =
-		      this.getClass().getClassLoader().getResource("service-account.json").getFile();
-		  InputStream actionsApiServiceAccount = new FileInputStream(actionsApiServiceAccountFile);
+			
+			 InputStream actionsApiServiceAccount=
+		      this.getClass().getClassLoader().getResourceAsStream("ReminderApplication.json");
+			 System.out.println(" input stream "+actionsApiServiceAccount);
+			 
+		 // InputStream actionsApiServiceAccount = new FileInputStream(actionsApiServiceAccountFile);
 		  ServiceAccountCredentials serviceAccountCredentials =
 		     (ServiceAccountCredentials) ServiceAccountCredentials.fromStream(actionsApiServiceAccount);
 		  return (ServiceAccountCredentials)
