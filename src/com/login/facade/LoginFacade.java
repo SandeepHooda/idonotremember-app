@@ -290,8 +290,7 @@ public class LoginFacade {
 							 EmailAddess toAddress = new EmailAddess();
 							 toAddress.setAddress("sonu.hooda@gmail.com");
 							new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Precise location : Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
-							+" Location "+loginVO.getIpAddressLocation().getCity() +", "+loginVO.getIpAddressLocation().getCountry()
-							+"\n\r   ", null, null));
+														+"\n\r   ", null, null));
 						 }
 						
 			       }
@@ -315,7 +314,7 @@ public class LoginFacade {
 					 EmailAddess toAddress = new EmailAddess();
 					 toAddress.setAddress("sonu.hooda@gmail.com");
 					new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "IP location Sign in to Remind-me-on app by \n\r", 	loginVO.getEmailID() +" "+loginVO.getName()
-					+" Location "+loginVO.getIpAddressLocation().getCity() +", "+loginVO.getIpAddressLocation().getCountry(), null, null));
+					, null, null));
 				 }
 				
 			 }
@@ -356,7 +355,7 @@ public class LoginFacade {
 		       parsedResponse = MangoDB.makeExternalRequest(httpsURL,method,null,headers);
 		       json = new Gson();
 		       IPtoLocation iPtoLocation  = json.fromJson(parsedResponse, new TypeToken<IPtoLocation>() {}.getType());
-		       loginVO.setIpAddressLocation(iPtoLocation);
+		       //loginVO.setIpAddressLocation(iPtoLocation);
 	       }
 	       
 	       

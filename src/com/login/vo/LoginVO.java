@@ -17,7 +17,7 @@ public class LoginVO {
 	private long loginTime;
 	private Settings userSettings;
 	private String ipAddress;
-	private IPtoLocation ipAddressLocation;
+	//private IPtoLocation ipAddressLocation;
 	//private String userAgent;
 	//private String completeHeaders;
 	//private UserAgent userAgentObj;
@@ -93,12 +93,7 @@ public class LoginVO {
 		this.ipAddress = ipAddress;
 	}
 	
-	public IPtoLocation getIpAddressLocation() {
-		return ipAddressLocation;
-	}
-	public void setIpAddressLocation(IPtoLocation ipAddressLocation) {
-		this.ipAddressLocation = ipAddressLocation;
-	}
+	
 	
 	public String getPassword() {
 		return password;
