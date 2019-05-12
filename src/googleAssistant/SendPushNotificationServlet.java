@@ -33,21 +33,27 @@ public class SendPushNotificationServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		String res = "";
 		String email = request.getParameter("email");
 		if (null != email) {
 			 List<PushNotifyUser> users =  new Handler(). getNotififationUser( email) ; 
 			 if (null != users) {
 				 for (PushNotifyUser user : users) {
-					 PushNotificationSender sender = new PushNotificationSender();
-					 sender.sendNotification( "A test", user.get_id(), Handler.intentPush);
-					 System.out.println(" push notification sent to "+user.getEmail());
-					 response.getWriter().println(" push notification sent to "+user.getEmail());
+					 if (user.isSendUpdates()) {
+						 PushNotificationSender sender = new PushNotificationSender();
+						 sender.sendNotification( "A test", user.get_id(), Handler.intentPush);
+						 System.out.println(" push notification sent to "+user.getEmail());
+						 res = " push notification sent to "+user.getEmail();
+					 }else {
+						 res = " Notifications are off for  "+user.getEmail(); 
+					 }
+					
 				 }
 				
 			 }
 			
 		}
+		response.getWriter().println();
 		
 	}
 

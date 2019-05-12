@@ -13,13 +13,16 @@ public class PushNotificationUtils {
 				 List<PushNotifyUser> users =  new Handler(). getNotififationUser( email) ; 
 				 if (null != users) {
 					 for (PushNotifyUser user : users) {
-						 PushNotificationSender sender = new PushNotificationSender();
-						 try {
-							sender.sendNotification( title, user.get_id(), Handler.intentPush);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						 System.out.println(" push notification sent to "+user.getEmail());
+						 if (user.isSendUpdates()) {
+							 PushNotificationSender sender = new PushNotificationSender();
+							 try {
+								sender.sendNotification( title, user.get_id(), Handler.intentPush);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							 System.out.println(" push notification sent to "+user.getEmail());
+						 }
+						 
 						
 					 }
 					
