@@ -316,34 +316,8 @@ public class Handler extends HttpServlet {
 				}
 			//}
 		} else  if ("finish_push_setup".equalsIgnoreCase(intent) ) {
-			PushNotifyUser user =  getNotififationUser( email) ; 
-			PushNotifyUser notifyUser =user;
-			boolean firstTimeUser = false;
-			if (null == notifyUser) {
-				firstTimeUser = true;
-				notifyUser = new PushNotifyUser();
-				notifyUser.setEmail(email);
-			}
+			serviceResponse  = subscribeUser(email,name, googlerequest);
 			
-			notifyUser.setSendUpdates(true);
-			for (Input input : googlerequest.getOriginalDetectIntentRequest().getPayload().getInputs()) {
-				for (Argument argument: input.getArguments()) {
-					System.out.println(argument.getName() +" = "+argument.getTextValue());
-					 
-					if (notifyUser.get_id() == null && "UPDATES_USER_ID".equalsIgnoreCase(argument.getName())) {
-						notifyUser.set_id(argument.getTextValue());
-						
-				  }
-				}
-			}
-			Gson  json = new Gson();
-	         String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
-			if (firstTimeUser) {
-				MangoDB.createNewDocumentInCollection("idonot-remember-g-push-notification", "users", data, null);
-			}else {
-				 MangoDB.updateData("idonot-remember-g-push-notification", "users",data, user.get_id(), null);
-			}
-			serviceResponse = name+" You have been registered for notifications now. ";
 		} else if ("DeletePushNotification".equalsIgnoreCase(intent)  ){
 			serviceResponse = "";
 			
@@ -363,20 +337,23 @@ public class Handler extends HttpServlet {
 		"}";*/
 		String responseStr =  getCompleteResponse( serviceResponse+continueStr);
 		 if ("PushNotification".equalsIgnoreCase(intent)  ) {
-			 responseStr =  pushNotification;
-			 if ("Alert me of my reminders".equalsIgnoreCase(queryText)) {
+			// responseStr =  pushNotification;
+			 //if ("Alert me of my reminders".equalsIgnoreCase(queryText)) {
 				 responseStr =  pushNotificationPermision;
-			 }
+			 //}
 			 
 		 }else if ("DeletePushNotification".equalsIgnoreCase(intent)  ){
 			 serviceResponse = name+", You won't receive notifications";
 			 responseStr =  getClearUserStorageResponse( serviceResponse+continueStr);
-			 PushNotifyUser user =  getNotififationUser( email) ; 
-			 if (null != user) {
-				 user.setSendUpdates(false);
-				 Gson  json = new Gson();
-		         String data = json.toJson(user, new TypeToken<PushNotifyUser>() {}.getType());
-				 MangoDB.updateData("idonot-remember-g-push-notification", "users",data, user.get_id(), null);
+			 List<PushNotifyUser> users =  getNotififationUser( email) ; 
+			 if (null != users ) {
+				 for (PushNotifyUser user : users) {
+					 user.setSendUpdates(false);
+					 Gson  json = new Gson();
+			         String data = json.toJson(user, new TypeToken<PushNotifyUser>() {}.getType());
+					 MangoDB.updateData("idonot-remember-g-push-notification", "users",data, user.get_id(), null);
+				 }
+				 
 			 }
 			
 			 
@@ -392,10 +369,52 @@ public class Handler extends HttpServlet {
        
        out.flush();   
 	}
-    public PushNotifyUser getNotififationUser(String email) {
+    private String subscribeUser(String email, String name, GoogleRequest googlerequest) {
+    	//1. Get old users in the DB for that email
+    	List<PushNotifyUser> userList =  getNotififationUser( email) ;
+    	
+    	//2. Check if we have new user information 
+    	PushNotifyUser notifyUser =null;
+    	for (Input input : googlerequest.getOriginalDetectIntentRequest().getPayload().getInputs()) {
+			for (Argument argument: input.getArguments()) {
+				System.out.println(argument.getName() +" = "+argument.getTextValue());
+				if ("UPDATES_USER_ID".equalsIgnoreCase(argument.getName())) {
+					notifyUser = new PushNotifyUser();
+					notifyUser.setEmail(email);
+					notifyUser.set_id(argument.getTextValue());
+				}
+			}
+		}
+    	
+    	
+    	//Delete the previous records from DB
+    	if (null != notifyUser && null != userList && userList.size() > 0) {
+    		//deleteDocument(String dbName,String collection,  String dataKeyTobeDeleted, String key)
+    		for (PushNotifyUser user: userList) {
+    			MangoDB.deleteDocument("idonot-remember-g-push-notification", "users",  user.get_id(), null);
+    		}
+    	}
+    	
+    	if (null != notifyUser) {
+    		Gson  json = new Gson();
+	         String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
+	         MangoDB.createNewDocumentInCollection("idonot-remember-g-push-notification", "users", data, null);
+    	}else if (null != userList && userList.size() > 0) {
+    		Gson  json = new Gson();
+    		for (PushNotifyUser user: userList) {
+    			user.setSendUpdates(true);
+    			String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
+    			MangoDB.updateData("idonot-remember-g-push-notification", "users",data, user.get_id(), null);
+    		}
+    	}
+		
+		return  name+" You have been registered for notifications now. ";
+		
+    }
+    public List<PushNotifyUser> getNotififationUser(String email) {
     	Gson  json = new Gson();
-		String jsonText = MangoDB.getDocumentWithQuery("idonot-remember-g-push-notification", "users", email, "email",false, null, null);
-		PushNotifyUser user = json.fromJson(jsonText, new TypeToken<PushNotifyUser>() {}.getType());
+		String jsonText = "["+ MangoDB.getDocumentWithQuery("idonot-remember-g-push-notification", "users", email, "email",false, null, null)+"]";
+		List<PushNotifyUser> user = json.fromJson(jsonText, new TypeToken<List<PushNotifyUser>>() {}.getType());
 		return user;
     }
     
@@ -481,8 +500,8 @@ public class Handler extends HttpServlet {
 			"    }\r\n" + 
 			"  }\r\n" + 
 			"}";
-	
-	private static final String pushNotificationPermision = "{\r\n" + 
+	public static final String intentPush = "GetToDoPushNotification_9";
+	private static  String pushNotificationPermision = "{\r\n" + 
 			"  \"payload\": {\r\n" + 
 			"    \"google\": {\r\n" + 
 			"      \"expectUserResponse\": true,\r\n" + 
@@ -504,13 +523,14 @@ public class Handler extends HttpServlet {
 			"          \"permissions\": [\r\n" + 
 			"            \"UPDATE\" \r\n" + 
 			"          ], \"updatePermissionValueSpec\": {\r\n" + 
-			"            \"intent\": \"GetToDoPushNotification_5\"\r\n" + 
+			"            \"intent\": \""+intentPush+"\"\r\n" + 
 			"          }\r\n" + 
 			"        }\r\n" + 
 			"      }\r\n" + 
 			"    }\r\n" + 
 			"  }\r\n" + 
 			"}";
+	
 	private static final String location = "{\r\n" + 
 			"  \"payload\": {\r\n" + 
 			"    \"google\": {\r\n" + 

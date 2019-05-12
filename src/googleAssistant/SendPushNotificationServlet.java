@@ -3,6 +3,7 @@ package googleAssistant;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,12 +36,15 @@ public class SendPushNotificationServlet extends HttpServlet {
 		
 		String email = request.getParameter("email");
 		if (null != email) {
-			 PushNotifyUser user =  new Handler(). getNotififationUser( email) ; 
-			 if (null != user) {
-				 PushNotificationSender sender = new PushNotificationSender();
-				 sender.sendNotification( "A test", user.get_id(), "GetToDoPushNotification_1");
-				 System.out.println(" push notification sent to "+user.getEmail());
-				 response.getWriter().println(" push notification sent to "+user.getEmail());
+			 List<PushNotifyUser> users =  new Handler(). getNotififationUser( email) ; 
+			 if (null != users) {
+				 for (PushNotifyUser user : users) {
+					 PushNotificationSender sender = new PushNotificationSender();
+					 sender.sendNotification( "A test", user.get_id(), Handler.intentPush);
+					 System.out.println(" push notification sent to "+user.getEmail());
+					 response.getWriter().println(" push notification sent to "+user.getEmail());
+				 }
+				
 			 }
 			
 		}

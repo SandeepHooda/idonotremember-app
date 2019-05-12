@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.reminder.vo.ReminderVO;
 import com.scheduler.SchedulerService;
 
+import googleAssistant.PushNotificationUtils;
+
 /**
  * Servlet implementation class ScanReminders
  */
@@ -36,7 +38,7 @@ public class ScanReminders extends HttpServlet {
 		List<ReminderVO> currentReminders = schedulerService.getRemindersToBeExecuted();//Past reminders or executing in next 10 minutes
 		schedulerService.snoozReminders(currentReminders);//Keep reminding users till they stop it
 		schedulerService.executeReminderAndReschedule(currentReminders);//Send email/phone/sms and if it recurring find next execution time
-		
+		PushNotificationUtils.sendNotification(currentReminders);
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
