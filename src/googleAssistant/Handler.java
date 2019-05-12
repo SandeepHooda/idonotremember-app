@@ -319,7 +319,7 @@ public class Handler extends HttpServlet {
 			serviceResponse  = subscribeUser(email,name, googlerequest);
 			
 		} else if ("DeletePushNotification".equalsIgnoreCase(intent)  ){
-			serviceResponse = "";
+			serviceResponse = name+", You won't receive notifications";
 			
 		}
 			else {
@@ -337,14 +337,9 @@ public class Handler extends HttpServlet {
 		"}";*/
 		String responseStr =  getCompleteResponse( serviceResponse+continueStr);
 		 if ("PushNotification".equalsIgnoreCase(intent)  ) {
-			// responseStr =  pushNotification;
-			 //if ("Alert me of my reminders".equalsIgnoreCase(queryText)) {
-				 responseStr =  pushNotificationPermision;
-			 //}
+			 responseStr =  pushNotificationPermision;
 			 
 		 }else if ("DeletePushNotification".equalsIgnoreCase(intent)  ){
-			 serviceResponse = name+", You won't receive notifications";
-			 responseStr =  getClearUserStorageResponse( serviceResponse+continueStr);
 			 List<PushNotifyUser> users =  getNotififationUser( email) ; 
 			 if (null != users ) {
 				 for (PushNotifyUser user : users) {
@@ -422,10 +417,7 @@ public class Handler extends HttpServlet {
     	return responsePre+textToSpeak+responsePost;
     	
     }
-    private String getClearUserStorageResponse(String textToSpeak) {
-    	return clearUserStorage_Pre+textToSpeak+responsePost;
-    	
-    }
+   
     private void checkCallCredits(String email, Settings settings) {
     	try {
     		if (settings.getCurrentCallCredits() <=10) {
@@ -468,38 +460,9 @@ public class Handler extends HttpServlet {
 			"    }\r\n" + 
 			"  }\r\n" + 
 			"}";
-	private static final String clearUserStorage_Pre = "{\r\n" + 
-			"  \"payload\": {\r\n" + 
-			"    \"google\": {\r\n" + 
-			" \"resetUserStorage\": true, "+
-			"      \"expectUserResponse\": true,\r\n" + 
-			"      \"richResponse\": {\r\n" + 
-			"        \"items\": [\r\n" + 
-			"          {\r\n" + 
-			"            \"simpleResponse\": {\r\n" + 
-			"              \"textToSpeech\": \"";
 	
-	private static final String pushNotification = "{\r\n" + 
-			"  \"payload\": {\r\n" + 
-			"    \"google\": {\r\n" + 
-			"      \"expectUserResponse\": true,\r\n" + 
-			"      \"richResponse\": {\r\n" + 
-			"        \"items\": [\r\n" + 
-			"          {\r\n" + 
-			"            \"simpleResponse\": {\r\n" + 
-			"              \"textToSpeech\": \"Great decision. Say it as,  Alert me of my reminders \"\r\n" + 
-			"            }\r\n" + 
-			"          }\r\n" + 
-			"        ],\r\n" + 
-			"        \"suggestions\": [\r\n" + 
-			"          {\r\n" + 
-			"            \"title\": \"Alert me of my reminders\"\r\n" + 
-			"          }\r\n" + 
-			"        ]\r\n" + 
-			"      }\r\n" + 
-			"    }\r\n" + 
-			"  }\r\n" + 
-			"}";
+	
+	
 	public static final String intentPush = "GetToDoPushNotification_9";
 	private static  String pushNotificationPermision = "{\r\n" + 
 			"  \"payload\": {\r\n" + 
