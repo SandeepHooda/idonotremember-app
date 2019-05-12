@@ -153,7 +153,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
   				$scope.loginTry = 0;
   				$scope.getToDos();
   			}else {
-  				$scope.popUp('Failure', 'Please retry',null )
+  				$scope.popUpRefresh('Failure', 'Please retry',null )
   			}
   			
   		},
@@ -165,11 +165,11 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
   					$scope.loginTry++;
   					$scope.LoginAndRetry();
   				 }else {
-  					$scope.popUp('Failure', 'Please login back and then retry.',null );
+  					$scope.popUpRefresh('Failure', 'Please login back and then retry.',null );
   				 }
   				
   			 }else {
-  				$scope.popUp('Failure', 'Please retry.',null );
+  				$scope.popUpRefresh('Failure', 'Please retry.',null );
   			 }
   			
   			
@@ -190,7 +190,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	  		},
 			function(response){
 	  			 $scope.hideBusy();
-	  			$scope.popUp('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+	  			$scope.popUpRefresh('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
 			});
 		}
 	$scope.noDataFound = false;
@@ -258,7 +258,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	  		},
 			function(response){
 	  			 $scope.hideBusy();
-	  			$scope.popUp('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+	  			$scope.popUpRefresh('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
 			});
 	}
 	$scope.moveDown = function(index){
@@ -298,6 +298,15 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 		$scope.toggleComplete($scope.completedTodos[index]);
 	}
 		
+	$scope.popUpRefresh = function(subject, body, nextStep){
+		var confirmPopup = $ionicPopup.confirm({
+		     title: subject,
+		     template: body
+		   });
+		 confirmPopup.then(function(res) {
+			 location.reload();
+		  });
+	}
 		
 		$scope.popUp = function(subject, body, nextStep){
 			var confirmPopup = $ionicPopup.confirm({

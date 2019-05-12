@@ -362,8 +362,8 @@ public class LoginFacade {
 	       
 	       
 	       if (null != userAgent && null != userAgent.getParse() && StringUtils.isNotBlank(userAgent.getParse().getOperating_system()) ) {
-	    	   loginVO.setUserAgent(userAgent.getParse().getOperating_system()+" # "+userAgent.getParse().getSoftware_name()+" # "+userAgent.getParse().getSoftware_version());
-		       loginVO.setUserAgentObj(userAgent);
+	    	   //loginVO.setUserAgent(userAgent.getParse().getOperating_system()+" # "+userAgent.getParse().getSoftware_name()+" # "+userAgent.getParse().getSoftware_version());
+		      // loginVO.setUserAgentObj(userAgent);
 		       
 		       Map<String, String> requestHeaders = new HashMap<>();
 
@@ -375,7 +375,7 @@ public class LoginFacade {
 		        }
 		        
 		        
-		       loginVO.setRequestHeaders(requestHeaders);
+		       //loginVO.setRequestHeaders(requestHeaders);
 		       String loginVOStr = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
 				 MangoDB.updateData("idonot-remember", "registered-users", loginVOStr, loginVO.get_id(),null);
 	       }

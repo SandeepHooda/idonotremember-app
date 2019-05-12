@@ -169,7 +169,7 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 	  				$timeout($scope.getReminders(), 500);
 	  				
 	  			}else {
-	  				$scope.popUp('Sorry '+$scope.retryCount, 'Could not fectch data. Do you want to retry now? ','menu.login' );
+	  				$scope.popUpRefresh('Sorry '+$scope.retryCount, 'Could not fectch data. Do you want to retry now? ','menu.login' );
 	  			}
 	  			
 			});
@@ -252,6 +252,16 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 		     
 		   });
 	}
+	$scope.popUpRefresh = function(subject, body, nextStep){
+		var confirmPopup = $ionicPopup.confirm({
+		     title: subject,
+		     template: body
+		   });
+		 confirmPopup.then(function(res) {
+			 location.reload();
+		  });
+	}
+		
 	
 	$scope.popUp = function(subject, body, nextStep){
 		var confirmPopup = $ionicPopup.confirm({

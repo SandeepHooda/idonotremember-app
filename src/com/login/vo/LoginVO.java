@@ -18,10 +18,10 @@ public class LoginVO {
 	private Settings userSettings;
 	private String ipAddress;
 	private IPtoLocation ipAddressLocation;
-	private String userAgent;
-	private String completeHeaders;
-	private UserAgent userAgentObj;
-	private Map<String, String> requestHeaders;
+	//private String userAgent;
+	//private String completeHeaders;
+	//private UserAgent userAgentObj;
+	//private Map<String, String> requestHeaders;
 	
 	private String password = null;//"Welcome";
 	private String userName = null;//"pooja.arora@paytm.com";
@@ -92,30 +92,7 @@ public class LoginVO {
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
-	public String getUserAgent() {
-		return userAgent;
-	}
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
-	public String getCompleteHeaders() {
-		return completeHeaders;
-	}
-	public void setCompleteHeaders(String completeHeaders) {
-		this.completeHeaders = completeHeaders;
-	}
-	public UserAgent getUserAgentObj() {
-		return userAgentObj;
-	}
-	public void setUserAgentObj(UserAgent userAgentObj) {
-		this.userAgentObj = userAgentObj;
-	}
-	public Map<String, String> getRequestHeaders() {
-		return requestHeaders;
-	}
-	public void setRequestHeaders(Map<String, String> requestHeaders) {
-		this.requestHeaders = requestHeaders;
-	}
+	
 	public IPtoLocation getIpAddressLocation() {
 		return ipAddressLocation;
 	}
