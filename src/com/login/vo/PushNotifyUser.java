@@ -23,4 +23,8 @@ public class PushNotifyUser {
 	public void setSendUpdates(boolean sendUpdates) {
 		this.sendUpdates = sendUpdates;
 	}
+	@Override
+	public String toString() {
+		return "PushNotifyUser [email=" + email + ", _id=" + _id + ", sendUpdates=" + sendUpdates + "]";
+	}
 }

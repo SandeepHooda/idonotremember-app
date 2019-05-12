@@ -381,7 +381,7 @@ public class Handler extends HttpServlet {
 			}
 		}
     	
-    	
+    	System.out.println(" Userr details in request "+notifyUser);
     	//Delete the previous records from DB
     	if (null != notifyUser && null != userList && userList.size() > 0) {
     		//deleteDocument(String dbName,String collection,  String dataKeyTobeDeleted, String key)
@@ -389,7 +389,7 @@ public class Handler extends HttpServlet {
     			MangoDB.deleteDocument("idonot-remember-g-push-notification", "users",  user.get_id(), null);
     		}
     	}
-    	
+    	System.out.println(" User list in db  "+userList);
     	if (null != notifyUser) {
     		Gson  json = new Gson();
 	         String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
@@ -398,7 +398,8 @@ public class Handler extends HttpServlet {
     		Gson  json = new Gson();
     		for (PushNotifyUser user: userList) {
     			user.setSendUpdates(true);
-    			String data = json.toJson(notifyUser, new TypeToken<PushNotifyUser>() {}.getType());
+    			System.out.println(" turn notification  on for "+user);
+    			String data = json.toJson(user, new TypeToken<PushNotifyUser>() {}.getType());
     			MangoDB.updateData("idonot-remember-g-push-notification", "users",data, user.get_id(), null);
     		}
     	}

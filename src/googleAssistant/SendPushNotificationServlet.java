@@ -53,7 +53,7 @@ public class SendPushNotificationServlet extends HttpServlet {
 			 }
 			
 		}
-		response.getWriter().println();
+		response.getWriter().println(res);
 		
 	}
 

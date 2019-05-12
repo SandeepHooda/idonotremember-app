@@ -21,6 +21,8 @@ public class PushNotificationUtils {
 								e.printStackTrace();
 							}
 							 System.out.println(" push notification sent to "+user.getEmail());
+						 }else {
+							 System.out.println(" push notification off for  "+user.getEmail());
 						 }
 						 
 						
