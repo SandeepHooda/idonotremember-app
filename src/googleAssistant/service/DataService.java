@@ -1,5 +1,6 @@
 package googleAssistant.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,7 +98,7 @@ public class DataService {
 		Date today = new Date();
 		if (null != activeReminders) {
 			for (ReminderVO reminder : activeReminders) {
-				if (reminder.getNextExecutionTime() - today.getTime() <= 3600000 * 24 *5) {//5 days
+				if (reminder.getNextExecutionTime() - today.getTime() <= 3600000 * 24 *2) {//2 days
 					ToDO todo = new ToDO();
 					todo.setTaskDesc(reminder.getReminderSubject() +" "+reminder.getReminderText() );
 					toDoList.add(todo);
@@ -115,6 +116,37 @@ public class DataService {
 		}
 		
 		return pendingDotos;
+	}
+	public List<String> getRemindersByDate(String email, Date dateQuery) {
+		
+			List<ToDO> toDoList = new ArrayList<ToDO>();
+			List<ReminderVO> activeReminders = reminderFacade.getReminders(null,  email);
+			Date today = new Date();
+			if (null != activeReminders) {
+				for (ReminderVO reminder : activeReminders) { 
+					long timeGap = reminder.getNextExecutionTime() - dateQuery.getTime();
+					if (timeGap <0) {
+						timeGap *= -1;
+					}
+					if (timeGap < 3600000 * 24 *2) {// 2 days
+						ToDO todo = new ToDO();
+						todo.setTaskDesc(reminder.getReminderSubject() +" "+reminder.getReminderText() );
+						toDoList.add(todo);
+					}
+					
+				}
+			}
+			List<String> pendingDotos = new ArrayList<String>();
+			if ( toDoList.size() > 0) {
+				for (ToDO aToDo: toDoList) {
+					if (!aToDo.isComplete()) {
+						pendingDotos.add(aToDo.getTaskDesc());
+					}
+				}
+			}
+			
+			return pendingDotos;
+		
 	}
 	public List<String> getAllRemindersString(String email){
 		List<String> allReminders = new ArrayList<String>();

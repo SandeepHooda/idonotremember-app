@@ -2,6 +2,7 @@ package googleAssistant;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -84,6 +85,37 @@ public class Handler extends HttpServlet {
 			response =   " Your pending reminders for next 24 hours are.  "+response;
 		}
 		return response;
+    }
+    public String getRemindersByDate(String email, String date) {
+    	if (date != null) {
+    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd");
+    		SimpleDateFormat formatterDisplay  = new SimpleDateFormat("dd MMM yyyy");
+        	date = date.replaceAll("-", "_");
+        	try {
+				Date dateQuery = formatter.parse(date);
+				String response = "";
+	        	List<String> pendingDotos = dataService.getRemindersByDate(email, dateQuery);
+	    		if (pendingDotos.size() ==0) {
+	    			response =formatterDisplay.format(dateQuery)+" is a relax day! You don't have any Reminders for that day. ";
+	    			
+	    		}else {
+	    			for (String toDo: pendingDotos) {
+	    				response+=toDo+". ";
+	    			}
+	    			response =   " Your pending reminders for "+formatterDisplay.format(dateQuery)+" are.  "+response;
+	    		}
+	    		return response;
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
+    		
+    	}
+    		
+    	return  " I didn't get what date you mention.";
+    	
+    	
     }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	
@@ -274,6 +306,13 @@ public class Handler extends HttpServlet {
 			new  MailService().sendSimpleMail(MailService.prepareEmailVO(new EmailAddess(email, ""), "Steps to delete a task/Reminder.",	"If you want to delete a task that you set to get bread, Say delete bread. If you want to delete a reminder then login to https://idonotremember-app.appspot.com website and delete by left swipe on that reminder. ", null, null));
 		}else if ("GetRecentAppointments".equalsIgnoreCase(intent) ) {
 			serviceResponse = name+", "+getTodaysReminders(email);
+		}else if ("GetAppointmentByDate".equalsIgnoreCase(intent) ) {
+			String dateStr =(String) googlerequest.getQueryResult().getParameters().get("date");
+			if (dateStr.length() > 10) {
+				dateStr = dateStr.substring(0,10);
+			}
+			
+			serviceResponse = name+", "+getRemindersByDate(email, dateStr);
 		}else if ("WhenIsMyAppointment".equalsIgnoreCase(intent) ) {
 			String appointmentQuestion = (String)googlerequest.getQueryResult().getParameters().get("any");
 			appointmentQuestion = appointmentQuestion.trim().toLowerCase();
