@@ -6,6 +6,7 @@ public class Order {
 	
 	private String _id;
 	private TreeMap<String, String> orderDetails;
+	private String initAppName;
 	public String get_id() {
 		return _id;
 	}
@@ -17,6 +18,12 @@ public class Order {
 	}
 	public void setOrderDetails(TreeMap<String, String> orderDetails) {
 		this.orderDetails = orderDetails;
+	}
+	public String getInitAppName() {
+		return initAppName;
+	}
+	public void setInitAppName(String initAppName) {
+		this.initAppName = initAppName;
 	}
 
 }

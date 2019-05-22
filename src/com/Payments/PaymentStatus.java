@@ -29,6 +29,7 @@ import com.login.vo.Settings;
 import com.paytm.pg.merchant.CheckSumServiceHelper;
 
 import mangodb.MangoDB;
+import paytm_java.AppDetails;
 import paytm_java.PaytmConstants;
 
 /**
@@ -85,7 +86,7 @@ public class PaymentStatus extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		AppDetails appDetails = null;
 		//Parse teh response into map -parameters
 		Enumeration<String> paramNames = request.getParameterNames();
 
@@ -110,13 +111,18 @@ public class PaymentStatus extends HttpServlet {
 					String ORDERID = mapData.get("ORDERID")[0];
 					String TXNID = mapData.get("TXNID")[0];
 					if (TXNID.equalsIgnoreCase(printTxnStatus(ORDERID,TXNID))) {//Second level check
-						String orderJson = MangoDB.getDocumentWithQuery("remind-me-on", "add-cash-orders", ORDERID, null,true, null, null);
+						String orderJson = MangoDB.getDocumentWithQuery("paytm-orders", "add-cash-orders", ORDERID, null,true, null, null);
 						Gson  json = new Gson();
 						 Order order = json.fromJson(orderJson, new TypeToken<Order>() {}.getType());
 						 order.getOrderDetails().put("Paytm_TXNID", TXNID);
 						 orderJson = json.toJson(order, new TypeToken<Order>() {}.getType());
-						 MangoDB.createNewDocumentInCollection("remind-me-on", "add-cash-orders", orderJson, null);//Put the paytm txn id back in db
+						 MangoDB.createNewDocumentInCollection("paytm-orders", "add-cash-orders", orderJson, null);//Put the paytm txn id back in db
 						
+						 appDetails = PaytmConstants.appMap.get(order.getInitAppName());
+						 if (null == appDetails) {
+							 appDetails =  PaytmConstants.appMap.get(PaytmConstants.detaultAppName);
+						 }
+						 
 						 //4. get user call settings from DB
 						 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", order.getOrderDetails().get("EMAIL"), null,true, null, null);
 						 Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
@@ -128,23 +134,23 @@ public class PaymentStatus extends HttpServlet {
 						 
 						 EmailAddess toAddress = new EmailAddess();
 						 toAddress.setAddress("sonu.hooda@gmail.com");
-						new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Cash txn Sucess!!  ",	order.getOrderDetails().get("EMAIL") +" Amount "+ mapData.get("TXNAMOUNT")[0], null, null));
+						new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Cash txn Sucess!!  for app  : "+appDetails.getAppName(),	order.getOrderDetails().get("EMAIL") +" Amount "+ mapData.get("TXNAMOUNT")[0], null, null));
 						
 					}else {
-						sendFailureEmail(mapData);
+						sendFailureEmail(mapData, appDetails.getAppName());
 					}
 					
-					 response.sendRedirect("/ui/index.html#/menu/addCashSuccess");
+					 response.sendRedirect(appDetails.getPaymentSuccessUrl());
 				}else{
 					showFailurePage(mapData, response);
 				}
 			}else{
-				sendFailureEmail(mapData);
+				sendFailureEmail(mapData, appDetails.getAppName());
 				showFailurePage(mapData, response);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			sendFailureEmail(mapData);
+			sendFailureEmail(mapData, appDetails.getAppName());
 			showFailurePage(mapData, response);
 		}
 		
@@ -166,7 +172,7 @@ public class PaymentStatus extends HttpServlet {
 
 		response.getWriter().println("<b>Payment Failed. orderID "+orderID+ " TXNID "+TXNID+"  Amount:"+TXNAMOUNT+"</b>");
 	}
-	private void sendFailureEmail(Map<String, String[]> mapData) {
+	private void sendFailureEmail(Map<String, String[]> mapData, String appName) {
 		 EmailAddess toAddress = new EmailAddess();
 		 toAddress.setAddress("sonu.hooda@gmail.com");
 		 String orderID = "";
@@ -181,7 +187,7 @@ public class PaymentStatus extends HttpServlet {
 		 if ( mapData.get("TXNID") != null) {
 			 TXNID =  mapData.get("TXNID")[0];
 		 }
-		new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Payment failure!!  ",	" order id : "+orderID+" txn amt "+ TXNAMOUNT +" txt id "+TXNID, null, null));
+		new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Payment failure!!  for app  : "+appName,	" order id : "+orderID+" txn amt "+ TXNAMOUNT +" txt id "+TXNID, null, null));
 		
 	}
 

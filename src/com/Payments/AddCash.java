@@ -20,6 +20,7 @@ import com.login.vo.Settings;
 import com.paytm.pg.merchant.CheckSumServiceHelper;
 
 import mangodb.MangoDB;
+import paytm_java.AppDetails;
 import paytm_java.PaytmConstants;
 
 /**
@@ -41,7 +42,15 @@ public class AddCash extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String user =(String) request.getSession().getAttribute("email");
+		String appName = request.getParameter("appName");
+		if (null ==appName) {
+			appName = PaytmConstants.detaultAppName;
+		}
+		AppDetails appDetails = PaytmConstants.appMap.get(appName);
+		String user =request.getParameter("email");
+		if (null == user) {
+			user =(String) request.getSession().getAttribute("email");
+		}
 		String amount = request.getParameter("amount");
 		if (null != amount && amount.indexOf(".")>0) {
 			amount = amount.substring(0,amount.indexOf("."));
@@ -66,7 +75,7 @@ public class AddCash extends HttpServlet {
 			}
 			parameters.put("MOBILE_NO",mobile);
 			parameters.put("EMAIL",user);
-			parameters.put("CALLBACK_URL", "https://idonotremember-app.appspot.com/PaymentStatus");
+			parameters.put("CALLBACK_URL", appDetails.getCallBackUrl());
 			
 			try {
 				//1. Get check sum
@@ -105,15 +114,16 @@ public class AddCash extends HttpServlet {
 				//Add to DB
 				Order order = new Order();
 				order.set_id(parameters.get("ORDER_ID"));
+				order.setInitAppName(appDetails.getAppName());
 				order.setOrderDetails(parameters);
 				Gson  json = new Gson();
 				String orderJson = json.toJson(order, new TypeToken<Order>() {}.getType());
 				
-				MangoDB.createNewDocumentInCollection("remind-me-on", "add-cash-orders",  orderJson,null);
+				MangoDB.createNewDocumentInCollection("paytm-orders", "add-cash-orders",  orderJson,null);
 				
 				EmailAddess toAddress = new EmailAddess();
 				 toAddress.setAddress("sonu.hooda@gmail.com");
-				new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Cash txn initiated  ",	parameters.get("EMAIL") +" Amount "+amount, null, null));
+				new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Cash txn initiated  for app : "+appDetails.getAppName(),	parameters.get("EMAIL") +" Amount "+amount, null, null));
 				
 				
 				response.getWriter().println(outputHtml);
@@ -122,9 +132,9 @@ public class AddCash extends HttpServlet {
 				e.printStackTrace();
 				 EmailAddess toAddress = new EmailAddess();
 				 toAddress.setAddress("sonu.hooda@gmail.com");
-				new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Payment failure!!  ",	 "Could not initiate to Paytm "+e.getLocalizedMessage(), null, null));
+				new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Payment failure!!  for app : "+appDetails.getAppName(),	 "Could not initiate to Paytm "+e.getLocalizedMessage(), null, null));
 				
-				response.sendRedirect("/ui/index.html");
+				response.sendRedirect(appDetails.getAppHome());
 			}
 		}
 		
