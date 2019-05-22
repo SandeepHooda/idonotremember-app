@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PaytmConstants {
-	public static final String detaultAppName = "reminder";
+	
  public static Map<String, AppDetails> appMap = null;
   public final static String MID="MaaDur53067059433032";//"MaaDur53067059433032";//"Remind29538375717256";
   public final static String MERCHANT_KEY="H9ImWI6KsyUSAg8f";//"H9ImWI6KsyUSAg8f";//"htDAp1KejfuJq00L";
@@ -16,7 +16,7 @@ public class PaytmConstants {
   static {
 	  appMap = new HashMap<String, AppDetails>();
 	  AppDetails app = new AppDetails();
-	  app.setAppName(detaultAppName);
+	  app.setAppName(AppDetails.detaultAppName);
 	  app.setCallBackUrl("https://idonotremember-app.appspot.com/PaymentStatus");
 	  app.setPaymentSuccessUrl("/ui/index.html#/menu/addCashSuccess");
 	  app.setAppHome("/ui/index.html");

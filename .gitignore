@@ -1,3 +1,7 @@
 /build/classes/**/*
 /WebContent/ui/**/*
 /build/
+
+/src/ReminderApplication.json
+/src/servicekey/ReminderApplication.json
+/src/servicekey/idonotremember.json

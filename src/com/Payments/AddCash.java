@@ -44,7 +44,7 @@ public class AddCash extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String appName = request.getParameter("appName");
 		if (null ==appName) {
-			appName = PaytmConstants.detaultAppName;
+			appName = AppDetails.detaultAppName;
 		}
 		AppDetails appDetails = PaytmConstants.appMap.get(appName);
 		String user =request.getParameter("email");

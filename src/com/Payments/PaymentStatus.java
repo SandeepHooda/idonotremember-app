@@ -120,7 +120,7 @@ public class PaymentStatus extends HttpServlet {
 						
 						 appDetails = PaytmConstants.appMap.get(order.getInitAppName());
 						 if (null == appDetails) {
-							 appDetails =  PaytmConstants.appMap.get(PaytmConstants.detaultAppName);
+							 appDetails =  PaytmConstants.appMap.get(AppDetails.detaultAppName);
 						 }
 						 
 						 //4. get user call settings from DB
