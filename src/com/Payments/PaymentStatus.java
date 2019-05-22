@@ -140,7 +140,7 @@ public class PaymentStatus extends HttpServlet {
 						sendFailureEmail(mapData, appDetails.getAppName());
 					}
 					
-					 response.sendRedirect(appDetails.getPaymentSuccessUrl());
+					 response.sendRedirect(appDetails.getPaymentSuccessUrl()+"?txn="+TXNID);
 				}else{
 					showFailurePage(mapData, response);
 				}
