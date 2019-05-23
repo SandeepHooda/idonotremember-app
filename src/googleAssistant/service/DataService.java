@@ -63,7 +63,7 @@ public class DataService {
 			if (!"".equals(itemLocation)) {
 				return itemLocation;
 			}else {
-				return "Sorry, but  you never told me that where have you kept your "+item +". ";
+				return "Sorry, but  you never told me that where have you kept your "+item +". You can say things like put my toothpaste in red bag.";
 			}
 		}
 		

@@ -65,7 +65,10 @@ public class SchedulerService {
 					
 					try {
 						
-						
+						if (null == settings) {
+							settings = new Settings();
+							settings.setAppTimeZone("Asia/Calcutta");
+						}
 						String timeZone = settings.getUserSuppliedTimeZone();
 						if (null == timeZone) {
 							timeZone = settings.getAppTimeZone();
@@ -101,7 +104,7 @@ public class SchedulerService {
 			emalVO.setUserName("personal.reminder.notification@gmail.com");
 			emalVO.setPassword(Key.email);
 			emalVO.setSubject(reminderVO.getReminderSubject());
-			emalVO.setHtmlContent(reminderVO.getReminderText());
+			emalVO.setHtmlContent(reminderVO.getReminderText()+". Please log on to https://idonotremember-app.appspot.com to mamage your to dos and reminders. ");
 			EmailAddess from = new EmailAddess();
 			from.setAddress(emalVO.getUserName());
 			
@@ -115,9 +118,6 @@ public class SchedulerService {
 				throw new Exception("Couln't not notify user via email");
 			}
 			
-			
-				
-		
 			
 		
 		//Get user balance to check if he has funds or not
@@ -146,15 +146,20 @@ public class SchedulerService {
 			 MangoDB.createNewDocumentInCollection("remind-me-on", "call-logs", logsJson, null);
 		}
 		
-		//Place a call
-		if (reminderVO.isMakeACall() && settings.getCurrentCallCredits() >=5) {
-			if (!MakeACall.call(callLog.getTo(), callLog.get_id())) {
-				throw new Exception("Couln't not notify user via Phone");
+		try {
+			if (reminderVO.isMakeACall() && settings.getCurrentCallCredits() >=5) {
+				if (!MakeACall.call(callLog.getTo(), callLog.get_id())) {
+					throw new Exception("Couln't not notify user via Phone");
+				}
+				
+				//Make a call above the comment and then update settings
+				 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -5);
 			}
-			
-			//Make a call above the comment and then update settings
-			 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -5);
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
+		//Place a call
+		
 		  
 		
 		
@@ -169,12 +174,17 @@ public class SchedulerService {
 				 if (message.length() > 160) {
 					 message = message.substring(0, 160);
 				 }
-				 if (!SendSMS.sendText(callLog.getTo(),callLog.getMessage())) {
-						throw new Exception("Couln't not notify user via Phone");
+				 try {
+					 if (!SendSMS.sendText(callLog.getTo(),callLog.getMessage())) {
+							//throw new Exception("Couln't not notify user via Phone");
+						}
+					 
+					//Send above the comment and then update settings
+					 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -1);
+				 }catch(Exception e) {
+						e.printStackTrace();
 					}
 				 
-				//Send above the comment and then update settings
-				 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -1);
 			 }
 		
 		
