@@ -176,7 +176,7 @@ public class SchedulerService {
 				 }
 				 try {
 					 if (!SendSMS.sendText(callLog.getTo(),callLog.getMessage())) {
-							//throw new Exception("Couln't not notify user via Phone");
+							throw new Exception("Couln't not notify user via Phone");
 						}
 					 
 					//Send above the comment and then update settings

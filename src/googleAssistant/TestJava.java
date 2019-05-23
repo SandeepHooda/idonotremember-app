@@ -22,14 +22,14 @@ public class TestJava {
 		
 		
 		
-		Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park|keep|kept|left|lost) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?) (on|at|under|in) (.*?)");
+		Pattern itemPattern1 = Pattern.compile("(put|placed|parked|park|keep|kept|left|lost|had) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?) (on|at|under|in) (.*?)");
 		 Pattern itemPattern2 = Pattern.compile("[m]{0,1}[y]{0,1}[ ]{0,1}(.*?) [ia]{0,1}[sr]{0,1}[ e]{0,1}[ ]{0,1}(on|at|under|in) (.*?)");
 		 Pattern locationPattern1 = Pattern.compile(" (on|at|under|in) (.*?)$");
 		  Pattern itemPatternWhere1 = Pattern.compile("(where is|where are|find|when is|when are) [m]{0,1}[y]{0,1}[ ]{0,1}(.*?)$");
 	
 		 String[] queryArray = new String[] {"I have kept my toy under table","my toy under table","my toys are on table","toy is on table","keep toy on table","toy on table",
 				"my pen is in my pocket", "find toy","i left a pie in the refrigerator", "i left apples in the refrigerator","put my machine in my red bag","Find my son's PTM"
-				};
+				,"I put my lighter in the headboard", "I had my stash in my jacket pocket"};
 		  //String[] queryArray = new String[] {};
 		  for (String query:queryArray ) {
 			 query = query.toLowerCase();
