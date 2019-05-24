@@ -10,9 +10,11 @@ APP.SERVICES.service ('appData',['$window','dataRestore','$ionicPopup',
 		//var host = "https://idonotremember-app.appspot.com";
 		var host = "";
 		if ($window.location.host == ""){
-			host = "phone";
+			host = "https://idonotremember-app.appspot.com";
 			//host = "https://deliveratmydoor.appspot.com";
-		}else if ($window.location.host.indexOf("localhost:8080") >=0 ){
+		}else if ($window.location.host.indexOf("localhost") >=0 ){
+			host = "http://localhost:9080";
+		}else {
 			host = "";
 		}
 		

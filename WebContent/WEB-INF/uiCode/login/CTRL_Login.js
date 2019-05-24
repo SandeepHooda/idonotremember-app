@@ -1,6 +1,8 @@
 APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoading','appData','$ionicPopup',
     function($scope,$state,$http,$ionicLoading,appData,$ionicPopup){
 	var theCtrl = this;
+	$scope.login = {};
+	$scope.login.type="signin";
 	$scope.host = appData.getHost();
 	$scope.conditionAgree = false;
 	 var config = {

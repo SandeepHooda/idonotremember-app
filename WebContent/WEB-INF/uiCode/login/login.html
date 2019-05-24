@@ -10,22 +10,36 @@
 		
 		
 	 </div>
-
-	<div ng-if=" conditionAgree && host != 'phone' ">
-	 	<input class="cash" type="text" placeholder="User name" ng-model="login.userName"/>
-	 	<input class="cash" type="password" placeholder="Password" ng-model="login.password" />
-
+	 -->
+	 <div ng-init="login.type = 'signin'">
+		<label>
+		    <input style="width:20px;" type="radio" ng-model="login.type" value="signin" ng-init="checked=true">
+		    Sign In
+	  	</label>
+	  <label>
+	    <input style="width:20px;" type="radio" ng-model="login.type" value="signup">
+	    Sign up
+	  </label>
+	 </div>
+	<div style="padding-right: 10px;">
+		<div ng-if="host != '' ">
+		 	<input class="cash input-shadow"  type="text" placeholder="Your Email" ng-model="login.userName"/>
+		 	<input type="password" class="cash input-shadow"  type="password" placeholder="Your Password" ng-model="login.password" />
+		 	<input ng-if="login.type == 'signup'" type="password" class="cash input-shadow"  type="password" placeholder="Confirm password" ng-model="login.passwordconfirm" />
+		 	
+		</div>
 	</div>
-						<div style="text-align: center;">
-						    <span>
-						        <h1>Or</h1>
-						    </span>
-						</div>
- -->
- 	 <button ng-if="host != 'phone' "  ng-click="$ctrl.signIN()" id="signin" name="signin" class="loginBtn loginBtn--google loginWithGoogle">Secure Sign in with Google</button>
+	
+						
+ 
+ 	 <button ng-if="host == '' "  ng-click="$ctrl.signIN()" id="signin" name="signin" class="loginBtn loginBtn--google loginWithGoogle">Secure Sign in with Google</button>
  	
- 	
-	 <button ng-if="host == 'phone' " ng-click="googleSignIn()" id="signin" name="signin" class="loginBtn loginBtn--google centerText">Secure Sign in with Google</button>
+ 	<div style="text-align: center;">
+ 	<br/>
+		 <button class="email-sign-btn" ng-if="host != '' " 
+		 ng-click="signInEmail()" id="signinEmail" name="signinEmail" 
+		 ><span ng-if="login.type == 'signin'">Sign In</span> <span ng-if="login.type == 'signup'">Sign Up</span></button>
+	 </div>
 	
 	
  </ion-content>

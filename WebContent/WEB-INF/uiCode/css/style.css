@@ -286,6 +286,15 @@ display: block;
 	background:white;
 	width:100%;
 }
+.input-shadow {
+	
+	box-shadow: rgb(190, 190, 190) 0px 0px 3px;
+	border-radius: 5px;
+}
+.email-sign-btn{
+	background-color: #0c60ee;
+    color: white;
+}
 .cashBtn {
 	display:block;
 	width:100%;
