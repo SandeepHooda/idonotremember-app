@@ -327,6 +327,9 @@ public class ReminderFacade {
 	public String getEmail(String regID) {
 		String email = null;
 		String data = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", regID, null,true, null, null);
+		if (null == data || data.trim().length() ==0) {
+			data = MangoDB.getDocumentWithQuery("idonot-remember-android", "registered-users", regID, null,true, null, null);
+		}
 		if (null != data) {
 			Gson  json = new Gson();
 			LoginVO loginVO = json.fromJson(data, new TypeToken<LoginVO>() {}.getType());

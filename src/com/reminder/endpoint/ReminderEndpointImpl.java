@@ -49,8 +49,16 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response updateReminder(ReminderVO reminderVO, HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String)session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
+			
 			if (!reminderVO.getEmail().equalsIgnoreCase(email)) {
 				LoginVO vo = new LoginVO();
 				vo.setErrorMessage("Please log in to authenticate ");
@@ -71,10 +79,18 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response getReminders(HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
+			String regID = request.getHeader("Auth");
+			String email = null;
 			if (null != regID) {
-				return Response.ok().entity(reminderFacade.getReminders(regID)).build();
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
+			
+			if (null != email) {
+				return Response.ok().entity(reminderFacade.getReminders(regID, email)).build();
 			}else {
 				LoginVO vo = new LoginVO();
 				vo.setErrorMessage("Please log in to authenticate ");
@@ -93,9 +109,17 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response deleteReminder(String reminderID, HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
+			String regID = request.getHeader("Auth");
+			String email = null;
 			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
+			
+			if (null != email) {
 				reminderFacade.deleteReminder(reminderID);
 				return Response.ok().entity(reminderFacade.getReminders(regID)).build();
 			}else {
@@ -116,8 +140,15 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response deleteSnoozedReminder(String reminderID, HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String)session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
 			if (null != email) {
 				reminderFacade.deleteSnoozedReminder(reminderID);
 				return getSnoozedReminders(request);
@@ -139,8 +170,15 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response addToDo( ToDO todo,  HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String)session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
 			if (null != email) {
 				todo.setDateCreated(new Date().getTime());
 				todo.set_id(""+todo.getDateCreated()+"_"+email);
@@ -162,8 +200,15 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response updateToDo( ToDO todo,  HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String)session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
 			if (null != email) {
 				return Response.ok().entity(reminderFacade.updateToDo(todo)).build();
 			}else {
@@ -183,8 +228,15 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	
 	public Response swapToDoOrderInDB( ToDO[] todos,  HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String)session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
 			if (null != email && todos != null && todos.length == 2) {
 				reminderFacade.updateToDo(todos[0]);
 				reminderFacade.updateToDo(todos[1]);
@@ -208,8 +260,15 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response getToDos( HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String)session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
 			if (null != email) {
 				return Response.ok().entity(reminderFacade.getToDos(email)).build();
 			}else {
@@ -229,9 +288,16 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	
 	public Response markComplete( String toDoID, HttpServletRequest request, boolean force) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
-			if (null != regID || force) {
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
+			if (null != email || force) {
 				reminderFacade.markComplete(toDoID);
 				return getToDos(request);
 			}else {
@@ -267,8 +333,15 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response getSnoozedReminders(HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String)session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
 			if (null != email) {
 				return Response.ok().entity(reminderFacade.getSnoozedReminders(email)).build();
 			}else {

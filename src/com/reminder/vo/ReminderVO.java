@@ -51,6 +51,16 @@ public class ReminderVO {
 		
 		return sdfDiaplay.format(dateTimeStr);
 	}
+	
+	public String formatDisplayTimeWithDay(long dateTimeStr, String timeZone ) {
+		SimpleDateFormat sdfDiaplay = new SimpleDateFormat("EEEE , dd MMM yyyy hh:mm a");
+		
+		TimeZone userTimeZone = TimeZone.getTimeZone(timeZone);
+		sdfDiaplay.setTimeZone(userTimeZone);
+		
+		
+		return sdfDiaplay.format(dateTimeStr);
+	}
 
 	public String getRegID() {
 		return regID;

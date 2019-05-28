@@ -37,6 +37,18 @@ public interface LoginEndpoint {
 	public Response logout(@PathParam("regID") String regID,  @Context HttpServletRequest request);
 	
 	@POST
+	@Path("/login/loginWithPassword")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response loginWithPassword( LoginVO loginVO,  @Context HttpServletRequest request);
+	
+	@GET
+	@Path("/login/validate/email/{email}/smid/{regID}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateEmail( @PathParam("email") String email,@PathParam("regID") String regID,  @Context HttpServletRequest request);
+	
+	@POST
 	@Path("/phone")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })

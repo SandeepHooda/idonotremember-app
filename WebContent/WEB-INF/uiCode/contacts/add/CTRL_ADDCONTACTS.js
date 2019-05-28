@@ -4,11 +4,13 @@ APP.CONTROLLERS.controller ('CTRL_ADDCONTACTS',['$scope','$ionicLoading','$http'
 	$scope.countryCodes = ["India", "USA"];
 	$scope.phone = {};
 	$scope.phone.countryCode =  "India";
-	var config = {
-            headers : {
-                'Content-Type': 'application/json;'
-            }
-        }
+	var regIDStorege = window.localStorage.getItem('regID');
+	 var config = {
+	            headers : {
+	                'Content-Type': 'application/json;',
+	                'Auth' : ''+regIDStorege
+	            }
+	        }
 	
 	$scope.addContact = function(){
 		$scope.showBusy();

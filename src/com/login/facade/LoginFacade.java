@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,6 @@ import org.apache.cxf.common.util.CollectionUtils;
 
 import com.Constants;
 import com.communication.email.EmailAddess;
-import com.communication.email.EmailVO;
 import com.communication.email.MailService;
 import com.communication.phone.text.Key;
 import com.communication.phone.text.SendSMS;
@@ -41,7 +41,11 @@ public class LoginFacade {
 	
 	public LoginVO validateRegID(String regID, String appTimeZone) {
 		log.info("regID logged into system "+regID);
+		boolean appUser = false;
 		String data = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", regID, null,true, null, null);
+		if (null == data || data.trim().length() ==0) {
+			data = MangoDB.getDocumentWithQuery("idonot-remember-android", "registered-users", regID, null,true, null, null);
+		}
 		 Gson  json = new Gson();
 		 LoginVO result  = json.fromJson(data, new TypeToken<LoginVO>() {}.getType());
 		 String email = null;
@@ -67,6 +71,8 @@ public class LoginFacade {
 			 result.setUserSettings(settings);
 			 settingsJson = json.toJson(settings, new TypeToken<Settings>() {}.getType());
 			 MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users-settings", settingsJson, null);
+			 result.setPassword(null);
+			 result.setPasswordConfirm(null);
 			 return result;
 		 }else {
 			 return null;
@@ -261,6 +267,53 @@ public class LoginFacade {
        
 	}
 	
+	public LoginVO loginWithPassword(LoginVO loginVO) {
+		Gson  json = new Gson();
+		if ("signup".equalsIgnoreCase(loginVO.getType())) {
+			
+			loginVO.setRegID(UUID.randomUUID().toString());
+			loginVO.set_id(loginVO.getRegID());
+			loginVO.setEmailID(loginVO.getUserName());
+			String loginVOStr = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
+			MangoDB.createNewDocumentInCollection("idonot-remember-android", "registered-users", loginVOStr, null);
+			String confirmLink = "https://idonotremember-app.appspot.com/ws/login/validate/email/"+loginVO.getUserName()+"/smid/"+loginVO.getRegID();
+			 EmailAddess toAddress = new EmailAddess();
+			 toAddress.setAddress(loginVO.getUserName());
+			new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Confirm your emmail ID", 	"Please click on the below link to confirm that you are the owner of teh email ID that you used to sign up to the reminder app"
+			+"<br/>  <br/> "+confirmLink, null, null));
+			loginVO.setPassword(null);
+			loginVO.setPasswordConfirm(null);
+			return loginVO;
+		}else {
+			String data = "["+MangoDB.getDocumentWithQuery("idonot-remember-android", "registered-users", null,loginVO.getUserName(), false, null, null) +"]";
+			List<LoginVO> loginVOList  = json.fromJson(data, new TypeToken<List<LoginVO>>() {}.getType());
+			if (null != loginVOList) {
+				for (LoginVO aVo: loginVOList) {
+					if (aVo.getPassword().equals(loginVO.getPassword())) {
+						aVo.setPassword(null);
+						aVo.setPasswordConfirm(null);
+						return aVo;
+					}
+				}
+			}
+		}
+		
+		 return null;
+	}
+	
+	public boolean validateEmail(String emaill , String regID) {
+		Gson  json = new Gson();
+		String data = MangoDB.getDocumentWithQuery("idonot-remember-android", "registered-users", regID,null, true, null, null);
+		LoginVO loginVO  = json.fromJson(data, new TypeToken<LoginVO>() {}.getType());
+		if (loginVO != null && loginVO.getEmailID().equalsIgnoreCase(emaill)) {
+			loginVO.setEmailValidated(true);
+			String loginVOStr = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
+			MangoDB.createNewDocumentInCollection("idonot-remember-android", "registered-users", loginVOStr, null);
+			return true;
+		}
+		return false;
+	}
+	
 	public LoginVO updatePreciseLocation(LatLang latLang, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String regID = (String)session.getAttribute("regID");
@@ -300,8 +353,13 @@ public class LoginFacade {
 	}
 	
 	public LoginVO recordLoginSucess(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		String regID = (String)session.getAttribute("regID");
+		
+		String regID = request.getHeader("Auth");
+		
+		if (null == regID) {
+			HttpSession session = request.getSession();
+			 regID = (String)session.getAttribute("regID");
+		}
 		
 		  String loginVOJson = MangoDB.getDocumentWithQuery("idonot-remember", "registered-users", regID,null, true, null, null);
 			 Gson  json = new Gson();

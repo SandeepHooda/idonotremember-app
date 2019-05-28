@@ -91,7 +91,7 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
 	$scope.showMenu = function () {
 	    $ionicSideMenuDelegate.toggleLeft();
 	};
-	$scope.login = {};
+	
 	
 	 theCtrl.signIN = function(){
 		 if(window.localStorage.getItem('regID')){
@@ -101,7 +101,74 @@ APP.CONTROLLERS.controller ('CTRL_Login',['$scope','$state','$http','$ionicLoadi
 		 
 		 window.open("/Oauth", "_self");
 	 }
-	 
+	 theCtrl.signInPassword = function(){
+		 if(window.localStorage.getItem('regID')){
+			 localStorage.removeItem('regID');
+			 localStorage.removeItem('name');
+		 }
+		 if ($scope.validateUserNamePwd()){
+			 $scope.showBusy();
+			 $http.post(appData.getHost()+'/ws/login/loginWithPassword/',$scope.login , config)
+		  		.then(function(response){
+		  			 $scope.hideBusy();
+		  			 let loginVO = response.data
+		  			 if (loginVO){
+		  				window.localStorage.setItem('regID', loginVO.regID);
+		  				 if ($scope.login.type === 'signup'){
+		  					$scope.popUp('Verify your identity', 'We have sent you and verification email on you email ID '+$scope.login.userName+
+		  							'. Please check your email and confirm that you are the owner of the email ID.',null ) 
+		  				 }else {
+		  					$state.transitionTo("menu.tab.home");
+		  				 }
+		  				
+			  			 
+		  			 }else {
+		  				$scope.popUp('Server Error', 'We encontered some error while processing your request. Please retry after some time. ',null ) 
+		  			 }
+		  			 
+		  		},
+				function(response){
+		  			 $scope.hideBusy();
+		  			 if (response.status == 401){
+		  				$scope.popUp('Invalid user name/password', 'The user name/password that you supplied doesn\'t match our records. ',null )
+		  			 }else {
+		  				$scope.popUp('Server Error', 'We encontered some error while processing your request. Please retry after some time. ',null )
+		  			 }
+		  			
+		  			});
+		 }
+		
+	 }
+	 theCtrl.showPassword  = function(){
+		 let x = document.getElementById("password");
+		  if (x.type === "password") {
+		    x.type = "text";
+		  } else {
+		    x.type = "password";
+		  }
+	 }
+	 $scope.validateUserNamePwd = function(){
+		 if ($scope.login.userName){
+			 $scope.login.userName = $scope.login.userName.toLocaleLowerCase();
+			 if ($scope.login.userName.endsWith("@gmail.com")){
+				 if($scope.login.password && $scope.login.password.length >=8 ){
+					 if ( $scope.login.type=="signin" || ( $scope.login.passwordConfirm === $scope.login.password)){
+						 return true;
+					 }else {
+						 $scope.popUp('Password mismatch', 'Your password and confirm password don\'t match',null ) 
+					 }
+						
+				 }else {
+					 $scope.popUp('Invalid password', 'Please use your a password with length equal or greater than 8',null ) 
+				 }
+				
+			 }else {
+				 $scope.popUp('Invalid user name', 'Please use your Gmail ID',null )
+			 }
+		 }
+		
+		 return false;
+	 }
 	 
 	 $scope.popUp = function(subject, body, nextStep){
 			var confirmPopup = $ionicPopup.confirm({

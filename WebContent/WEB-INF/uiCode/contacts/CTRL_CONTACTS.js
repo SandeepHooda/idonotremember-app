@@ -5,11 +5,13 @@ APP.CONTROLLERS.controller ('CTRL_CONTACTS',['$scope','$ionicLoading','$http','$
 	$scope.data.otpValue = "";
 	$scope.userPhonesVerified = [];
 	$scope.userPhonesNotVerified = [];
-	var config = {
-            headers : {
-                'Content-Type': 'application/json;'
-            }
-        }
+	var regIDStorege = window.localStorage.getItem('regID');
+	 var config = {
+	            headers : {
+	                'Content-Type': 'application/json;',
+	                'Auth' : ''+regIDStorege
+	            }
+	        }
 	$scope.newContact = function (){
 		$state.transitionTo('menu.addcontacts');
 	}
@@ -17,7 +19,7 @@ APP.CONTROLLERS.controller ('CTRL_CONTACTS',['$scope','$ionicLoading','$http','$
 	$scope.getContacts = function(){
 		$scope.showBusy();
 		
-		$http.get(appData.getHost()+'/ws/phone/')
+		$http.get(appData.getHost()+'/ws/phone/',config )
   		.then(function(response){
   			 $scope.hideBusy();
   			if (response.data){
@@ -67,7 +69,7 @@ APP.CONTROLLERS.controller ('CTRL_CONTACTS',['$scope','$ionicLoading','$http','$
 				   
 				   $scope.showBusy();
 					
-					$http.delete(appData.getHost()+'/ws/phone/phoneID/'+$scope.userPhonesNotVerified[index]._id)
+					$http.delete(appData.getHost()+'/ws/phone/phoneID/'+$scope.userPhonesNotVerified[index]._id, config)
 			  		.then(function(response){
 			  			 $scope.hideBusy();
 			  			if (response.data){
@@ -98,7 +100,7 @@ APP.CONTROLLERS.controller ('CTRL_CONTACTS',['$scope','$ionicLoading','$http','$
 	$scope.confirmOtp = function(index){
 		$scope.showBusy();
 		
-		$http.get(appData.getHost()+'/ws/phone/phoneID/'+$scope.userPhonesNotVerified[index]._id+'/confirmOtp/'+$scope.data.otpValue)
+		$http.get(appData.getHost()+'/ws/phone/phoneID/'+$scope.userPhonesNotVerified[index]._id+'/confirmOtp/'+$scope.data.otpValue, config)
   		.then(function(response){
   			 $scope.hideBusy();
   			if (response.data){
@@ -129,7 +131,7 @@ APP.CONTROLLERS.controller ('CTRL_CONTACTS',['$scope','$ionicLoading','$http','$
 	$scope.verify = function(index){
 		$scope.showBusy();
 		
-		$http.get(appData.getHost()+'/ws/phone/verify/ID/'+$scope.userPhonesNotVerified[index]._id)
+		$http.get(appData.getHost()+'/ws/phone/verify/ID/'+$scope.userPhonesNotVerified[index]._id, config)
   		.then(function(response){
   			 $scope.hideBusy();
   			if (response.data){

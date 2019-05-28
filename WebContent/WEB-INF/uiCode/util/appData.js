@@ -9,7 +9,7 @@ APP.SERVICES.service ('appData',['$window','dataRestore','$ionicPopup',
 		//var host = "http://www.idonotremember.com";
 		//var host = "https://idonotremember-app.appspot.com";
 		var host = "";
-		if ($window.location.host == ""){
+		if ($window.location.host == ""){ //android app
 			host = "https://idonotremember-app.appspot.com";
 			//host = "https://deliveratmydoor.appspot.com";
 		}else if ($window.location.host.indexOf("localhost") >=0 ){

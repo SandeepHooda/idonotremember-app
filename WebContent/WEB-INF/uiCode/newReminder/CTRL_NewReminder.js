@@ -4,11 +4,13 @@ APP.CONTROLLERS.controller ('CTRL_NewReminder',['$scope','$http','$rootScope','$
 	var theCtrl = this;
 	theCtrl.selectedPhone = "";
 	$scope.reminder = {}
+	var regIDStorege = window.localStorage.getItem('regID');
 	 var config = {
-            headers : {
-                'Content-Type': 'application/json;'
-            }
-        }
+	            headers : {
+	                'Content-Type': 'application/json;',
+	                'Auth' : ''+regIDStorege
+	            }
+	        }
 var monthNames =[
 		
 		"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
@@ -241,7 +243,7 @@ var monthNames =[
 		}
 	}
 	$scope.getVerifiedPhones = function(){
-		$http.get(appData.getHost()+'/ws/phone/verified/true')
+		$http.get(appData.getHost()+'/ws/phone/verified/true', config)
   		.then(function(response){
   			 $scope.hideBusy();
   			if (response.data){

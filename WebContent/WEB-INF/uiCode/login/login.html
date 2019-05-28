@@ -24,9 +24,9 @@
 	<div style="padding-right: 10px;">
 		<div ng-if="host != '' ">
 		 	<input class="cash input-shadow"  type="text" placeholder="Your Email" ng-model="login.userName"/>
-		 	<input type="password" class="cash input-shadow"  type="password" placeholder="Your Password" ng-model="login.password" />
-		 	<input ng-if="login.type == 'signup'" type="password" class="cash input-shadow"  type="password" placeholder="Confirm password" ng-model="login.passwordconfirm" />
-		 	
+		 	<input type="password" class="cash input-shadow"  type="password" placeholder="Your Password" ng-model="login.password"  id="password"/>
+		 	<input ng-if="login.type == 'signup'" type="password" class="cash input-shadow"  type="password" placeholder="Confirm password" ng-model="login.passwordConfirm" />
+		 	<span ng-if="login.type == 'signin'"> <br/><input style="width: 15px;"  type="checkbox" ng-click="$ctrl.showPassword()">Show Password </span>
 		</div>
 	</div>
 	
@@ -37,7 +37,7 @@
  	<div style="text-align: center;">
  	<br/>
 		 <button class="email-sign-btn" ng-if="host != '' " 
-		 ng-click="signInEmail()" id="signinEmail" name="signinEmail" 
+		 ng-click="$ctrl.signInPassword()" id="signInPassword" name="signInPassword" 
 		 ><span ng-if="login.type == 'signin'">Sign In</span> <span ng-if="login.type == 'signup'">Sign Up</span></button>
 	 </div>
 	

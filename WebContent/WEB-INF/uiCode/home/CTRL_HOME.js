@@ -21,9 +21,13 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 	//cordova plugin add cordova-plugin-contacts-phonenumbers
 	//cordova plugin add https://github.com/boltex/cordova-plugin-powermanagement
 	//cordova plugin add https://github.com/katzer/cordova-plugin-local-notifications de.appplant.cordova.plugin.local-notification
+	
+	
+	var regIDStorege = window.localStorage.getItem('regID');
 	 var config = {
 	            headers : {
-	                'Content-Type': 'application/json;'
+	                'Content-Type': 'application/json;',
+	                'Auth' : ''+regIDStorege
 	            }
 	        }
 	 dataLayer.push({'pageTitle': 'Home'});    // Better
@@ -155,7 +159,7 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 		
 		$scope.showBusy();
 		
-		 $http.get(appData.getHost()+'/ws/reminder')
+		 $http.get(appData.getHost()+'/ws/reminder',config )
 	  		.then(function(response){
 	  			 $scope.hideBusy();
 	  			$scope.formatReminderDisplay(response.data) ;
@@ -163,14 +167,21 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 	  			
 	  		},
 			function(response){
-	  			 $scope.hideBusy();
-	  			$scope.retryCount ++;
-	  			if ($scope.retryCount <=10){
-	  				$timeout($scope.getReminders(), 500);
+	  			if (response.status == 401){
+	  				$scope.popUp('Please Log in ', 'Seams like you have been logged out. Please login back.',null  );
+	  				$state.transitionTo('menu.login');
 	  				
 	  			}else {
-	  				$scope.popUpRefresh('Sorry '+$scope.retryCount, 'Could not fectch data. Do you want to retry now? ','menu.login' );
+	  				 $scope.hideBusy();
+	 	  			$scope.retryCount ++;
+	 	  			if ($scope.retryCount <=10){
+	 	  				$timeout($scope.getReminders(), 500);
+	 	  				
+	 	  			}else {
+	 	  				$scope.popUp('Sorry '+$scope.retryCount, 'Could not fectch data. Please relaunch the app. ',null  );
+	 	  			}
 	  			}
+	  			
 	  			
 			});
 	}
@@ -229,7 +240,7 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$scope','$state','$rootScope','$ionicL
 				   
 				   $scope.showBusy();
 					
-					 $http.delete(appData.getHost()+'/ws/reminder/reminderID/'+$scope.reminders[$scope.deleteIndex]._id)
+					 $http.delete(appData.getHost()+'/ws/reminder/reminderID/'+$scope.reminders[$scope.deleteIndex]._id, config)
 				  		.then(function(response){
 				  			 $scope.hideBusy();
 				  			$scope.formatReminderDisplay(response.data) ;

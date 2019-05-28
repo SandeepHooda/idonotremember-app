@@ -4,8 +4,11 @@
     </ion-header-bar>
 <ion-content class="padding">
 <span class="whitecolor">
+<div ng-if="androidApp">
+Please complete your payment via the secure payment gateway and come back to the app
+</div>
 <!--  Recharhe component -->
-<div >
+<div ng-if="!androidApp">
 	<div >
 	 	<input id="rechargeAmount" class="cash" type="text" placeholder="Recharge Amount" ng-model="recharge.amount" ng-change="validateAmount()">
 	 	&nbsp;<button class="button button-calm order-button cashBtn" ng-click="goToHome()">Cancel </button>&nbsp;&nbsp;&nbsp;
@@ -13,10 +16,10 @@
 				
 			</button>
 	</div>
-	
+In this top up you will get {{recharge.callValue}} calls or , {{recharge.smsValue}} SMS.<br/><br/>	
 </div>	
-In this top up you will get {{recharge.callValue}} calls or , {{recharge.smsValue}} SMS.<br/><br/>
-For pricing please refer: <a href="/docs/pricing.html" target="_blank">For pricing please click here</a>	
+
+For pricing please refer: <a href="https://idonotremember-app.appspot.com/docs/pricing.html" target="_system">For pricing please click here</a>	
 </span>
 </ion-content>
 </ion-view>

@@ -11,7 +11,15 @@ APP.CONTROLLERS.controller ('CTRL_AddCashSuccess',['$scope','$http','$state','ap
 	}
 	$scope.recharge.amount = window.localStorage.getItem('rechargeAmount');
 	
-	$http.get(appData.getHost()+'/RecentOrders')
+	var regIDStorege = window.localStorage.getItem('regID');
+	 var config = {
+	            headers : {
+	                'Content-Type': 'application/json;',
+	                'Auth' : ''+regIDStorege
+	            }
+	        }
+	
+	$http.get(appData.getHost()+'/RecentOrders', config)
 		.then(function(response){
 			if (response.data != "null"){
 				$scope.recharge.orderID = response.data ;

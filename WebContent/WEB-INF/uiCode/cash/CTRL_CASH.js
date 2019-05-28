@@ -1,9 +1,25 @@
-APP.CONTROLLERS.controller ('CTRL_CASH',['$scope','$ionicLoading','$http','$ionicPopup','$state','appData',
-    function($scope,$ionicLoading,$http,$ionicPopup, $state,appData ){
+APP.CONTROLLERS.controller ('CTRL_CASH',['$window','$scope','$ionicLoading','$http','$ionicPopup','$state','appData',
+    function($window,$scope,$ionicLoading,$http,$ionicPopup, $state,appData ){
 	var theCtrl = this;
 	$scope.recharge = {}
 	$scope.recharge.amount = "";
 	$scope.paymentGateway = "Payment gateway"
+		$scope.androidApp= false;	
+		
+	
+		var regID = window.localStorage.getItem('regID');
+		if (!regID){
+			regID = $location.search()['regID']
+			window.localStorage.setItem('regID',regID );
+		}
+		if ($window.location.host == "") { //android app
+			//$scope.popUp(' Patment in progress ', 'Please complete your payment via the secure payment gateway and come back to the app',null);
+			
+			$scope.androidApp= true;
+			window.open("https://idonotremember-app.appspot.com/ui/index.html#/menu/addcash?regID="+regID, "_system");
+			 //$state.transitionTo('menu.tab.home');
+			
+		}
 	$scope.goToHome = function(){
 		var moveTo = "";
 		if (window.localStorage.getItem('postlogin-moveto')){

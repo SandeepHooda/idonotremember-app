@@ -86,8 +86,17 @@ public class LoginEndpointImpl implements LoginEndpoint {
 	@Override
 	public Response addPhoneNo(Phone phone, HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
+			
+			String regID = request.getHeader("Auth");
+			
+			if (null == regID) {
+				HttpSession session = request.getSession();
+				 regID = (String)session.getAttribute("regID");
+			}
+			
+			
+			
+			
 			return Response.ok().entity(loginFacade.addPhoneNo(phone, regID)).build();
 		}catch(Exception e){
 			e.printStackTrace();
@@ -115,8 +124,12 @@ public class LoginEndpointImpl implements LoginEndpoint {
 	@Override
 	public Response getUserPhones(HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
+			String regID = request.getHeader("Auth");
+			
+			if (null == regID) {
+				HttpSession session = request.getSession();
+				 regID = (String)session.getAttribute("regID");
+			}
 			String email = new ReminderFacade().getEmail(regID);
 			return Response.ok().entity(loginFacade.getUserPhones( email)).build(); 
 		}catch(Exception e){
@@ -132,8 +145,12 @@ public class LoginEndpointImpl implements LoginEndpoint {
 	@Override
 	public Response deletePhone(String phoneID, HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
+			String regID = request.getHeader("Auth");
+			
+			if (null == regID) {
+				HttpSession session = request.getSession();
+				 regID = (String)session.getAttribute("regID");
+			}
 			String email = new ReminderFacade().getEmail(regID);
 			if (phoneID.endsWith(email)) {
 				loginFacade.deletePhone( phoneID);
@@ -156,8 +173,12 @@ public class LoginEndpointImpl implements LoginEndpoint {
 	@Override
 	public Response sendOtp(String phoneID, HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
+			String regID = request.getHeader("Auth");
+			
+			if (null == regID) {
+				HttpSession session = request.getSession();
+				 regID = (String)session.getAttribute("regID");
+			}
 			String email = new ReminderFacade().getEmail(regID);
 			if (phoneID.endsWith(email)) {
 				String userName = (String)request.getSession().getAttribute("userName");
@@ -198,8 +219,12 @@ public class LoginEndpointImpl implements LoginEndpoint {
 	@Override
 	public Response getPhoneViaStatus(boolean status, HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String regID = (String)session.getAttribute("regID");
+			String regID = request.getHeader("Auth");
+			
+			if (null == regID) {
+				HttpSession session = request.getSession();
+				 regID = (String)session.getAttribute("regID");
+			}
 			String email = new ReminderFacade().getEmail(regID);
 			return Response.ok().entity(loginFacade.getPhoneViaStatus( email, status)).build(); 
 		}catch(Exception e){
@@ -228,8 +253,15 @@ public class LoginEndpointImpl implements LoginEndpoint {
 	@Override
 	public Response feedback( String feedback,   HttpServletRequest request) {
 		try{
-			HttpSession session = request.getSession();
-			String email = (String) session.getAttribute("email");
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = new ReminderFacade().getEmail(regID);
+			}
+			if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}
 			String userName = (String)request.getSession().getAttribute("userName");
 			if (null == userName) {
 				userName = "";
@@ -259,6 +291,47 @@ public class LoginEndpointImpl implements LoginEndpoint {
 			LoginVO vo = new LoginVO();
 			vo.setErrorMessage("Feedback received ");
 			return Response.ok().entity(vo).build(); 
+		}catch(Exception e){
+			e.printStackTrace();
+			LoginVO vo = new LoginVO();
+			vo.setErrorMessage("Internal Server Error ");
+			
+			return Response.serverError().entity(vo).build();
+		}
+	}
+
+	@Override
+	public Response loginWithPassword(LoginVO loginVO, HttpServletRequest request) {
+		
+		try{
+			loginVO = loginFacade.loginWithPassword(loginVO);
+			if (null == loginVO) {
+				return Response.status(Response.Status.UNAUTHORIZED).entity(false).build();
+			}else {
+				return Response.ok().entity(loginVO).build();
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			LoginVO vo = new LoginVO();
+			vo.setErrorMessage("Internal Server Error ");
+			
+			return Response.serverError().entity(vo).build();
+		}
+	}
+
+	@Override
+	public Response validateEmail(String email, String regID, HttpServletRequest request) {
+		try{
+			if (loginFacade.validateEmail(email, regID)) {
+				return Response.ok().entity("Thanks for your confirmation. Your identity has now been verified. You may close this window. Please go to the app and sign in with the user name and password that you used.").build();
+			}else {
+				return Response.status(Response.Status.UNAUTHORIZED).entity(false).build();
+			}
+		
+			
+				
+			
 		}catch(Exception e){
 			e.printStackTrace();
 			LoginVO vo = new LoginVO();

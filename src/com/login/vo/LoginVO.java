@@ -1,6 +1,5 @@
 package com.login.vo;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class LoginVO {
@@ -17,6 +16,7 @@ public class LoginVO {
 	private long loginTime;
 	private Settings userSettings;
 	private String ipAddress;
+	private String type;//signin , signup
 	//private IPtoLocation ipAddressLocation;
 	//private String userAgent;
 	//private String completeHeaders;
@@ -24,7 +24,9 @@ public class LoginVO {
 	//private Map<String, String> requestHeaders;
 	
 	private String password = null;//"Welcome";
+	private String passwordConfirm = null;//"Welcome";
 	private String userName = null;//"pooja.arora@paytm.com";
+	private boolean emailValidated;
 	 
 	
 	public LoginVO() {
@@ -118,6 +120,24 @@ public class LoginVO {
 	}
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}
+	public boolean isEmailValidated() {
+		return emailValidated;
+	}
+	public void setEmailValidated(boolean emailValidated) {
+		this.emailValidated = emailValidated;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 

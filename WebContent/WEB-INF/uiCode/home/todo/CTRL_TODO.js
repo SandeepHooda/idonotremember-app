@@ -5,11 +5,13 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	var theCtrl = this;
 	theCtrl.newTodo = "";
 	window.localStorage.setItem('postlogin-moveto','menu.tab.todo');
-	var config = {
-            headers : {
-                'Content-Type': 'application/json;'
-            }
-        }
+	var regIDStorege = window.localStorage.getItem('regID');
+	 var config = {
+	            headers : {
+	                'Content-Type': 'application/json;',
+	                'Auth' : ''+regIDStorege
+	            }
+	        }
 	var name = window.localStorage.getItem('name');
 	if (name ){
 		$scope.userName = "Welcome "+name;
@@ -105,12 +107,12 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	}
 	$scope.login = function (){
 		var regID = window.localStorage.getItem('regID');
-		if (document.URL.indexOf('localhost')>=0){
+		/*if (document.URL.indexOf('localhost')>=0){
 			regID = "69905a13-79b9-4314-95fa-17a87a6121b0";
 			 window.localStorage.setItem('regID', regID);
-		}
+		}*/
 		
-		 $http.get(appData.getHost()+'/ws/login/validate/'+regID+'/timeZone/'+Intl.DateTimeFormat().resolvedOptions().timeZone.replace("/", "@"))
+		 $http.get(appData.getHost()+'/ws/login/validate/'+regID+'/timeZone/'+Intl.DateTimeFormat().resolvedOptions().timeZone.replace("/", "@"), config)
 	  		.then(function(response){
 	  			
 	  		});
@@ -178,9 +180,10 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	}
 	$scope.getToDos = function(){
 		
+		
 		$scope.showBusy();
 		
-		 $http.get(appData.getHost()+'/ws/todo')
+		 $http.get(appData.getHost()+'/ws/todo', config)
 	  		.then(function(response){
 	  			 $scope.hideBusy();
 	  			//$scope.todos = response.data ;
@@ -189,8 +192,13 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	  			
 	  		},
 			function(response){
-	  			 $scope.hideBusy();
-	  			$scope.popUpRefresh('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+	  			if (response.status == 401){
+	  				$state.transitionTo('menu.login');
+	  			}else {
+	  				 $scope.hideBusy();
+	 	  			$scope.popUp('Sorry ', 'Could not fectch data. Please relaunch the app. ',null  );
+	  			}
+	  			
 			});
 		}
 	$scope.noDataFound = false;
@@ -218,7 +226,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	
 	$scope.toggleComplete = function(todo){
 		 $scope.showBusy();
-		 $http.delete(appData.getHost()+'/ws/todo/id/'+todo._id)
+		 $http.delete(appData.getHost()+'/ws/todo/id/'+todo._id, config)
 	  		.then(function(response){
 	  			 $scope.hideBusy();
 	  			$scope.showToDos(response.data);
@@ -258,7 +266,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	  		},
 			function(response){
 	  			 $scope.hideBusy();
-	  			$scope.popUpRefresh('Sorry ', 'Could not fectch data. Do you want to retry now?','menu.login' );
+	  			$scope.popUp('Sorry ','Could not fectch data. Please relaunch the app. ',null );
 			});
 	}
 	$scope.moveDown = function(index){
