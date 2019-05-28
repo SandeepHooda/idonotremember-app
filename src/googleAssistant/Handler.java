@@ -286,7 +286,7 @@ public class Handler extends HttpServlet {
 					if (new ReminderFacade().addReminder(reminder,settings.getAppTimeZone() )) {
 						reminder.setDisplayTime(reminder.formatDisplayTime(reminder.getNextExecutionTime(), settings.getAppTimeZone()));
 						String displayDateStr = reminder.formatDisplayTimeWithDay(reminder.getNextExecutionTime(), settings.getAppTimeZone());
-						serviceResponse =   name+", I have set the reminder,  "+googlerequest.getQueryResult().getParameters().get("any")+", for  "+displayDateStr.replace("@", ", Time ") ;
+						serviceResponse =   name+", I have set the reminder for,  "+googlerequest.getQueryResult().getParameters().get("any")+", on  "+displayDateStr.replace("@", ", Time ") ;
 						checkCallCredits(email,settings);
 					}else {
 						serviceResponse = " There was some error. Please try at some time later.";
