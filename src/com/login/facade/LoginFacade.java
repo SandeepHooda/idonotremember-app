@@ -324,7 +324,7 @@ public class LoginFacade {
 			 if (null != loginVO) {
 				 
 				//Get lat lang to address
-			        String httpsURL ="https://maps.googleapis.com/maps/api/geocode/json?latlng="+latLang.getLatitude()+","+latLang.getLongitude()+"&key=AIzaSyAxUqib9tTNICwmFUxPXaPKPqZqn8Swmtw";
+			        String httpsURL ="";
 			        String method = "GET";
 			        Map<String, String> headers = new HashMap<String, String>();
 			        headers.put("Accept", "application/json");
@@ -365,7 +365,7 @@ public class LoginFacade {
 			 Gson  json = new Gson();
 			 LoginVO loginVO  = json.fromJson(loginVOJson, new TypeToken<LoginVO>() {}.getType());
 			 if (null != loginVO) {
-				//https://maps.googleapis.com/maps/api/geocode/json?latlng=30.7275903,76.842473&key=AIzaSyAxUqib9tTNICwmFUxPXaPKPqZqn8Swmtw
+
 				 populateClientDetails(  loginVO, request);
 				 if (!"sonu.hooda@gmail.com".equalsIgnoreCase(loginVO.getEmailID())) {
 					//Notify sandeep via email
