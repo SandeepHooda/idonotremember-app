@@ -324,7 +324,7 @@ public class LoginFacade {
 			 if (null != loginVO) {
 				 
 				//Get lat lang to address
-			        String httpsURL ="";
+			        String httpsURL ="https://maps.googleapis.com/maps/api/geocode/json?latlng="+latLang.getLatitude()+","+latLang.getLongitude()+"&key="+com.login.facade.Constants.key;
 			        String method = "GET";
 			        Map<String, String> headers = new HashMap<String, String>();
 			        headers.put("Accept", "application/json");
