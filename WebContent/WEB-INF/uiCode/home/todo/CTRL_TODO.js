@@ -1,7 +1,7 @@
-APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicLoading','$http','$ionicPopup','appData',
-    function($scope,$state,$rootScope,$ionicLoading,$http,$ionicPopup, appData){
+APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope','$ionicLoading','$http','$ionicPopup','appData',
+    function($window,$scope,$state,$rootScope,$ionicLoading,$http,$ionicPopup, appData){
 	
-	
+			
 	var theCtrl = this;
 	theCtrl.newTodo = "";
 	window.localStorage.setItem('postlogin-moveto','menu.tab.todo');
@@ -25,16 +25,66 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 		$scope.$emit('logOut');
 	}
 	$scope.listenToVoice = function(){
+	
+		if ($window.location.host == ""){ //android
+			$scope.listenToVoiceCordova();
+		}else {
+			$scope.listenToVoiceWeb();
+		}
+	}
+
+	$scope.listenToVoiceWeb = function(){
 		if (theCtrl.newTodo.length) {
 			theCtrl.newTodo += ' ';
 		  }
 		$scope.recognition.start();
 	}
+
+	$scope.speachPermissionGranted = function(){
+				var settings = {
+					lang: "en-US",
+					showPopup: true
+			};
+
+			window.plugins.speechRecognition.startListening(function(result){
+				//console.log(result);
+				theCtrl.newTodo = result[0];
+				$scope.addNewTodo();
+		}, function(err){
+				console.log(err);
+		}, settings);
+	}
+
+	$scope.listenToVoiceCordova = function(){
+
+		window.plugins.speechRecognition.isRecognitionAvailable(function(available){
+			if(available){
+				window.plugins.speechRecognition.hasPermission(function (isGranted){
+					if(isGranted){
+						$scope.speachPermissionGranted();
+					}else{
+							window.plugins.speechRecognition.requestPermission(function (){
+								$scope.speachPermissionGranted();
+							}, function (err){
+									// Opps, nope
+							});
+					}
+				}, function(err){
+						console.log(err);
+				});
+
+
+			}
+	}, function(err){
+			console.error(err);
+	});
+
+	}
 	$scope.voiceInit = function(){
 		try {
 			  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 			  $scope.recognition = new SpeechRecognition();
-			  $scope.recognition.continuous = true;
+			  $scope.recognition.continuous = false;
 			  $scope.recognition.onstart = function() { 
 				  //alert('Voice recognition activated. Try speaking into the microphone.');
 				}
@@ -49,7 +99,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 				  };*/
 				}
 			  $scope.recognition.onresult = function(event) {
-
+				  $scope.recognition.stop();
 				  // event is a SpeechRecognitionEvent object.
 				  // It holds all the lines we have captured so far. 
 				  // We only need the current one.
@@ -88,16 +138,25 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$scope','$state','$rootScope','$ionicL
 	 }
 	
 	 $scope.readOutLoud = function(message) {
-		  var speech = new SpeechSynthesisUtterance();
+		 
+		if ($window.location.host == ""){//android 
+				TTS.speak(message).then(function () {
+	           
+	        }, function (reason) {
+	           
+	        });
+		}else {
+				var speech = new SpeechSynthesisUtterance();
 
-		  // Set the text and voice attributes.
-		  speech.text = message;
-		  speech.volume = 1;
-		  speech.rate = 1;
-		  speech.pitch = 1;
-
-		  window.speechSynthesis.speak(speech);
-		}
+				// Set the text and voice attributes.
+				speech.text = message;
+				speech.volume = 1;
+				speech.rate = 1;
+				speech.pitch = 1;
+				window.speechSynthesis.speak(speech);
+			}
+			
+	}
 	$scope.voiceInit();
 	
 	$scope.checkEnter = function(){

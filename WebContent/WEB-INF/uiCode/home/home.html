@@ -68,8 +68,10 @@
 			</div>
 			<div><span class="infoText">Swipe left to delete an item.</span></div>
 		</span>
-		
-		<button ng-click="$ctrl.addNewReminder()" id="floatingBtn" class="floatingBtn top0" name="add new" title="add new reminder" ng-click="newReminder()">
+		<button ng-click="herokuInit();readOutLoudQuestion();" id="floatingBtnMic" class="floatingBtn top0"  name="add new" title="add new todo" >
+			 <i class="fa fa-microphone"></i>
+		</button>
+		<button ng-click="$ctrl.addNewReminder()" id="floatingBtn" class="floatingBtn top0" name="add new" style="right: 80px;" title="add new reminder" ng-click="newReminder()">
 			 <i class="icon ion-plus"></i>
 		</button>
 	</div>
