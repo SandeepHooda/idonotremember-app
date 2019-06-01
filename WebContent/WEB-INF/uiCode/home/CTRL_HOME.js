@@ -49,6 +49,8 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$window','$scope','$state','$rootScope
 		 theCtrl.voiceReminder.questionsTextOnly.push(theCtrl.voiceReminder.questions[i].replace(/[^0-9a-zA-Z ]/g, ''));
 		}
 	var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+ var	month = ["January","February","March", "April", "May", "June","July","August", "September",
+ "October","November", "December"];
 	window.localStorage.setItem('postlogin-moveto','menu.tab.home');
 	var name = window.localStorage.getItem('name');
 	if (name ){
@@ -432,7 +434,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		if ($window.location.host != ""){
 			$scope.recognition.stop();
 		}
-		
+		let requestWaitingFromHeroku = false;
 		
 		if (answer){
 			if (theCtrl.voiceReminder.currentQuestion == 2){
@@ -446,6 +448,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 					}
 				}else {
 					//get date from heroku 
+					requestWaitingFromHeroku = true;
 					$scope.getDateAndTimeHeroku(answer)
 				}
 				
@@ -456,7 +459,12 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 					theCtrl.voiceReminder.currentQuestion++;
 				}
 			}else if(theCtrl.voiceReminder.currentQuestion == 4) {
-				if ( answer != 'weekly' || answer != 'monthly' || answer != 'yearly'){
+				if ("early" ==answer ){
+					answer = "yearly";
+				}else if ("bitly" ==answer ){
+					answer = "weekly";
+				}
+				if ( answer != 'weekly' && answer != 'monthly' && answer != 'yearly'){
 					answer = 'once';
 				}
 				theCtrl.voiceReminder.answers.push(answer);
@@ -468,7 +476,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 			}
 			
 		}
-		if (theCtrl.voiceReminder.currentQuestion <=4){
+		if (theCtrl.voiceReminder.currentQuestion <=4 && !requestWaitingFromHeroku){
 			$scope.readOutLoudQuestion();
 		}
 		
@@ -483,10 +491,10 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 				if (dateTimeHeroku && dateTimeHeroku.length >= 16){
 					let dateTime = {};
 					dateTime.date = dateTimeHeroku.substring(0,10);
-					dateTime.date = dateTime.date.replace("-","_");
+					dateTime.date = dateTime.date.replace(/-/g,"_");
 					if (dateTimeHeroku.substring(11,13) != "00"){
 						dateTime.time = dateTimeHeroku.substring(11,16);
-						dateTime.time = dateTime.time.replace(":","_");
+						dateTime.time = dateTime.time.replace(/:/g,"_");
 					}
 					
 					if (dateTime.date){
@@ -608,18 +616,50 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		reminderObj.time = theCtrl.voiceReminder.answers[3];
 		reminderObj.frequencyType =  "Date";
 		reminderObj.frequencyWithDate = theCtrl.voiceReminder.answers[4];
+
+		let date = reminderObj.date;
+		date = date.replace(/_/g,"-");
+		var dt = new Date(date);
+		
 		if ("weekly" == reminderObj.frequencyWithDate){
 			reminderObj.frequencyType =  "Day";
-			let date = reminderObj.date;
-			date = date.replace("_","-");
-			var dt = new Date(date);
-			reminderObj.dayRepeatFrequency("Every "+days[d.getDay()]);
-			
+			reminderObj.dayRepeatFrequency ="Every "+days[dt.getDay()];
+			reminderObj.displayTime = reminderObj.dayRepeatFrequency +" of every month @ "+(reminderObj.time.replace(/_/g,":"))
+		}else if ("monthly" == reminderObj.frequencyWithDate) {
+			reminderObj.displayTime = "Every month  "+dt.getDate()+" @ "+(reminderObj.time.replace(/_/g,":"))
+		}else if ("yearly" == reminderObj.frequencyWithDate) {
+			reminderObj.displayTime = "Every year  "+month[dt.getMonth()] +" "+dt.getDate()+" @ "+(reminderObj.time.replace(/_/g,":"))
 		}
 
-		reminderObj.displayTime = "14 August 2019 @ 10 : 00";
-		reminderObj._id = new Date().getTime() +Math.random();
 		
+		reminderObj._id = new Date().getTime() +Math.random();
+		$scope.httpAdd(reminderObj);
+	}
+
+	$scope.httpAdd = function(reminderObj){
+		$scope.showBusy();
+		$http.post(appData.getHost()+'/ws/reminder/',reminderObj , config)
+  		.then(function(response){
+  			 $scope.hideBusy();
+  			if (response.data){
+  				$scope.popUp('Success', 'Reminder added Successfully','menu.tab.home' );
+  			}else {
+  				$scope.popUp('Failure', 'Please retry',null )
+  			}
+  			
+  		},
+		function(response){
+  			 $scope.hideBusy();
+  			
+  			 if (response.status == 401) {
+  				$scope.popUp('Failure', 'Please login back and then retry.',null );
+  			 }else {
+  				$scope.popUp('Failure', 'Please retry.',null );
+  			 }
+  			
+  			
+			
+		});
 	}
 	
 	$scope.popUp = function(subject, body, nextStep){
