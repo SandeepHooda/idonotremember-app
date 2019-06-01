@@ -147,13 +147,13 @@ public class SchedulerService {
 		}
 		
 		try {
-			if (reminderVO.isMakeACall() && settings.getCurrentCallCredits() >=5) {
+			if (reminderVO.isMakeACall() && settings.getCurrentCallCredits() >=Settings.callCharges) {
 				if (!MakeACall.call(callLog.getTo(), callLog.get_id())) {
 					throw new Exception("Couln't not notify user via Phone");
 				}
 				
 				//Make a call above the comment and then update settings
-				 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -5);
+				 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -Settings.callCharges);
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -166,7 +166,7 @@ public class SchedulerService {
 		//Send SMS
 		
 			
-			 if (reminderVO.isSendText() && settings.getCurrentCallCredits() >=1) {
+			 if (reminderVO.isSendText() && settings.getCurrentCallCredits() >=Settings.smsCharges) {
 				 String message = callLog.getMessage();
 				 if (null == message) {
 					 message = "Reminder for your.";
@@ -180,7 +180,7 @@ public class SchedulerService {
 						}
 					 
 					//Send above the comment and then update settings
-					 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -1);
+					 settings.setCurrentCallCredits(settings.getCurrentCallCredits() -Settings.smsCharges);
 				 }catch(Exception e) {
 						e.printStackTrace();
 					}

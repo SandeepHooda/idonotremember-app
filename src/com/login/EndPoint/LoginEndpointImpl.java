@@ -5,6 +5,8 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import com.Constants;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.login.facade.LoginFacade;
 import com.login.vo.ContactUS;
 import com.login.vo.LatLang;
@@ -12,6 +14,8 @@ import com.login.vo.LoginVO;
 import com.login.vo.Phone;
 import com.login.vo.Settings;
 import com.reminder.facade.ReminderFacade;
+
+import mangodb.MangoDB;
 
 public class LoginEndpointImpl implements LoginEndpoint {
 	private LoginFacade loginFacade;
@@ -95,9 +99,22 @@ public class LoginEndpointImpl implements LoginEndpoint {
 			}
 			
 			
+			HttpSession session = request.getSession();
+			Settings usrSettings = (Settings) session.getAttribute("settings");
+			if (usrSettings.getCurrentCallCredits() > 10) {
+				usrSettings.setCurrentCallCredits(usrSettings.getCurrentCallCredits() -Settings.smsCharges);
+				Gson  json = new Gson();
+				 String settingsJson = json.toJson(usrSettings, new TypeToken<Settings>() {}.getType());
+				 String email = new ReminderFacade().getEmail(regID);
+				 MangoDB.updateData("remind-me-on", "registered-users-settings", settingsJson, email, null);
+				
+				return Response.ok().entity(loginFacade.addPhoneNo(phone, regID)).build();
+			}else {
+				LoginVO vo = new LoginVO();
+				vo.setErrorMessage("Insufficient balance");
+				return Response.status(Response.Status.PAYMENT_REQUIRED).entity(vo).build();
+			}
 			
-			
-			return Response.ok().entity(loginFacade.addPhoneNo(phone, regID)).build();
 		}catch(Exception e){
 			e.printStackTrace();
 			LoginVO vo = new LoginVO();

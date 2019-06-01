@@ -30,6 +30,9 @@ APP.CONTROLLERS.controller ('CTRL_ADDCONTACTS',['$scope','$ionicLoading','$http'
   			
   			 if (response.status == 401) {
   				$scope.popUp('Failure', 'Please login back and then retry.',null );
+  			 }else if (response.status == 402) {
+					$scope.popUp('Add funds', 'Your account must have at leaset Rs 10 to add a new phone number .',null );
+  				$state.transitionTo('menu.addcash');
   			 }else {
   				$scope.popUp('Failure', 'Please retry.',null );
   			 }

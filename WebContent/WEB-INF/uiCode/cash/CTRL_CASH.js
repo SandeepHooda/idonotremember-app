@@ -52,7 +52,7 @@ APP.CONTROLLERS.controller ('CTRL_CASH',['$window','$scope','$ionicLoading','$ht
 			$scope.recharge.amount = "";
 		}else {
 			$scope.recharge.callValue = Math.floor($scope.recharge.amount / 7);
-			$scope.recharge.smsValue = Math.floor($scope.recharge.amount / 1.4);
+			$scope.recharge.smsValue = Math.floor($scope.recharge.amount / 2);
 			window.localStorage.setItem('rechargeAmount', $scope.recharge.amount);
 		}
 	}

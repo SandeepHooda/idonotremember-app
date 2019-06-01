@@ -3,6 +3,8 @@ package com.login.vo;
 import java.io.Serializable;
 
 public class Settings implements Serializable {
+	public static double callCharges = 7;
+	public static double smsCharges = 2;
 	private String _id;
 	private String appTimeZone;
 	private String userSuppliedTimeZone;
