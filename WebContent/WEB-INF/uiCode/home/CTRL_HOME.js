@@ -127,11 +127,20 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		}
 		let message = theCtrl.voiceReminder.questions[theCtrl.voiceReminder.currentQuestion];
 		if ($window.location.host == ""){//android 
+			let timeout = 2200;
+			if (theCtrl.voiceReminder.currentQuestion == 4){
+				timeout = 5000;
+			}
+			$timeout(function(){
+			
+				$scope.listenToVoiceCordova();
+			}, timeout);
 				TTS.speak(message).then(function () {
-					$scope.listenToVoiceCordova();
-	        }, function (reason) {
-	           
-	        });
+				 }, function (reason) {
+						
+					});
+					
+					
 		}else {
 				var speech = new SpeechSynthesisUtterance();
 
@@ -325,8 +334,12 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 	}
 	$scope.deleteReminder = function(deleteIndex){
 		$scope.deleteIndex  = deleteIndex;
+		let reminderText = $scope.reminders[$scope.deleteIndex].reminderText;
+		if (!reminderText || reminderText == "null"){
+			reminderText = ""
+		}
 		 var confirmPopup = $ionicPopup.confirm({
-		     title: ''+$scope.reminders[$scope.deleteIndex].reminderSubject+" "+$scope.reminders[$scope.deleteIndex].reminderText,
+		     title: ''+$scope.reminders[$scope.deleteIndex].reminderSubject+" "+reminderText,
 		     template: 'Do you want to delete this reminder. Please note that delte a reminder means that all future ocurances will also be cancled.'
 		   });
 
@@ -519,7 +532,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 	}
 		
 	$scope.getDateAndTime = function(answer){
-		console.log(" date time answer "+answer)
+		console.log(" date time answer "+answer);
 		let dateTime = {};
 		
 		if (answer){
@@ -530,7 +543,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		
 		dateTime.time = answer.match(/\d{1,2}:{0,1}\d{0,2} (am|pm)/g);
 		if (dateTime.time && dateTime.time[0]){
-			console.log("time extracted "+dateTime.time)
+			console.log("time extracted "+dateTime.time);
 			let time = dateTime.time[0];
 			
 			answer = answer.substring(0,answer.indexOf(time)).trim();
@@ -642,7 +655,8 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
   		.then(function(response){
   			 $scope.hideBusy();
   			if (response.data){
-  				$scope.popUp('Success', 'Reminder added Successfully','menu.tab.home' );
+					$scope.getReminders();
+  				$scope.popUp('Success', 'Reminder added Successfully','menu.tab.home ' );
   			}else {
   				$scope.popUp('Failure', 'Please retry',null )
   			}
