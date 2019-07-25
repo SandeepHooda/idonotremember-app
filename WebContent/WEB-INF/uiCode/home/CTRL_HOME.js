@@ -74,6 +74,24 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$window','$scope','$state','$rootScope
 				});
 	}
 
+	$scope.getVerifiedPhones = function(){
+		$http.get(appData.getHost()+'/ws/phone/verified/true', config)
+  		.then(function(response){
+  			 if (response.data){
+  				$scope.verifiedPhones = response.data;
+  				if($scope.verifiedPhones.length > 0){
+  					theCtrl.selectedPhone = $scope.verifiedPhones[0];
+					}
+  			}else {
+  				$scope.popUp('Failure', 'Please retry',null )
+  			}
+  			
+  		},
+		function(response){
+
+		});
+	}
+
 
 
 	$scope.micOn = function(){
@@ -629,6 +647,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		reminderObj.time = theCtrl.voiceReminder.answers[3];
 		reminderObj.frequencyType =  "Date";
 		reminderObj.frequencyWithDate = theCtrl.voiceReminder.answers[4];
+		reminderObj.selectedPhone = theCtrl.selectedPhone;
 
 		let date = reminderObj.date;
 		date = date.replace(/_/g,"-");

@@ -43,6 +43,9 @@ public class SchedulerService {
 	public static void executeReminderAndReschedule(List<ReminderVO> currentReminders) {
 		Map<String, Settings> settingsMap = new HashMap<>();
 		for(ReminderVO reminderVO : currentReminders) {
+			if ("actiontimemanager@gmail.com".equalsIgnoreCase(reminderVO.getEmail())) {
+				continue;
+			}
 			try {
 				
 				boolean oneTimeReminder = "Once".equalsIgnoreCase(reminderVO.getFrequencyWithDate());
