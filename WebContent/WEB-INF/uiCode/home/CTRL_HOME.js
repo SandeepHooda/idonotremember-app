@@ -648,6 +648,9 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		reminderObj.frequencyType =  "Date";
 		reminderObj.frequencyWithDate = theCtrl.voiceReminder.answers[4];
 		reminderObj.selectedPhone = theCtrl.selectedPhone;
+		if (reminderObj.selectedPhone){
+			reminderObj.makeACall = true;
+		}
 
 		let date = reminderObj.date;
 		date = date.replace(/_/g,"-");
@@ -675,7 +678,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
   			 $scope.hideBusy();
   			if (response.data){
 					$scope.getReminders();
-  				$scope.popUp('Success', 'Reminder added Successfully','menu.tab.home ' );
+  				$scope.popUp('Success', 'Reminder added Successfully','menu.tab.home' );
   			}else {
   				$scope.popUp('Failure', 'Please retry',null )
   			}
