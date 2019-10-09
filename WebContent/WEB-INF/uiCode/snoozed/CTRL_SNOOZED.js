@@ -6,8 +6,8 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$window', '$location','$scope','$io
 	$scope.currentCallCredits = 0;
 	
 	
-	/*if (document.URL.indexOf('localhost')>=0){
-		regID = "69905a13-79b9-4314-95fa-17a87a6121b0";
+/*	if (document.URL.indexOf('localhost')>=0){
+		regID = "e18a8b7d-f6a8-433d-853b-97bd7b875bb1";
 		 window.localStorage.setItem('regID', regID);
 	}*/
 	var regIDStorege = window.localStorage.getItem('regID');
@@ -44,7 +44,19 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$window', '$location','$scope','$io
 				
 			});
 	
-	
+	$scope.toggleAnounce = function(index){
+		$scope.snoozedReminders[index].anounceOnGoogleAssist = !$scope.snoozedReminders[index].anounceOnGoogleAssist;
+		$scope.updateSnoozedReminder($scope.snoozedReminders[index]);
+	}
+	$scope.updateSnoozedReminder = function(reminder){
+		$http.put(appData.getHost()+'/ws/snoozed/reminder', reminder, config)
+  		.then(function(response){
+  			
+  		},
+		function(response){
+  			 
+		});
+	}
 	$scope.getSnoozedReminders = function(){
 		$http.get(appData.getHost()+'/ws/snoozed/reminder',config)
   		.then(function(response){

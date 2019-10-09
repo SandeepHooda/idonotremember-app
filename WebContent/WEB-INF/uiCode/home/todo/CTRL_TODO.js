@@ -167,7 +167,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	$scope.login = function (){
 		var regID = window.localStorage.getItem('regID');
 		/*if (document.URL.indexOf('localhost')>=0){
-			regID = "69905a13-79b9-4314-95fa-17a87a6121b0";
+			regID = "e18a8b7d-f6a8-433d-853b-97bd7b875bb1";
 			 window.localStorage.setItem('regID', regID);
 		}*/
 		

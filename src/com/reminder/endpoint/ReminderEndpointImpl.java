@@ -74,7 +74,35 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 		}
 	}
 
-	
+
+	@Override
+	public Response updateSnoozedReminder(ReminderVO reminderVO, HttpServletRequest request) {
+		try{
+			String regID = request.getHeader("Auth");
+			String email = null;
+			if (null != regID) {
+				 email = reminderFacade.getEmail(regID);
+			}
+			/*if (email == null) {
+				HttpSession session = request.getSession();
+				 email = (String)session.getAttribute("email");
+			}*/
+			
+			if (!reminderVO.getEmail().equalsIgnoreCase(email)) {
+				LoginVO vo = new LoginVO();
+				vo.setErrorMessage("Please log in to authenticate ");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(vo).build();
+			}
+			return Response.ok().entity(reminderFacade.updateSnoozedReminder(reminderVO )).build();
+		}catch(Exception e){
+			e.printStackTrace();
+			LoginVO vo = new LoginVO();
+			vo.setErrorMessage("Internal Server Error ");
+			
+			return Response.serverError().entity(vo).build();
+		}
+	}
+
 
 	@Override
 	public Response getReminders(HttpServletRequest request) {

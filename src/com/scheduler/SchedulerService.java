@@ -201,6 +201,9 @@ public class SchedulerService {
 	
 	public static void snoozReminders(List<ReminderVO> currentReminders) {
 		 Gson  json = new Gson();
+		 for (ReminderVO reminder: currentReminders) {
+			 reminder.setAnounceOnGoogleAssist(true);
+		 }
 		 String data = json.toJson(currentReminders, new TypeToken<List<ReminderVO>>() {}.getType());
 		MangoDB.createNewDocumentInCollection("remind-me-on", "reminders-snooz", data, null);
 	}

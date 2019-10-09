@@ -10,8 +10,13 @@
 		<ion-item class="smallPadding" ng-repeat="reminder in snoozedReminders track by $index" on-swipe-left="deleteReminder({{$index}})">
 		  <div class="productDesc">
 		  		 <b>{{reminder.reminderSubject}} - {{reminder.reminderText}}</b> <br/>
-		  		 <span class="italicBlue">Remind via Email Time: <span> {{reminder.displayTime}}</span></span><br/>
-		  		  
+		  		 <span class="italicBlue">Remind via Email Time: <span> {{reminder.date}} : {{reminder.time}}</span></span><br/>
+				   <button ng-if="!reminder.anounceOnGoogleAssist" class="button button-balanced order-button buttonAnimationLarge" style="background-color:gray;" ng-click="toggleAnounce($index)"> 
+					No Announce 
+				   </button>
+				   <button ng-if="reminder.anounceOnGoogleAssist"  class="button button-balanced order-button buttonAnimationLarge"  ng-click="toggleAnounce($index)"> 
+					Announce notification 
+				   </button>
 		   </div>
 		 </ion-item>
 	</div>

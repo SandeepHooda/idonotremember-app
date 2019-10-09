@@ -59,7 +59,7 @@ public class GetSnoozedReminders extends HttpServlet {
 		List<ReminderVO> reminders  = json.fromJson(data, new TypeToken<List<ReminderVO>>() {}.getType());
 		Map<String, String> soozedRemindersMap = new HashMap<String, String>();
 		for(ReminderVO reminder:reminders ) {
-			if (queryEmail.equalsIgnoreCase(reminder.getEmail())) {
+			if (queryEmail.equalsIgnoreCase(reminder.getEmail()) && reminder.isAnounceOnGoogleAssist()) {
 				String reminderText = soozedRemindersMap.get(reminder.getEmail());
 				if (reminderText == null) {
 					reminderText = "";

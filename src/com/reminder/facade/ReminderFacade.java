@@ -90,6 +90,15 @@ public class ReminderFacade {
         
         
 	}
+	public boolean updateSnoozedReminder(ReminderVO reminderVO) throws ParseException {
+		
+		 Gson  json = new Gson();
+        String data = json.toJson(reminderVO, new TypeToken<ReminderVO>() {}.getType());
+      	 MangoDB.updateData("remind-me-on", "reminders-snooz", data,reminderVO.get_id(), null);
+   	return true;
+       
+       
+	}
 	public boolean addToDo(ToDO toDO) throws ParseException {
 		Gson  json = new Gson();
          String data = json.toJson(toDO, new TypeToken<ToDO>() {}.getType());

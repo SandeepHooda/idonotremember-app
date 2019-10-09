@@ -29,6 +29,12 @@ public interface ReminderEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updateReminder( ReminderVO reminderVO,  @Context HttpServletRequest request);
 	
+	@PUT
+	@Path("/snoozed/reminder")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response updateSnoozedReminder( ReminderVO reminderVO,  @Context HttpServletRequest request);
+	
 	@GET
 	@Path("/reminder")
 	@Produces({ MediaType.APPLICATION_JSON })

@@ -25,6 +25,7 @@ public class ReminderVO {
 	private String displayTime ;
 	private long nextExecutionTime;
 	private String selectedPhone;
+	private boolean anounceOnGoogleAssist = true;
 	private static Map<String, String> monthMap = new HashMap<String, String>();
 	static {
 		monthMap.put("01", " Jan ");
@@ -157,6 +158,14 @@ public class ReminderVO {
 	}
 	public void setSelectedPhone(String selectedPhone) {
 		this.selectedPhone = selectedPhone;
+	}
+
+	public boolean isAnounceOnGoogleAssist() {
+		return anounceOnGoogleAssist;
+	}
+
+	public void setAnounceOnGoogleAssist(boolean anounceOnGoogleAssist) {
+		this.anounceOnGoogleAssist = anounceOnGoogleAssist;
 	}
 
 }
