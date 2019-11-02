@@ -53,12 +53,20 @@ public class GetSnoozedReminders extends HttpServlet {
 			return;
 		}
 		
+		String turnOnAllReminders = request.getParameter("turnOnAllReminders");
+		/*if (turnOnAllReminders != null) {
+			if (turnOnAllReminders != null) {
+				reminder.setAnounceOnGoogleAssist(true);
+			}	
+		}*/
+		
 		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "reminders-snooz", null,null, false, null,null)+"]";
 		Gson  json = new Gson();
 		String remindersForUser = null;
 		List<ReminderVO> reminders  = json.fromJson(data, new TypeToken<List<ReminderVO>>() {}.getType());
 		Map<String, String> soozedRemindersMap = new HashMap<String, String>();
 		for(ReminderVO reminder:reminders ) {
+			
 			if (queryEmail.equalsIgnoreCase(reminder.getEmail()) && reminder.isAnounceOnGoogleAssist()) {
 				String reminderText = soozedRemindersMap.get(reminder.getEmail());
 				if (reminderText == null) {
@@ -70,13 +78,20 @@ public class GetSnoozedReminders extends HttpServlet {
 			}
 			
 		}
-		remindersForUser = remindersForUser.replace("null", "");
+		
 		if (null != remindersForUser) {
-			String google = " Google response: "+notifyViaGoogleRelay(remindersForUser);
-			String alexa = " Alexa response: "+addAlexaNotification(remindersForUser);
-			remindersForUser += google + alexa;
+			remindersForUser = remindersForUser.replace("null", "");
+			//String google = " Google response: "+notifyViaGoogleRelay(remindersForUser);
+			//String alexa = " Alexa response: "+addAlexaNotification(remindersForUser);
+			//remindersForUser += google + alexa;
+			remindersForUser = remindersForUser.toLowerCase();
+			remindersForUser = remindersForUser.replace("reminders", "");
+			remindersForUser = remindersForUser.replace("reminder", "");
+			response.getWriter().append("repeat after me reboot "+remindersForUser);
+		}else {
+			response.getWriter().append("");
 		}
-		response.getWriter().append(remindersForUser);
+		
 		
 	}
 	

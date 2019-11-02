@@ -69,6 +69,7 @@ public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
 				}
 				reminderText += "<br/><br/> &nbsp;&nbsp;&nbsp; &#8226; &nbsp;<b>" +reminder.getReminderSubject()+" "+reminder.getReminderText()+" </b>";
 				soozedRemindersMap.put(reminder.getEmail(), reminderText);
+				reminder.setAnounceOnGoogleAssist(true);
 			}
 			Set<String> emailIds = soozedRemindersMap.keySet();
 			if (!CollectionUtils.isEmpty(emailIds)){

@@ -58,11 +58,11 @@ public class Oauth extends HttpServlet {
 	/**
 	 * Important notes
 	 */
-    //https://console.cloud.google.com/apis/credentials?project=remind-me-on&authuser=5
+    //https://console.cloud.google.com/apis/credentials?project=idonotremember-app //personal reminder notification
     //Also change redirect URI
    private static String client_secret = "JKxIjO-4o7zyPP2Up5Fc4Li2";
    private static String client_id = "880304193567-42sve75pq3vs1h8ivimqmjtn8on2ltk2.apps.googleusercontent.com";
-   //Enanle people.googleapis.com from https://console.cloud.google.com/apis/library?project=remind-me-on&authuser=5
+   //Enanle people.googleapis.com from https://console.cloud.google.com/apis/library?project=idonotremember-app
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 				
