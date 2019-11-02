@@ -71,6 +71,11 @@ public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
 				soozedRemindersMap.put(reminder.getEmail(), reminderText);
 				reminder.setAnounceOnGoogleAssist(true);
 			}
+			
+			//Since this funcation get called every morning so this will set anouncement flag on if user turned it off previous day
+			data  = json.toJson(reminders, new TypeToken<List<ReminderVO>>() {}.getType());
+			MangoDB.updateData("remind-me-on", "reminders-snooz", data, null,null);
+			
 			Set<String> emailIds = soozedRemindersMap.keySet();
 			if (!CollectionUtils.isEmpty(emailIds)){
 				for (String email: emailIds) {
