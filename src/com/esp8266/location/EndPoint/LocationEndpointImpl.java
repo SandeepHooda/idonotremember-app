@@ -55,6 +55,26 @@ public class LocationEndpointImpl implements LocationEndpoint {
 		}
 	}
 
+	@Override
+	public Response getAddress(LatLang latLang, HttpServletRequest request) {
+		try{
+			/*loginVO = loginFacade.loginWithPassword(loginVO);
+			if (null == loginVO) {
+				return Response.status(Response.Status.UNAUTHORIZED).entity(false).build();
+			}else {
+				return Response.ok().entity(loginVO).build();
+			}*/
+			System.out.println(" request "+latLang);
+			return Response.ok().entity(locationFacade.getAddress( latLang)).build();
+		}catch(Exception e){
+			e.printStackTrace();
+			LoginVO vo = new LoginVO();
+			vo.setErrorMessage("Internal Server Error ");
+			
+			return Response.serverError().entity(vo).build();
+		}
+	}
+
 
 
 

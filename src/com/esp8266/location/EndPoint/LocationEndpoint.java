@@ -32,6 +32,12 @@ public interface LocationEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response wifiNetworks( LocationVO locationVO,  @Context HttpServletRequest request);
 	
+	@POST
+	@Path("/location/getAddress")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAddress( LatLang latLang,  @Context HttpServletRequest request);
+	
 	
 
 }
