@@ -35,6 +35,8 @@
         
         <ref bean = "loginEndPointFact"></ref>
          <ref bean = "reminderEndPointFact"></ref>
+         <ref bean = "locationEndPointFact"></ref>
+         
         </jaxrs:serviceFactories>
          <jaxrs:providers>
           		
@@ -55,6 +57,19 @@
    </bean>
    <bean id="loginFacade" class="com.login.facade.LoginFacade">
    </bean>
+   
+   
+   
+   <bean id="locationEndPointFact" class="org.apache.cxf.jaxrs.spring.SpringResourceFactory">
+   		<property name="beanId" value="locationEndpoint"/>
+  </bean>
+  
+   <bean id="locationEndpoint" class="com.esp8266.location.EndPoint.LocationEndpointImpl">
+   		<property name="locationFacade" ref="locationFacade"/>
+   </bean>
+   <bean id="locationFacade" class="com.esp8266.location.facade.LocationFacade">
+   </bean>
+   
    
    <bean id="reminderEndPointFact" class="org.apache.cxf.jaxrs.spring.SpringResourceFactory">
    		<property name="beanId" value="reminderEndpoint"/>

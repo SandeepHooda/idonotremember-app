@@ -60,11 +60,13 @@ public class MangoDB {
             if(res.getResponseCode() >=200 && res.getResponseCode()  <300) {
             	return (new String(res.getContent()));
             }else {
+            	System.out.println(" response code is not ok "+res.getResponseCode());
             	return null;
             }
             
  
         } catch (IOException e) {
+        	e.printStackTrace();
         	return null;
         }
 	}
