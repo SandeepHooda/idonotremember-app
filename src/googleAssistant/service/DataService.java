@@ -11,7 +11,9 @@ import java.util.StringTokenizer;
 
 import javax.ws.rs.core.Response;
 
+import com.esp8266.location.facade.LocationFacade;
 import com.login.vo.LoginVO;
+import com.login.vo.UserLocation;
 import com.reminder.facade.ReminderFacade;
 import com.reminder.vo.ReminderVO;
 import com.reminder.vo.Thing;
@@ -20,6 +22,7 @@ import com.reminder.vo.ToDO;
 public class DataService {
 	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 	private ReminderFacade reminderFacade  = new ReminderFacade();
+	private LocationFacade locationFacade = new LocationFacade();
 	public boolean putMyThing(String email, String item, String location, String quertText) {
 		if (item.startsWith("the ")) {
 			item = item.substring(4);
@@ -297,4 +300,11 @@ public class DataService {
 		}
 	}
 
+	
+ public List<UserLocation> getCarLocation() {
+		
+	  return locationFacade.getRecentLocations();
+		
+	}
+	
 }
