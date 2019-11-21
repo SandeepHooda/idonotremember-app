@@ -59,7 +59,7 @@ public class CarLocation extends HttpServlet {
        }
        System.out.println(" intent = "+intent + " queryText "+queryText);
        System.out.println(" complete request: "+sb.toString());
-       String serviceResponse = "Your last 5 locations are";
+       String serviceResponse = "Your last 5 locations are. ";
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();

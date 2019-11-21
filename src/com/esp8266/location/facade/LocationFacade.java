@@ -125,10 +125,16 @@ public class LocationFacade {
 		Collections.sort(locations, new UserLocationComparator());
 		List<UserLocation> top5 = new ArrayList<UserLocation>();
 		String lastKnown = "";
+		int i=0;
 		for (UserLocation loc :locations ) {
 			if (!loc.getLocation().equalsIgnoreCase(lastKnown)) {
 				lastKnown = loc.getLocation();
 				top5.add(loc);
+				i++;
+				
+			}
+			if (i>=5) {
+				break;
 			}
 		}
 		return top5;
