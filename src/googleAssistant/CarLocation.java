@@ -3,7 +3,9 @@ package googleAssistant;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -59,7 +61,7 @@ public class CarLocation extends HttpServlet {
        }
        System.out.println(" intent = "+intent + " queryText "+queryText);
        System.out.println(" complete request: "+sb.toString());
-       String serviceResponse = "Your last 5 locations are. ";
+       String serviceResponse = "Your car's recent 5 locations are. . . ";
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -69,9 +71,14 @@ public class CarLocation extends HttpServlet {
 
 		//if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
 		List<UserLocation> top5 = dataService.getCarLocation() ;
-			
+		SimpleDateFormat sdf = new SimpleDateFormat("h, mm aa");
+	   	 TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
+	   	 
+		sdf.setTimeZone(userTimeZone);
+		
+		
 			for (UserLocation loc: top5) {
-				serviceResponse+=loc.getLocation()+". ";
+				serviceResponse+=" Time. "+sdf.format(new Date(loc.get_id())) +" . . . " +loc.getLocation()+" . . . ";
 			}
 			
 			
@@ -79,7 +86,7 @@ public class CarLocation extends HttpServlet {
 		
 		String continueStr  = "";
 				if (continueConversation) {
-					continueStr  = ". Anything else I can help you with?";
+					continueStr  = " Anything else I can help you with?";
 				}
 		
 		String responseStr =  getCompleteResponse( serviceResponse+continueStr);
