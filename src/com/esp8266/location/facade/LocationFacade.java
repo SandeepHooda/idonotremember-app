@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.cxf.common.util.CollectionUtils;
 
@@ -27,6 +29,9 @@ import com.login.vo.UserLocations;
 import mangodb.MangoDB;
 
 public class LocationFacade {
+	Pattern societyAddres = Pattern.compile("GH[S]{0,1}[-]{0,1}[\\s]{0,1}(.*)");
+	Pattern scoPattern = Pattern.compile("SCO[-]{0,1}[\\s]{0,1}(.*)");
+	
 	 private String httpsURL ="https://www.googleapis.com/geolocation/v1/geolocate?key="+Key.googleLocationAPI;
 
 	public  String getLocation(LocationVO locationVO) {
@@ -127,8 +132,19 @@ public class LocationFacade {
 		String lastKnown = "";
 		int i=0;
 		for (UserLocation loc :locations ) {
-			if (!loc.getLocation().equalsIgnoreCase(lastKnown)) {
-				lastKnown = loc.getLocation();
+			String currentLoc = loc.getLocation();
+			Matcher societyMatcher = societyAddres.matcher(currentLoc);
+			 if (societyMatcher.find()) {
+				 currentLoc = "Group Housing Society "+ societyMatcher.group(1);
+			 }
+			 
+			 Matcher scoMatcher = scoPattern.matcher(currentLoc);
+			 if (scoMatcher.find()) {
+				 currentLoc = "S.C.O. "+ scoMatcher.group(1);
+			 }
+			 
+			if (!currentLoc.equalsIgnoreCase(lastKnown)) {
+				lastKnown = currentLoc;
 				top5.add(loc);
 				i++;
 				
