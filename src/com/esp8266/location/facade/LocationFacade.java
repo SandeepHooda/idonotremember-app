@@ -144,6 +144,7 @@ public class LocationFacade {
 			 }
 			 
 			if (!currentLoc.equalsIgnoreCase(lastKnown)) {
+				loc.setLocation(currentLoc);
 				lastKnown = currentLoc;
 				top5.add(loc);
 				i++;
