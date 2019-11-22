@@ -110,7 +110,12 @@ public class LocationFacade {
 			userLocation.setUuid(1);;
 			userLocation.setLat(latLang.getLatitude());
 			userLocation.setLon(latLang.getLongitude());
-			userLocation.setAccuracy(latLang.getAccuracy());
+			try {
+				userLocation.setAccuracy(latLang.getAccuracy().substring(0,latLang.getAccuracy().indexOf(".") ));
+			}catch(Exception e) {
+				userLocation.setAccuracy(latLang.getAccuracy());
+			}
+			
 			userLocation.setLocation( address.getResults().get(0).getFormatted_address() );
 			userLocations.getLocations().add(userLocation);
 			allLocations = json.toJson(userLocations, new TypeToken<UserLocations>() {}.getType());
