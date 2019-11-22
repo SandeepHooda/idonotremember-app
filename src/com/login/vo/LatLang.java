@@ -4,6 +4,8 @@ public class LatLang {
 private String latitude;
 private String longitude;
 private String accuracy;
+private int nwCount;
+private String wifii;
 public String getLatitude() {
 	return latitude;
 }
@@ -26,6 +28,18 @@ public void setAccuracy(String accuracy) {
 @Override
 public String toString() {
 	return "LatLang [latitude=" + latitude + ", longitude=" + longitude + ", accuracy=" + accuracy + "]";
+}
+public int getNwCount() {
+	return nwCount;
+}
+public void setNwCount(int nwCount) {
+	this.nwCount = nwCount;
+}
+public String getWifii() {
+	return wifii;
+}
+public void setWifii(String wifii) {
+	this.wifii = wifii;
 }
 
 }

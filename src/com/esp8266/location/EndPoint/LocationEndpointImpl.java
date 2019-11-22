@@ -65,6 +65,7 @@ public class LocationEndpointImpl implements LocationEndpoint {
 				return Response.ok().entity(loginVO).build();
 			}*/
 			System.out.println(" request "+latLang);
+			
 			return Response.ok().entity(locationFacade.getAddress( latLang)).build();
 		}catch(Exception e){
 			e.printStackTrace();
@@ -73,6 +74,12 @@ public class LocationEndpointImpl implements LocationEndpoint {
 			
 			return Response.serverError().entity(vo).build();
 		}
+	}
+
+	@Override
+	public Response healthPing(String  wifii, HttpServletRequest request) {
+		locationFacade.healthPing(wifii );
+		return Response.ok().entity(wifii).build();
 	}
 
 

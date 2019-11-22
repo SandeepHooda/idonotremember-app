@@ -7,6 +7,8 @@ public class UserLocation {
 	private String lon;
 	private String location;
 	private String accuracy;
+	private int nwCount;
+	private String wifii;
 	public long get_id() {
 		return _id;
 	}
@@ -42,6 +44,18 @@ public class UserLocation {
 	}
 	public void setAccuracy(String accuracy) {
 		this.accuracy = accuracy;
+	}
+	public int getNwCount() {
+		return nwCount;
+	}
+	public void setNwCount(int nwCount) {
+		this.nwCount = nwCount;
+	}
+	public String getWifii() {
+		return wifii;
+	}
+	public void setWifii(String wifii) {
+		this.wifii = wifii;
 	}
 
 }

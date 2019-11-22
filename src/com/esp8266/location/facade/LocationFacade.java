@@ -18,6 +18,8 @@ import org.apache.cxf.common.util.CollectionUtils;
 
 import com.communication.phone.text.Key;
 import com.esp8266.location.GoogleAddress;
+import com.esp8266.location.HealthPing;
+import com.esp8266.location.HealthPing.HealthStatus;
 import com.esp8266.location.LocationVO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,14 +39,14 @@ public class LocationFacade {
 	public  String getLocation(LocationVO locationVO) {
 		Gson  json = new Gson();
 		 String data = json.toJson(locationVO, new TypeToken<LocationVO>() {}.getType());
-		       System.out.println(" request data to google  ="+data);
+		       
 		       Map<String, String> headers = new HashMap<String, String>();
 		       headers.put("Content-type", "application/json");
 		       headers.put("Connection", "close");
 		       headers.put("Content-Length", ""+data.getBytes().length);
 		      
 		       String parsedResponse = MangoDB.makeExternalRequest(httpsURL,"POST",data,headers);
-		       System.out.println(" parsedResponse "+parsedResponse);
+		  
 		      return parsedResponse;
 		      
 	}
@@ -90,7 +92,6 @@ public class LocationFacade {
 	private void saveLocationInDB(LatLang latLang, GoogleAddress address) {
 		Gson  json = new Gson();
 		String allLocations = MangoDB.getDocumentWithQuery("wemos-users", "user-locations", UserLocations.id, null, true, MangoDB.mlabKeySonu, null) ;
-		System.out.println(" allLocations ="+allLocations);
 		UserLocations userLocations = new UserLocations();
 		if (allLocations != null && allLocations.trim().length() > 0) {
 			userLocations = json.fromJson(allLocations,  new TypeToken<UserLocations>() {}.getType());
@@ -110,6 +111,8 @@ public class LocationFacade {
 			userLocation.setUuid(1);;
 			userLocation.setLat(latLang.getLatitude());
 			userLocation.setLon(latLang.getLongitude());
+			userLocation.setNwCount(latLang.getNwCount());
+			userLocation.setWifii(latLang.getWifii());
 			try {
 				userLocation.setAccuracy(latLang.getAccuracy().substring(0,latLang.getAccuracy().indexOf(".") ));
 			}catch(Exception e) {
@@ -119,13 +122,13 @@ public class LocationFacade {
 			userLocation.setLocation( address.getResults().get(0).getFormatted_address() );
 			userLocations.getLocations().add(userLocation);
 			allLocations = json.toJson(userLocations, new TypeToken<UserLocations>() {}.getType());
-			System.out.println(" saving allLocations "+allLocations);
+			
 			 MangoDB.createNewDocumentInCollection("wemos-users", "user-locations",  allLocations, MangoDB.mlabKeySonu);
 	}
 	public List<UserLocation> getRecentLocations() {
 		Gson  json = new Gson();
 		String allLocations = MangoDB.getDocumentWithQuery("wemos-users", "user-locations", UserLocations.id, null, true, MangoDB.mlabKeySonu, null) ;
-		System.out.println(" allLocations ="+allLocations);
+	
 		UserLocations userLocations = new UserLocations();
 		if (allLocations != null && allLocations.trim().length() > 0) {
 			userLocations = json.fromJson(allLocations,  new TypeToken<UserLocations>() {}.getType());
@@ -160,5 +163,22 @@ public class LocationFacade {
 			}
 		}
 		return top5;
+	}
+	public void healthPing(String wifii) {
+		String healthPingStr = MangoDB.getDocumentWithQuery("wemos-users", "health-ping", "HealthPing", null, true, MangoDB.mlabKeySonu, null) ;
+		Gson  json = new Gson();
+		HealthPing healthPing = null;
+		if (healthPingStr != null && healthPingStr.trim().length() > 0) {
+			healthPing = json.fromJson(healthPingStr,  new TypeToken<HealthPing>() {}.getType());
+		}else {
+			 healthPing = new HealthPing();
+		}
+		HealthStatus status = healthPing.new HealthStatus();
+		status.setTime(System.currentTimeMillis());
+		status.setWifii(wifii);
+		healthPing.getHealthUpdate().add(status);
+		
+		healthPingStr = json.toJson(healthPing, new TypeToken<HealthPing>() {}.getType());
+		MangoDB.createNewDocumentInCollection("wemos-users", "health-ping",  healthPingStr, MangoDB.mlabKeySonu);
 	}
 }
