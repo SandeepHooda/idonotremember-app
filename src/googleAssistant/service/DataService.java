@@ -8,9 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 
 import javax.ws.rs.core.Response;
 
+import com.communication.email.EmailAddess;
+import com.communication.email.EmailVO;
+import com.communication.email.MailService;
+import com.communication.phone.text.Key;
 import com.esp8266.location.facade.LocationFacade;
 import com.login.vo.LoginVO;
 import com.login.vo.UserLocation;
@@ -301,10 +306,43 @@ public class DataService {
 	}
 
 	
- public List<UserLocation> getCarLocation() {
-		
-	  return locationFacade.getRecentLocations();
-		
+ public String getCarLocation() {
+		StringBuilder serviceResponse = new StringBuilder();
+		StringBuilder emailBody = new StringBuilder();
+		List<UserLocation> top5 =  locationFacade.getRecentLocations();
+		  
+		SimpleDateFormat sdf = new SimpleDateFormat("h, mm aa");
+		TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
+		sdf.setTimeZone(userTimeZone);
+			
+			
+		for (UserLocation loc: top5) {
+			String address = " Time. "+sdf.format(new Date(loc.get_id())) +" . . . " +loc.getLocation()+" . . . ";
+			serviceResponse.append(address);
+			emailBody.append(" <br/><br/> \n\n"+address+" <br/> \n https://maps.mapmyindia.com/@"+loc.getLat()+","+loc.getLon());
+		}
+		sendEmail(emailBody.toString());
+		return serviceResponse.toString();
 	}
+ 
+ private void sendEmail(String emailBody) {
+	 EmailVO emalVO = new EmailVO();
+		emalVO.setUserName("personal.reminder.notification@gmail.com");
+		emalVO.setPassword(Key.email);
+		emalVO.setSubject("car last 5 locations ");
+		emalVO.setHtmlContent(emailBody);
+		EmailAddess from = new EmailAddess();
+		from.setAddress(emalVO.getUserName());
+		
+		List<EmailAddess> receipients = new ArrayList<>();
+		EmailAddess to = new EmailAddess();
+		to.setAddress("sonu.hooda@gmail.com");
+		emalVO.setFromAddress(from);
+		receipients.add(to);
+		emalVO.setToAddress(receipients);
+		if (!MailService.sendSimpleMail(emalVO)) {
+			System.out.println(" cound not send email");
+		}
+ }
 	
 }

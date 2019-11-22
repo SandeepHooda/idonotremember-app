@@ -70,23 +70,15 @@ public class CarLocation extends HttpServlet {
 		
 
 		//if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
-		List<UserLocation> top5 = dataService.getCarLocation() ;
-		SimpleDateFormat sdf = new SimpleDateFormat("h, mm aa");
-	   	 TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
-	   	 
-		sdf.setTimeZone(userTimeZone);
+		serviceResponse += dataService.getCarLocation() ;
 		
-		
-			for (UserLocation loc: top5) {
-				serviceResponse+=" Time. "+sdf.format(new Date(loc.get_id())) +" . . . " +loc.getLocation()+" . . . ";
-			}
 			
 			
 		//}
 		
 		String continueStr  = "";
 				if (continueConversation) {
-					continueStr  = " Anything else I can help you with?";
+					continueStr  = " Do you want to hear it again?";
 				}
 		
 		String responseStr =  getCompleteResponse( serviceResponse+continueStr);

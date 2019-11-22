@@ -129,7 +129,7 @@ public class LocationFacade {
 		List<UserLocation> locations = userLocations.getLocations();
 		Collections.sort(locations, new UserLocationComparator());
 		List<UserLocation> top5 = new ArrayList<UserLocation>();
-		String lastKnown = "";
+		List<String> lastKnown = new ArrayList<String>();
 		int i=0;
 		for (UserLocation loc :locations ) {
 			String currentLoc = loc.getLocation();
@@ -143,9 +143,9 @@ public class LocationFacade {
 				 currentLoc = "S.C.O. "+ scoMatcher.group(1);
 			 }
 			 
-			if (!currentLoc.equalsIgnoreCase(lastKnown)) {
+			if (lastKnown.indexOf(currentLoc) <0) {
 				loc.setLocation(currentLoc);
-				lastKnown = currentLoc;
+				lastKnown.add(currentLoc);
 				top5.add(loc);
 				i++;
 				
