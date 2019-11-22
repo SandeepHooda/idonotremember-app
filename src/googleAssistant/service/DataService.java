@@ -317,7 +317,7 @@ public class DataService {
 			
 			
 		for (UserLocation loc: top5) {
-			String address = " Time. "+sdf.format(new Date(loc.get_id())) +" . . . " +loc.getLocation()+" . . . ";
+			String address = " Time. "+sdf.format(new Date(loc.get_id())) +" . . . " +loc.getLocation()+" . . . Accuracy. " +loc.getAccuracy() +" . . ." ;
 			serviceResponse.append(address);
 			emailBody.append(" <br/><br/> \n\n"+address+" <br/> \n https://maps.mapmyindia.com/@"+loc.getLat()+","+loc.getLon());
 		}
