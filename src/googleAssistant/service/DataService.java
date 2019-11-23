@@ -16,13 +16,19 @@ import com.communication.email.EmailAddess;
 import com.communication.email.EmailVO;
 import com.communication.email.MailService;
 import com.communication.phone.text.Key;
+import com.esp8266.location.HealthPing;
+import com.esp8266.location.HealthPing.HealthStatus;
 import com.esp8266.location.facade.LocationFacade;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.login.vo.LoginVO;
 import com.login.vo.UserLocation;
 import com.reminder.facade.ReminderFacade;
 import com.reminder.vo.ReminderVO;
 import com.reminder.vo.Thing;
 import com.reminder.vo.ToDO;
+
+import mangodb.MangoDB;
 
 public class DataService {
 	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
@@ -307,8 +313,16 @@ public class DataService {
 
 	
  public String getCarLocation() {
-		StringBuilder serviceResponse = new StringBuilder();
-		StringBuilder emailBody = new StringBuilder();
+	 String healthPingStr = MangoDB.getDocumentWithQuery("wemos-users", "health-ping", "HealthPing", null, true, MangoDB.mlabKeySonu, null) ;
+		Gson  json = new Gson();
+		HealthPing healthPing = null;
+		if (healthPingStr != null && healthPingStr.trim().length() > 0) {
+			healthPing = json.fromJson(healthPingStr,  new TypeToken<HealthPing>() {}.getType());
+		}
+		HealthStatus healthStat = healthPing.getHealthUpdate().get(healthPing.getHealthUpdate().size()-1);
+		String healtStr = " Last health update "+healthStat.getTimeStr() +" WIFI dfetails "+healthStat.getWifii()+" . ";
+		StringBuilder serviceResponse = new StringBuilder(healtStr);
+		StringBuilder emailBody = new StringBuilder(healtStr);
 		List<UserLocation> top5 =  locationFacade.getRecentLocations();
 		  
 		SimpleDateFormat sdf = new SimpleDateFormat("h, mm aa");

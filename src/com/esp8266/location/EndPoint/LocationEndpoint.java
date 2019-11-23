@@ -37,6 +37,11 @@ public interface LocationEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response healthPing(@PathParam("wifii") String wifii,  @Context HttpServletRequest request);
 	
+	@GET
+	@Path("/location/recent5")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response recent5Locations(@Context HttpServletRequest request);
 	
 
 }

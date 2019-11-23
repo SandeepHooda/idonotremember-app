@@ -33,6 +33,8 @@ import mangodb.MangoDB;
 public class LocationFacade {
 	Pattern societyAddres = Pattern.compile("GH[S]{0,1}[-]{0,1}[\\s]{0,1}(.*)");
 	Pattern scoPattern = Pattern.compile("SCO[-]{0,1}[\\s]{0,1}(.*)");
+	Pattern houseNoPattern = Pattern.compile("H.no[\\.]{0,1}[\\s]{0,1}(.*)");
+	
 	
 	 private String httpsURL ="https://www.googleapis.com/geolocation/v1/geolocate?key="+Key.googleLocationAPI;
 
@@ -149,6 +151,11 @@ public class LocationFacade {
 			 Matcher scoMatcher = scoPattern.matcher(currentLoc);
 			 if (scoMatcher.find()) {
 				 currentLoc = "S.C.O. "+ scoMatcher.group(1);
+			 }
+			 
+			 Matcher houseNoMatcher = houseNoPattern.matcher(currentLoc);
+			 if (houseNoMatcher.find()) {
+				 currentLoc = "House Number "+ houseNoMatcher.group(1);
 			 }
 			 
 			if (lastKnown.indexOf(currentLoc) <0) {

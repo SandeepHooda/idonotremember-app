@@ -18,6 +18,7 @@ import com.login.vo.LatLang;
 import com.login.vo.LoginVO;
 import com.login.vo.Phone;
 import com.login.vo.Settings;
+import com.login.vo.UserLocation;
 import com.reminder.facade.ReminderFacade;
 
 import mangodb.MangoDB;
@@ -80,6 +81,12 @@ public class LocationEndpointImpl implements LocationEndpoint {
 	public Response healthPing(String  wifii, HttpServletRequest request) {
 		locationFacade.healthPing(wifii );
 		return Response.ok().entity(wifii).build();
+	}
+
+	@Override
+	public Response recent5Locations(HttpServletRequest request) {
+		List<UserLocation> top5 =  locationFacade.getRecentLocations();
+		return Response.ok().entity(top5).build();
 	}
 
 

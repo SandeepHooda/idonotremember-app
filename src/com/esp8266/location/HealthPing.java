@@ -30,8 +30,8 @@ public class HealthPing {
 		private String wifii;
 		private String timeStr;
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("h, mm aa");
-		TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
+		private transient SimpleDateFormat sdf = new SimpleDateFormat("dd MMM YYYY, h, mm aa");
+		private transient TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 		
 		
 		public long getTime() {
