@@ -25,12 +25,12 @@ function getMapCordinates(){
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 ) {
 			if (this.status == 200){
-				var d = new Date();
-				var timeNow = d.getTime();
+				
 				let locationsResults = JSON.parse(this.responseText.substring(5));
 				let locations = []
+				let mostRecentTime = locationsResults[0]._id;
 				for (let i =0;i < locationsResults.length ; i++){
-					if ( (timeNow - locationsResults[i]._id) <1000*60*120 ){//only recents
+					if ( (mostRecentTime - locationsResults[i]._id) <1000*60*60 ){//only recent tour
 						locations.push(locationsResults[i]);
 					}
 				}

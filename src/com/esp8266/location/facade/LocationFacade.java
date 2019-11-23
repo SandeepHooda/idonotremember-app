@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.cxf.common.util.CollectionUtils;
 
 import com.communication.phone.text.Key;
 import com.esp8266.location.GoogleAddress;
@@ -75,10 +72,12 @@ public class LocationFacade {
 	            responseStr =responseBuf.toString();
 	            Gson  json = new Gson();
 	            GoogleAddress address = json.fromJson(responseStr, new TypeToken<GoogleAddress>() {}.getType());
-	           
-	            System.out.println(" Address "+ address.getResults().get(0).getFormatted_address());
+	           String addressFormatted = address.getResults().get(0).getFormatted_address();
+	            System.out.println(" Address "+ addressFormatted);
+	            
 	            saveLocationInDB( latLang,  address);
-	            return address.getResults().get(0).getFormatted_address();
+	            sendToRaspberryPi(addressFormatted);
+	            return addressFormatted;
 	            
 	        } catch (Exception e) {
 	        	e.printStackTrace();
@@ -91,6 +90,33 @@ public class LocationFacade {
 	            }
 	}
 	
+	private void sendToRaspberryPi(String addressFormatted ) {
+		try {
+			String urlStr = "http://sanhoo.duckdns.org:5000/altoLocationUpdate?location=\"+URLEncoder.encode(addressFormatted, \"UTF-8\")";
+					//"https://idonotremember-app.appspot.com/ws/location/recent5";
+			//http://sanhoo.duckdns.org:5000/altoLocationUpdate?location="+URLEncoder.encode(addressFormatted, "UTF-8")
+			
+			 URL url = new URL(urlStr);
+			 //long startTime = System.currentTimeMillis();
+	            
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setConnectTimeout(2000);
+	            conn.setReadTimeout(2000);
+	    	    conn.setRequestMethod("GET");
+	    	    BufferedReader in = new BufferedReader(    new InputStreamReader(conn.getInputStream()));
+	    		String inputLine;
+	    		StringBuffer responseBuf = new StringBuffer();
+	    		while ((inputLine = in.readLine()) != null) {
+	    			responseBuf.append(inputLine);
+	    		}
+	    		in.close();
+	    		//System.out.println(" raspberry response in "+(System.currentTimeMillis() - startTime)+ " "+responseBuf.toString());
+	    	
+	            
+		}catch(Exception e) {
+			//e.printStackTrace();
+		}
+	}
 	private void saveLocationInDB(LatLang latLang, GoogleAddress address) {
 		Gson  json = new Gson();
 		String allLocations = MangoDB.getDocumentWithQuery("wemos-users", "user-locations", UserLocations.id, null, true, MangoDB.mlabKeySonu, null) ;
@@ -128,6 +154,7 @@ public class LocationFacade {
 			 MangoDB.createNewDocumentInCollection("wemos-users", "user-locations",  allLocations, MangoDB.mlabKeySonu);
 	}
 	public List<UserLocation> getRecentLocations() {
+		//sendToRaspberryPi("55 Sector 25");
 		Gson  json = new Gson();
 		String allLocations = MangoDB.getDocumentWithQuery("wemos-users", "user-locations", UserLocations.id, null, true, MangoDB.mlabKeySonu, null) ;
 	

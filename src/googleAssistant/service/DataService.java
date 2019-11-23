@@ -320,7 +320,7 @@ public class DataService {
 			healthPing = json.fromJson(healthPingStr,  new TypeToken<HealthPing>() {}.getType());
 		}
 		HealthStatus healthStat = healthPing.getHealthUpdate().get(healthPing.getHealthUpdate().size()-1);
-		String healtStr = " Last health update "+healthStat.getTimeStr() +" WIFI dfetails "+healthStat.getWifii()+" . ";
+		String healtStr = " Last health update "+healthStat.getTimeStr() +" WIFI details "+healthStat.getWifii()+" . ";
 		StringBuilder serviceResponse = new StringBuilder(healtStr);
 		StringBuilder emailBody = new StringBuilder(" <b>Track :</b> https://idonotremember-app.appspot.com/map.html <br/><br/>" + healtStr);
 		List<UserLocation> top5 =  locationFacade.getRecentLocations();
