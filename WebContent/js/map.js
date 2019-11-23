@@ -25,28 +25,41 @@ function getMapCordinates(){
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 ) {
 			if (this.status == 200){
-				
-				let locations = JSON.parse(this.responseText.substring(5));
-				flightPlanCoordinates = [];
-				for (let i=locations.length-1;i>=0;i--){
-					let aLoc = {};
-					aLoc.lat = Number(locations[i].lat);
-					aLoc.lng = Number(locations[i].lon);
-					let aWayPoint = {"stopover": true};
-					aWayPoint.location = ""+aLoc.lat+", "+aLoc.lng;
-					if (i == 3){
-						mapCenter = aLoc;
-					}
-					if ( i >=1 && i<=3){
-						waypts.push(aWayPoint);
-					}
-					if (i==0){
-						endLoc = aLoc;
-					}else if (i==4){
-						startLoc = aLoc;
+				var d = new Date();
+				var timeNow = d.getTime();
+				let locationsResults = JSON.parse(this.responseText.substring(5));
+				let locations = []
+				for (let i =0;i < locationsResults.length ; i++){
+					if ( (timeNow - locationsResults[i]._id) <1000*60*120 ){//only recents
+						locations.push(locationsResults[i]);
 					}
 				}
-				initMap();
+				if (locations.length > 0){
+					for (let i=locations.length-1;i>=0;i--){
+						let aLoc = {};
+						aLoc.lat = Number(locations[i].lat);
+						aLoc.lng = Number(locations[i].lon);
+						let aWayPoint = {"stopover": true};
+						aWayPoint.location = ""+aLoc.lat+", "+aLoc.lng;
+						if (i == Math.floor (locations.length/2)){
+							mapCenter = aLoc;
+						}
+						
+						if (i==0){
+							endLoc = aLoc;
+							if (locations.length ==1){
+								startLoc = aLoc;//Lets say we have only one location
+							}
+							
+						}else if (i== locations.length-1){
+							startLoc = aLoc;
+						}else {
+							waypts.push(aWayPoint);
+						}
+					}
+					initMap();
+				}
+				
 			}
 		     
 		   }
