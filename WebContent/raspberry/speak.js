@@ -58,7 +58,7 @@
 	
 	function sendReview(text){
 		
-		var xhttp =  new XMLHttpRequest();;
+		/*var xhttp =  new XMLHttpRequest();;
 		if (window.XMLHttpRequest) {
 		    // code for modern browsers
 			xhttp = new XMLHttpRequest();
@@ -75,7 +75,8 @@
 		  };
 		xhttp.open("GET", "http://sanhoo.duckdns.org:5000/raspberry/text2speach/"+encodeURI(text), true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send();  
+		xhttp.send();  */
+		document.getElementById("forJsonP").src = "http://sanhoo.duckdns.org:5000/raspberry/text2speach/"+encodeURI(text);
 	}
 	
 	var recognition = null;
