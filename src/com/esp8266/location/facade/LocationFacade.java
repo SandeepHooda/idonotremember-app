@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,7 +93,7 @@ public class LocationFacade {
 	
 	private void sendToRaspberryPi(String addressFormatted ) {
 		try {
-			String urlStr = "http://sanhoo.duckdns.org:5000/altoLocationUpdate?location=\"+URLEncoder.encode(addressFormatted, \"UTF-8\")";
+			String urlStr = "http://sanhoo.duckdns.org:5000/raspberry/text2speach/"+URLEncoder.encode("Sandeep is at. "+addressFormatted, "UTF-8");
 					//"https://idonotremember-app.appspot.com/ws/location/recent5";
 			//http://sanhoo.duckdns.org:5000/altoLocationUpdate?location="+URLEncoder.encode(addressFormatted, "UTF-8")
 			

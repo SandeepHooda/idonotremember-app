@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<meta name="author" content="">
+	<title>Raspberry speak</title>
+	<!-- Styles -->
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+		body {
+			padding-top: 20px;
+			padding-bottom: 20px;
+			overscroll-behavior-y: contain;
+		}
+
+		#sig-canvas {
+			border-radius: 0px;
+			cursor: crosshair;
+		}
+
+		#sig-dataUrl {
+			width: 100%;
+		}
+		
+		
+.floatingBtn {
+  display: block;
+  position: fixed;
+  left: 30px;
+
+ 
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  
+}
+
+.top50{
+	 top: 50px;
+}
+.top0{
+	 top: 0px;
+}
+
+	</style>
+</head>
+<body>
+	<!-- Content -->
+	<div class="container">
+	
+		<div class="row">
+			<div class="col-md-12">
+				<button  id="floatingBtnMic" class="floatingBtn top0"  name="add new" title="add new todo" >
+					 <i class="fa fa-microphone"></i>
+				</button>
+			</div>
+		</div>
+		<br/><br/><br/>
+		<div class="row">
+			<div class="col-md-12">
+				<textarea rows="10" cols="50" id="myReview"></textarea>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-md-12">
+				<button class="btn btn-primary" id="sig-submitBtn">Speak</button>
+			 <button class="btn btn-default" id="sig-clearBtn">Clear</button> 
+			</div>
+		</div>
+		
+		<br/>
+		
+	</div>
+	<div id="response"></div>
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<!--<script src="https://code.angularjs.org/snapshot/angular.min.js"></script>-->
+	<script src="speak.js"></script>
+</body>
+</html>
