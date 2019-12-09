@@ -78,7 +78,7 @@ public class CarLocation extends HttpServlet {
 		
 		String continueStr  = "";
 				if (continueConversation) {
-					continueStr  = " Do you want to hear it again?";
+					continueStr  = ". Do you want to hear it again?";
 				}
 		
 		String responseStr =  getCompleteResponse( serviceResponse+continueStr);
