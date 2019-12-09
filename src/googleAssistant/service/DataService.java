@@ -323,10 +323,10 @@ public String getMMILocation() {
 			
 			for (Device device : mmiLocation.getDevices()) {
 				if (device.getDeviceId() == Key.mmiDeviceID) {
-					SimpleDateFormat sdf = new SimpleDateFormat("dd, MMM, yyyy h, mm aa");
+					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
 					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 					sdf.setTimeZone(userTimeZone);
-					response = " As of. "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
+					response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
 					StringBuilder emailBody = new StringBuilder(response);
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					sendEmail(emailBody.toString());
