@@ -61,7 +61,7 @@ public class CarLocation extends HttpServlet {
        }
        System.out.println(" intent = "+intent + " queryText "+queryText);
        System.out.println(" complete request: "+sb.toString());
-       String serviceResponse = "Your car's recent 5 locations are. . . ";
+      
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -70,7 +70,7 @@ public class CarLocation extends HttpServlet {
 		
 
 		//if ("AddToDo".equalsIgnoreCase(intent) && null != queryText){
-		serviceResponse += dataService.getCarLocation() ;
+		 String serviceResponse =  dataService.getMMILocation() ;
 		
 			
 			

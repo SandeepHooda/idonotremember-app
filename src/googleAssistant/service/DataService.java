@@ -19,6 +19,8 @@ import com.communication.phone.text.Key;
 import com.esp8266.location.HealthPing;
 import com.esp8266.location.HealthPing.HealthStatus;
 import com.esp8266.location.facade.LocationFacade;
+import com.esp8266.location.mapMyIndia.Device;
+import com.esp8266.location.mapMyIndia.LiveLocations;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LoginVO;
@@ -311,7 +313,30 @@ public class DataService {
 		}
 	}
 
-	
+public String getMMILocation() {
+	Gson  json = new Gson();
+	LiveLocations mmiLocation =  json.fromJson(MangoDB.getMMILiveLocations(),  new TypeToken<LiveLocations>() {}.getType());
+	//System.out.println(MangoDB.getMMILiveLocations());
+	String response = "Map my india is unable to get the locations of the car";
+	if (mmiLocation.getStatus() == 200) {
+		if (mmiLocation.getDevices() != null) {
+			
+			for (Device device : mmiLocation.getDevices()) {
+				if (device.getDeviceId() == Key.mmiDeviceID) {
+					SimpleDateFormat sdf = new SimpleDateFormat("dd, MMM, yyyy h, mm aa");
+					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
+					sdf.setTimeZone(userTimeZone);
+					response = " As of. "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
+					StringBuilder emailBody = new StringBuilder(response);
+					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
+					sendEmail(emailBody.toString());
+					break;
+				}
+			}
+		}
+	}
+	return response;
+}
  public String getCarLocation() {
 	 String healthPingStr = MangoDB.getDocumentWithQuery("wemos-users", "health-ping", "HealthPing", null, true, MangoDB.mlabKeySonu, null) ;
 		Gson  json = new Gson();
@@ -343,7 +368,7 @@ public class DataService {
 	 EmailVO emalVO = new EmailVO();
 		emalVO.setUserName("personal.reminder.notification@gmail.com");
 		emalVO.setPassword(Key.email);
-		emalVO.setSubject("car last 5 locations ");
+		emalVO.setSubject("Car location ");
 		emalVO.setHtmlContent(emailBody);
 		EmailAddess from = new EmailAddess();
 		from.setAddress(emalVO.getUserName());

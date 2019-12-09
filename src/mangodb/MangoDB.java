@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.communication.phone.text.Key;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -69,6 +70,30 @@ public class MangoDB {
         	e.printStackTrace();
         	return null;
         }
+	}
+	
+	public static String getMMILiveLocations() {
+		String httpsURL  = "https://apis.mapmyindia.com/intouch/v1/"+Key.mmiKey+"/getLiveData";
+		
+	
+		String responseStr = "";
+		 try {
+			
+		        URL url = new URL(httpsURL);
+	            HTTPRequest req = new HTTPRequest(url, HTTPMethod.GET, lFetchOptions);
+	            HTTPResponse res = fetcher.fetch(req);
+	            responseStr =(new String(res.getContent()));
+	            
+	        } catch (Exception e) {
+	        	e.printStackTrace();
+	        	log.warning("Error while gettiung data from map my india");
+	        	return null;
+	        }
+		
+		
+			
+		
+		 return responseStr;
 	}
 	
 	public static String getDocumentWithQuery(String dbName, String collection,  String documentKey, String keyName, boolean isKeyString, String mlabApiKey, String query){
