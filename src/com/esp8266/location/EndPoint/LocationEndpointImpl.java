@@ -88,6 +88,11 @@ public class LocationEndpointImpl implements LocationEndpoint {
 		List<UserLocation> top5 =  locationFacade.getRecentLocations();
 		return Response.ok().entity(top5).build();
 	}
+	
+	@Override
+	public Response mmiLocation(HttpServletRequest request) {
+		return Response.ok().entity(locationFacade.mmiLocation()).build();
+	}
 
 
 

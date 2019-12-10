@@ -26,6 +26,7 @@ import com.login.vo.UserLocation;
 import com.login.vo.UserLocationComparator;
 import com.login.vo.UserLocations;
 
+import googleAssistant.service.DataService;
 import mangodb.MangoDB;
 
 public class LocationFacade {
@@ -153,6 +154,9 @@ public class LocationFacade {
 			allLocations = json.toJson(userLocations, new TypeToken<UserLocations>() {}.getType());
 			
 			 MangoDB.createNewDocumentInCollection("wemos-users", "user-locations",  allLocations, MangoDB.mlabKeySonu);
+	}
+	public String mmiLocation() {
+		return new DataService().getMMILocation();
 	}
 	public List<UserLocation> getRecentLocations() {
 		//sendToRaspberryPi("55 Sector 25");
