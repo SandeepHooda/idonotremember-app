@@ -329,7 +329,7 @@ public String getMMILocation() {
 					//response += "https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					sendEmail(emailBody.toString());
-					MailService.sendWhatAppMsg("919216411835", emailBody.toString());
+					//MailService.sendWhatAppMsg("919216411835", emailBody.toString());
 					MailService.sendWhatAppMsg("917837394152", emailBody.toString());
 					break;
 				}
