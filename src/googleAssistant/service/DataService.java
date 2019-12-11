@@ -1,6 +1,5 @@
 package googleAssistant.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,8 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
-
-import javax.ws.rs.core.Response;
 
 import com.communication.email.EmailAddess;
 import com.communication.email.EmailVO;
@@ -31,6 +28,7 @@ import com.reminder.vo.Thing;
 import com.reminder.vo.ToDO;
 
 import mangodb.MangoDB;
+
 
 public class DataService {
 	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
@@ -328,8 +326,10 @@ public String getMMILocation() {
 					sdf.setTimeZone(userTimeZone);
 					response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
 					StringBuilder emailBody = new StringBuilder(response);
+					//response += "https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					sendEmail(emailBody.toString());
+					MailService.sendWhatAppMsg("919216411835", emailBody.toString());
 					break;
 				}
 			}

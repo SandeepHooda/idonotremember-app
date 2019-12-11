@@ -88,6 +88,38 @@ public class MailService {
 	        	return "";
 	        }
 	  }
+   public static void sendWhatAppMsg(String phone, String msg) {
+	   String httpsURL  = "https://post-master.herokuapp.com/WhatsAppMessanger";
+		
+		 try {
+			
+			 URL url = new URL(httpsURL);
+		        
+		        HTTPRequest req = new HTTPRequest(url, HTTPMethod.POST, lFetchOptions);
+	            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
+	            req.setHeader(header);
+	           
+	            header = new HTTPHeader("Accept", "application/json");
+	            req.setHeader(header);
+	           
+	            WhatAppVO vo = new WhatAppVO();
+	            vo.setMsg(msg);
+	            vo.setPhone(phone);
+	            Gson  json = new Gson();
+	            String data = json.toJson(vo, new TypeToken<WhatAppVO>() {}.getType());
+	            req.setPayload(data.getBytes());
+	            com.google.appengine.api.urlfetch.HTTPResponse res = fetcher.fetch(req);
+	     
+	            System.out.println(" Response code "+res.getResponseCode() +" msg = "+res.getContent());
+	            
+	            
+	            
+	        } catch (Exception e) {
+	        	e.printStackTrace();
+	        	log.warning("Error in whats app   : "+e.getLocalizedMessage());
+	        	
+	        }
+   }
 	public static boolean sendSimpleMail(EmailVO emailVO ) {
 		
 		
