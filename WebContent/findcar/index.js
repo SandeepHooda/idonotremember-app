@@ -9,7 +9,9 @@ function getCarLocation() {
 	        	   if(xmlhttp.responseText){
 	        		   var resp =  JSON.parse(xmlhttp.responseText.substring(5));
 		        	  let location = "http://maps.google.com/maps?&z=10&q="+resp.latitude+"+"+resp.longitude+"(Pool+Location)&mrt=yp"
+		        	  document.getElementById("loader").style.display = "none";
 	        		   window.open(location);
+		        	
 		        	
 		         	  
 	        	   }
@@ -28,8 +30,8 @@ function getCarLocation() {
 	        }
 	    };
 	    xmlhttp.open("GET", "/ws/location/mmi/car/cordinates", true);
-	 
-	    xmlhttp.send(); 
+	    document.getElementById("loader").style.display = "block";
+	   xmlhttp.send(); 
 	}
 
 
