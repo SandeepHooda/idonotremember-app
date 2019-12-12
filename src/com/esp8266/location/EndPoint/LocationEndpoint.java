@@ -49,5 +49,11 @@ public interface LocationEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response mmiLocation(@Context HttpServletRequest request);
 	
+	@GET
+	@Path("/location/mmi/car/cordinates")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response mmiCarCordinates(@Context HttpServletRequest request);
+	
 
 }

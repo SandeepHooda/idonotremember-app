@@ -19,6 +19,7 @@ import com.esp8266.location.GoogleAddress;
 import com.esp8266.location.HealthPing;
 import com.esp8266.location.HealthPing.HealthStatus;
 import com.esp8266.location.LocationVO;
+import com.esp8266.location.mapMyIndia.Device;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LatLang;
@@ -157,6 +158,9 @@ public class LocationFacade {
 	}
 	public String mmiLocation() {
 		return new DataService().getMMILocation();
+	}
+	public Device mmiCarCordinates() {
+		return new DataService().mmiCarCordinates();
 	}
 	public List<UserLocation> getRecentLocations() {
 		//sendToRaspberryPi("55 Sector 25");

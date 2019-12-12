@@ -338,6 +338,32 @@ public String getMMILocation() {
 	}
 	return response;
 }
+
+public Device mmiCarCordinates() {
+	Gson  json = new Gson();
+	LiveLocations mmiLocation =  json.fromJson(MangoDB.getMMILiveLocations(),  new TypeToken<LiveLocations>() {}.getType());
+	
+	if (mmiLocation.getStatus() == 200) {
+		if (mmiLocation.getDevices() != null) {
+			
+			for (Device device : mmiLocation.getDevices()) {
+				if (device.getDeviceId() == Key.mmiDeviceID) {
+					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
+					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
+					sdf.setTimeZone(userTimeZone);
+					String response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
+					StringBuilder emailBody = new StringBuilder(response);
+					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
+					sendEmail(emailBody.toString());
+					MailService.sendWhatAppMsg("917837394152", emailBody.toString());
+					return device;
+				
+				}
+			}
+		}
+	}
+	return null;
+}
  public String getCarLocation() {
 	 String healthPingStr = MangoDB.getDocumentWithQuery("wemos-users", "health-ping", "HealthPing", null, true, MangoDB.mlabKeySonu, null) ;
 		Gson  json = new Gson();

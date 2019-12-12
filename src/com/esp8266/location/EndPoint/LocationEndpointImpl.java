@@ -10,6 +10,7 @@ import com.Constants;
 import com.esp8266.location.LocationVO;
 import com.esp8266.location.WiFiVO;
 import com.esp8266.location.facade.LocationFacade;
+import com.esp8266.location.mapMyIndia.Device;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.facade.LoginFacade;
@@ -92,6 +93,15 @@ public class LocationEndpointImpl implements LocationEndpoint {
 	@Override
 	public Response mmiLocation(HttpServletRequest request) {
 		return Response.ok().entity(locationFacade.mmiLocation()).build();
+	}
+	
+	@Override
+	public Response mmiCarCordinates(HttpServletRequest request) {
+		Device device = locationFacade.mmiCarCordinates();
+		if (null == device) {
+			return Response.serverError().entity(device).build();
+		}
+		return Response.ok().entity(device).build();
 	}
 
 
