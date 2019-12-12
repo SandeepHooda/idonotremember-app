@@ -342,7 +342,7 @@ public String getMMILocation() {
 public Device mmiCarCordinates() {
 	Gson  json = new Gson();
 	LiveLocations mmiLocation =  json.fromJson(MangoDB.getMMILiveLocations(),  new TypeToken<LiveLocations>() {}.getType());
-	
+	System.out.println("MMI http code "+mmiLocation.getStatus());
 	if (mmiLocation.getStatus() == 200) {
 		if (mmiLocation.getDevices() != null) {
 			
@@ -356,6 +356,7 @@ public Device mmiCarCordinates() {
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					sendEmail(emailBody.toString());
 					MailService.sendWhatAppMsg("917837394152", emailBody.toString());
+					MailService.sendWhatAppMsg("919216411835", emailBody.toString());
 					return device;
 				
 				}

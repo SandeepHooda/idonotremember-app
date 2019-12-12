@@ -10,6 +10,7 @@ function getCarLocation() {
 	        		   var resp =  JSON.parse(xmlhttp.responseText.substring(5));
 		        	  let location = "http://maps.google.com/maps?&z=10&q="+resp.latitude+"+"+resp.longitude+"(Pool+Location)&mrt=yp"
 		        	  document.getElementById("loader").style.display = "none";
+		        	  document.getElementById("Address").innerHTML = resp.address
 	        		   window.open(location);
 		        	
 		        	
