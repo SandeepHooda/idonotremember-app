@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.communication.email.MailService;
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -87,6 +88,7 @@ public class GetSnoozedReminders extends HttpServlet {
 			remindersForUser = remindersForUser.toLowerCase();
 			remindersForUser = remindersForUser.replace("reminders", "");
 			remindersForUser = remindersForUser.replace("reminder", "");
+			MailService.sendWhatAppMsg("919216411835",remindersForUser,true,false);
 			response.getWriter().append("repeat after me reboot "+remindersForUser);
 		}else {
 			response.getWriter().append("");

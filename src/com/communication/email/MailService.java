@@ -88,7 +88,7 @@ public class MailService {
 	        	return "";
 	        }
 	  }
-   public static void sendWhatAppMsg(String phone, String msg) {
+   public static void sendWhatAppMsg(String phone, String msg, boolean sandeepPushover ,boolean kusumPushover) {
 	   String httpsURL  = "https://post-master.herokuapp.com/WhatsAppMessanger";
 		
 		 try {
@@ -105,6 +105,8 @@ public class MailService {
 	            WhatAppVO vo = new WhatAppVO();
 	            vo.setMsg(msg);
 	            vo.setPhone(phone);
+	            vo.setKusumPushover(kusumPushover);
+	            vo.setSandeepPushover(sandeepPushover);
 	            Gson  json = new Gson();
 	            String data = json.toJson(vo, new TypeToken<WhatAppVO>() {}.getType());
 	            req.setPayload(data.getBytes());

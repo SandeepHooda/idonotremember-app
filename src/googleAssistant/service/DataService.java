@@ -310,7 +310,7 @@ public class DataService {
 			return null;
 		}
 	}
-
+//For ok google
 public String getMMILocation() {
 	Gson  json = new Gson();
 	LiveLocations mmiLocation =  json.fromJson(MangoDB.getMMILiveLocations(),  new TypeToken<LiveLocations>() {}.getType());
@@ -329,8 +329,10 @@ public String getMMILocation() {
 					//response += "https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					sendEmail(emailBody.toString());
-					//MailService.sendWhatAppMsg("919216411835", emailBody.toString());
-					MailService.sendWhatAppMsg("917837394152", emailBody.toString());
+					
+					String whatAppMsg = "Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
+					MailService.sendWhatAppMsg("917837394152", whatAppMsg,false,true);
+					MailService.sendWhatAppMsg("919216411835", whatAppMsg,true,false);
 					break;
 				}
 			}
@@ -338,7 +340,7 @@ public String getMMILocation() {
 	}
 	return response;
 }
-
+//For web app with my photo in phone 
 public Device mmiCarCordinates() {
 	Gson  json = new Gson();
 	LiveLocations mmiLocation =  json.fromJson(MangoDB.getMMILiveLocations(),  new TypeToken<LiveLocations>() {}.getType());
@@ -355,8 +357,9 @@ public Device mmiCarCordinates() {
 					StringBuilder emailBody = new StringBuilder(response);
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					sendEmail(emailBody.toString());
-					MailService.sendWhatAppMsg("917837394152", emailBody.toString());
-					MailService.sendWhatAppMsg("919216411835", emailBody.toString());
+					String whatAppMsg = "Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
+					MailService.sendWhatAppMsg("917837394152", whatAppMsg,false,true);
+					MailService.sendWhatAppMsg("919216411835", whatAppMsg,true,false);
 					return device;
 				
 				}
