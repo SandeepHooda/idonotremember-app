@@ -187,7 +187,7 @@ public class LocationFacade {
 				nearestFavLoc = aFavLoc;
 			}
 		}
-		com.esp8266.location.LatLang currentLocation = new com.esp8266.location.LatLang(current_lat,  current_lan, nearestFavLoc.getLabel(), userName, pos.getGpsStatusTime(), pos.getGpsStatusTime());
+		com.esp8266.location.LatLang currentLocation = new com.esp8266.location.LatLang(current_lat,  current_lan, nearestFavLoc.getLabel(), dbCollection, pos.getGpsStatusTime(), pos.getGprsStatusTime());
 		currentLocation.setDistanceFromNearestKnow(distanceFromFav);
 		if (distanceFromFav < 80) {
 			currentLocation.setAtKnownLocation(true);
