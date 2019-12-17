@@ -19,7 +19,11 @@ import com.esp8266.location.GoogleAddress;
 import com.esp8266.location.HealthPing;
 import com.esp8266.location.HealthPing.HealthStatus;
 import com.esp8266.location.LocationVO;
+import com.esp8266.location.Utils;
 import com.esp8266.location.mapMyIndia.Device;
+import com.esp8266.location.mapMyIndia.safemate.Position;
+import com.esp8266.location.mapMyIndia.safemate.Pt;
+import com.esp8266.location.mapMyIndia.safemate.SafeMateDevice;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LatLang;
@@ -34,6 +38,7 @@ public class LocationFacade {
 	Pattern societyAddres = Pattern.compile("GH[S]{0,1}[-]{0,1}[\\s]{0,1}(.*)");
 	Pattern scoPattern = Pattern.compile("SCO[-]{0,1}[\\s]{0,1}(.*)");
 	Pattern houseNoPattern = Pattern.compile("H.no[\\.]{0,1}[\\s]{0,1}(.*)");
+	 
 	
 	
 	 private String httpsURL ="https://www.googleapis.com/geolocation/v1/geolocate?key="+Key.googleLocationAPI;
@@ -162,6 +167,67 @@ public class LocationFacade {
 	public Device mmiCarCordinates() {
 		return new DataService().mmiCarCordinates();
 	}
+	public SafeMateDevice getSafeMateLocation() {
+		return new DataService().getSafeMateLocation();
+	}
+	public com.esp8266.location.LatLang userGeoFencingDistance(List<com.esp8266.location.LatLang> favLocations , String userName) {
+		String dbCollection  = "safemate-"+userName;
+		//Get current position from safemate servers
+		double distanceFromFav = 1000000;
+		com.esp8266.location.LatLang nearestFavLoc =null;
+		SafeMateDevice safeMateDevice = new DataService().getSafeMateLocation();
+		Position pos = safeMateDevice.getPositions().get(0);
+		Pt pt= pos.getAddress().getPt();
+		double current_lat = pt.getY(); 
+		double current_lan = pt.getX();
+		for (com.esp8266.location.LatLang aFavLoc: favLocations) {
+			double distanceMeters = 1000* Utils.distance(aFavLoc.getLat(), aFavLoc.getLan(), current_lat, current_lan, "K");
+			if (distanceFromFav > distanceMeters ) {
+				distanceFromFav = distanceMeters ;
+				nearestFavLoc = aFavLoc;
+			}
+		}
+		com.esp8266.location.LatLang currentLocation = new com.esp8266.location.LatLang(current_lat,  current_lan, nearestFavLoc.getLabel(), userName, pos.getGpsStatusTime(), pos.getGpsStatusTime());
+		currentLocation.setDistanceFromNearestKnow(distanceFromFav);
+		if (distanceFromFav < 80) {
+			currentLocation.setAtKnownLocation(true);
+		}
+		
+		//User location from DB
+		String userLocationStr = MangoDB.getDocumentWithQuery("wemos-users", dbCollection, dbCollection, null, true, MangoDB.mlabKeySonu, null) ;
+		Gson  json = new Gson();
+		com.esp8266.location.LatLang userLocationDB = currentLocation;
+		if (userLocationStr != null && userLocationStr.trim().length() > 0) {
+			userLocationDB = json.fromJson(userLocationStr,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
+		}else {
+			userLocationStr = json.toJson(userLocationDB,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
+			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);//create for the first time
+		}
+		
+		
+		//Entering or existing any klnown location
+		if (userLocationDB.isAtKnownLocation()  && !currentLocation.isAtKnownLocation()) {//existing
+			DataService.sendPushOverNotification(userName +" has started from "+userLocationDB.getLabel(),Key.sandeepPhone, true );
+		}else if (!userLocationDB.isAtKnownLocation()  && currentLocation.isAtKnownLocation()) {//entering
+			DataService.sendPushOverNotification(userName +" has reached  "+currentLocation.getLabel(),Key.sandeepPhone, true );
+		}
+		
+
+		double distanceFromLastSaved = 1000* Utils.distance(userLocationDB.getLat(), userLocationDB.getLan(), current_lat, current_lan, "K");
+		if (distanceFromLastSaved > 40) {
+			//kusum is moving to update time
+			userLocationStr = json.toJson(currentLocation,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
+			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);
+		}
+		
+		
+		
+		currentLocation.setComment("Stay at current location minutes : "+((currentLocation.getLocationEntryTime() - userLocationDB.getLocationEntryTime())/60000 ) +
+				" GPS time "+((System.currentTimeMillis() - currentLocation.getGprsTime()*1000 )/60000 )+
+				" GPRS time "+((System.currentTimeMillis() - currentLocation.getGprsTime()*1000 )/60000 ));
+		return currentLocation;
+	}
+	
 	public List<UserLocation> getRecentLocations() {
 		//sendToRaspberryPi("55 Sector 25");
 		Gson  json = new Gson();

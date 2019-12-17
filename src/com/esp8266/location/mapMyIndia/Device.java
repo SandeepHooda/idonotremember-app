@@ -136,7 +136,7 @@ public class Device {
     @JsonProperty("blinker")
     private Object blinker;
     @JsonProperty("deviceOdometer")
-    private Object deviceOdometer;
+    private double deviceOdometer;
     @JsonProperty("intakeAirTemp")
     private Object intakeAirTemp;
     @JsonProperty("intakeabsolutePress")
@@ -515,12 +515,12 @@ public class Device {
     }
 
     @JsonProperty("deviceOdometer")
-    public Object getDeviceOdometer() {
+    public double getDeviceOdometer() {
         return deviceOdometer;
     }
 
     @JsonProperty("deviceOdometer")
-    public void setDeviceOdometer(Object deviceOdometer) {
+    public void setDeviceOdometer(double deviceOdometer) {
         this.deviceOdometer = deviceOdometer;
     }
 

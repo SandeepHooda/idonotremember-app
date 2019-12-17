@@ -1,10 +1,18 @@
 package googleAssistant.service;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
@@ -18,6 +26,7 @@ import com.esp8266.location.HealthPing.HealthStatus;
 import com.esp8266.location.facade.LocationFacade;
 import com.esp8266.location.mapMyIndia.Device;
 import com.esp8266.location.mapMyIndia.LiveLocations;
+import com.esp8266.location.mapMyIndia.safemate.SafeMateDevice;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LoginVO;
@@ -31,6 +40,7 @@ import mangodb.MangoDB;
 
 
 public class DataService {
+	private static final double odometer_init = 66557.7;
 	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 	private ReminderFacade reminderFacade  = new ReminderFacade();
 	private LocationFacade locationFacade = new LocationFacade();
@@ -44,6 +54,29 @@ public class DataService {
 		return reminderFacade.placeAThing(thing);
 		
 	}
+	
+	 public static void sendPushOverNotification(String msg, String user, boolean ignoreDNDTimings)  {
+		
+		 System.out.println(" notification text "+msg);
+		 SimpleDateFormat sdf = new SimpleDateFormat("H mm");
+			TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
+			sdf.setTimeZone(userTimeZone);
+			String time_str = sdf.format(new Date());
+			int time = Integer.parseInt(time_str.replaceAll(" ", ""));
+			System.out.println(" time now is "+time);
+			
+			if (ignoreDNDTimings || (time < 900 || time > 1630)) {
+				String data = "{\"token\":\"au2pgshc1vu4p3cxsa8n8zgvrnsed4\" , \"user\":\""+user+"\" ,\"message\" :\""+msg+"\"}";
+						
+				Map<String, String> headers = new HashMap<String, String>();
+			       headers.put("Content-type", "application/json");
+			       headers.put("Connection", "close");
+			       headers.put("Content-Length", ""+data.getBytes().length);
+			      
+			    String parsedResponse = MangoDB.makeExternalRequest("https://api.pushover.net/1/messages.json","POST",data,headers);
+				
+			}
+	 }
 	public String findMyThing(String email, String item) {
 		item = item.toLowerCase().trim();
 		if ("everything".equalsIgnoreCase(item.toLowerCase()) || "all my things".equalsIgnoreCase(item.toLowerCase())) {
@@ -321,6 +354,7 @@ public String getMMILocation() {
 			
 			for (Device device : mmiLocation.getDevices()) {
 				if (device.getDeviceId() == Key.mmiDeviceID) {
+					device.setDeviceOdometer(device.getDeviceOdometer() +odometer_init);
 					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
 					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 					sdf.setTimeZone(userTimeZone);
@@ -328,17 +362,30 @@ public String getMMILocation() {
 					StringBuilder emailBody = new StringBuilder(response);
 					//response += "https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
+					emailBody.append(" <br/><br/>  <br/>  Odo meter reading "+device.getDeviceOdometer());
 					sendEmail(emailBody.toString());
 					
-					String whatAppMsg = "Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
-					MailService.sendWhatAppMsg("917837394152", whatAppMsg,false,true);
-					MailService.sendWhatAppMsg("919216411835", whatAppMsg,true,false);
+					//String whatAppMsg = "Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
+					//MailService.sendWhatAppMsg("917837394152", whatAppMsg,false,true);
+					//MailService.sendWhatAppMsg("919216411835", whatAppMsg,true,false);
 					break;
 				}
 			}
 		}
 	}
 	return response;
+}
+public SafeMateDevice getSafeMateLocation() {
+	String accessToken = MangoDB.getSafeMateLocations();
+	String url ="https://fleet.mapmyindia.com/Fleet2009/WebAPIServer/FleetWebServer/GetVehiclesLastPositions?last_state_id_from=40265416176&access_token="+accessToken;
+
+	Map<String, String> headers = new HashMap<String, String>();
+    headers.put("Connection", "close");
+	System.out.println();
+	Gson  json = new Gson();
+	SafeMateDevice safeMateDevive =  json.fromJson(MangoDB.makeExternalRequest( url,  "GET", null,  headers),  new TypeToken<SafeMateDevice>() {}.getType());
+	
+	return safeMateDevive;
 }
 //For web app with my photo in phone 
 public Device mmiCarCordinates() {
@@ -350,12 +397,14 @@ public Device mmiCarCordinates() {
 			
 			for (Device device : mmiLocation.getDevices()) {
 				if (device.getDeviceId() == Key.mmiDeviceID) {
+					device.setDeviceOdometer(device.getDeviceOdometer() +odometer_init);
 					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
 					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 					sdf.setTimeZone(userTimeZone);
 					String response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
 					StringBuilder emailBody = new StringBuilder(response);
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
+					emailBody.append(" <br/><br/>  <br/>  Odo meter reading "+device.getDeviceOdometer());
 					sendEmail(emailBody.toString());
 					String whatAppMsg = "Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					MailService.sendWhatAppMsg("917837394152", whatAppMsg,false,true);

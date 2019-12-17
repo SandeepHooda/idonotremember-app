@@ -1,15 +1,20 @@
 package mangodb;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import com.communication.phone.text.Key;
 import com.google.appengine.api.urlfetch.FetchOptions;
@@ -30,22 +35,32 @@ public class MangoDB {
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 	
 	public static String makeExternalRequest(String httpsURL, String method, String data, Map<String, String> headers) {
+		return makeExternalRequest(httpsURL,  method,  data,  headers, true, null);
+	}
+	public static String makeExternalRequest(String httpsURL, String method, String data, Map<String, String> headers, boolean followRefirect, String needResponseCookie) {
 		try {
-			
+			FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate().setDeadline(300d);
+			if (!followRefirect) {
+				lFetchOptions = lFetchOptions.doNotFollowRedirects();
+			}
 	        URL url = new URL(httpsURL);
             HTTPRequest req = null;
             if ("POST".equalsIgnoreCase(method)) {
             	req = new HTTPRequest(url, HTTPMethod.POST, lFetchOptions);
             }else {
             	req = new HTTPRequest(url, HTTPMethod.GET, lFetchOptions);
+            	
             }
             
            
-            Set<String>  keys=  headers.keySet();
-            for (String key: keys) {
-            	 HTTPHeader header = new HTTPHeader(key, headers.get(key));
-                 req.setHeader(header);
-            }
+            
+            	Set<String>  keys=  headers.keySet();
+                for (String key: keys) {
+                	 HTTPHeader header = new HTTPHeader(key, headers.get(key));
+                     req.setHeader(header);
+                }
+            
+            
            
             /*String contentType = headers.get("Content-type");
 			if (null == contentType) {
@@ -57,13 +72,28 @@ public class MangoDB {
             	req.setPayload(data.getBytes());
             }
             
+           
+
+    		
+            
             HTTPResponse res =fetcher.fetch(req);
-            if(res.getResponseCode() >=200 && res.getResponseCode()  <300) {
-            	return (new String(res.getContent()));
-            }else {
-            	System.out.println(" response code is not ok "+res.getResponseCode());
-            	return null;
-            }
+         
+           if (needResponseCookie != null) {
+    			for (HTTPHeader header : res.getHeaders()) {
+         			if (needResponseCookie.equalsIgnoreCase(header.getName())) {
+         				return header.getValue();
+         			}
+         		}
+    			return null;
+    		}else {
+    			int status = res.getResponseCode();
+    			if(status >=200 && status  <300) {
+    				return (new String(res.getContent()));
+       			}else {
+       				System.out.println(" response code is not ok "+res.getResponseCode());
+	                return null;
+       			}
+    	    }
             
  
         } catch (IOException e) {
@@ -96,6 +126,38 @@ public class MangoDB {
 		 return responseStr;
 	}
 	
+	public static String getSafeMateLocations() {
+		String mmiCookie = getLoginCookie();
+		return exchangeExcessToken(mmiCookie);
+		
+	}
+	
+	private static String getLoginCookie()  {
+		String loginUrl = "https://auth.mireo.hr/oauth2/login";
+		String query = "username="+Key.safeMateUser; 
+		query += "&pwd="+Key.safeMatePwd;
+		query += "&rm=0" ;
+		Map<String, String> headers = new HashMap<String, String>();
+	    headers.put("Content-type", "application/x-www-form-urlencoded");
+	    headers.put("Connection", "close");
+	    headers.put("Content-Length", ""+query.getBytes().length);
+		String mmiCookie =  makeExternalRequest(loginUrl, "POST", query, headers, false,"Set-Cookie"); 
+		return mmiCookie.substring(5,mmiCookie.indexOf(";")); 
+	}
+	
+	private static String exchangeExcessToken(String mmiCookie)  {
+		
+		String url ="https://auth.mireo.hr/oauth2/oauth?client_id=851982.apps.mireo.hr&redirect_uri=https://fleet.mapmyindia.com/Fleet2009/Fleet2009.html&response_type=token&client_domain=fleet.mapmyindia.com&welcome_url=";
+
+		Map<String, String> headers = new HashMap<String, String>();
+	    headers.put("Content-type", "application/json");
+	    headers.put("Cookie", "LUID="+mmiCookie);
+	    headers.put("Referer", "https://auth.mireo.hr/oauth2/html/login_fleet.html");
+	    headers.put("Connection", "close");
+	    String redirectUrl = makeExternalRequest(url, "GET", null, headers, false,"Location"); 
+		String accessToken = redirectUrl.substring(redirectUrl.indexOf("=")+1);
+		return accessToken;
+	}
 	public static String getDocumentWithQuery(String dbName, String collection,  String documentKey, String keyName, boolean isKeyString, String mlabApiKey, String query){
 		if (null == mlabApiKey) {
 			mlabApiKey = mlabKeyReminder;
@@ -114,7 +176,7 @@ public class MangoDB {
 			httpsURL += query;
 			
 		}
-		System.out.println("This is the url "+httpsURL);
+		//System.out.println("This is the url "+httpsURL);
 		String responseStr = "";
 		 try {
 			
@@ -175,7 +237,7 @@ public static void createNewDocumentInCollection(String dbName,String collection
 	            
 	 
 	        } catch (IOException e) {
-	        	
+	        	e.printStackTrace();
 	        }
 	}
 	

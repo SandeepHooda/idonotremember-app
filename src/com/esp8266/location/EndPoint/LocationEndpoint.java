@@ -55,5 +55,17 @@ public interface LocationEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response mmiCarCordinates(@Context HttpServletRequest request);
 	
+	@GET
+	@Path("/location/safemate/kusum")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getSafeMateLocation(@Context HttpServletRequest request);
+	
+	@GET
+	@Path("/location/geofencingDistance/kusum")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response kusumGeoFencingDistance(@Context HttpServletRequest request);
+	
 
 }
