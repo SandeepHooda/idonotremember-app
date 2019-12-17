@@ -172,6 +172,20 @@ public class LocationFacade {
 	}
 	public com.esp8266.location.LatLang userGeoFencingDistance(List<com.esp8266.location.LatLang> favLocations , String userName) {
 		String dbCollection  = "safemate-"+userName;
+		
+		//User location from DB
+		String userLocationStr = MangoDB.getDocumentWithQuery("wemos-users", dbCollection, dbCollection, null, true, MangoDB.mlabKeySonu, null) ;
+		Gson  json = new Gson();
+		com.esp8266.location.LatLang userLocationDB = new com.esp8266.location.LatLang();
+		if (userLocationStr != null && userLocationStr.trim().length() > 0) {
+			userLocationDB = json.fromJson(userLocationStr,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
+		}else {
+			userLocationStr = json.toJson(userLocationDB,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
+			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);//create for the first time
+		}
+		
+		
+				
 		//Get current position from safemate servers
 		double distanceFromFav = 1000000;
 		com.esp8266.location.LatLang nearestFavLoc =null;
@@ -189,20 +203,18 @@ public class LocationFacade {
 		}
 		com.esp8266.location.LatLang currentLocation = new com.esp8266.location.LatLang(current_lat,  current_lan, nearestFavLoc.getLabel(), dbCollection, pos.getGpsStatusTime(), pos.getGprsStatusTime());
 		currentLocation.setDistanceFromNearestKnow(distanceFromFav);
-		if (distanceFromFav < 80) {
+		
+		int safeDistancethreahHold = 100;
+		if (!pos.getGpsStatus()) {
+			safeDistancethreahHold = 600;
+		}
+		
+		if (distanceFromFav <= safeDistancethreahHold) {
 			currentLocation.setAtKnownLocation(true);
 		}
 		
-		//User location from DB
-		String userLocationStr = MangoDB.getDocumentWithQuery("wemos-users", dbCollection, dbCollection, null, true, MangoDB.mlabKeySonu, null) ;
-		Gson  json = new Gson();
-		com.esp8266.location.LatLang userLocationDB = currentLocation;
-		if (userLocationStr != null && userLocationStr.trim().length() > 0) {
-			userLocationDB = json.fromJson(userLocationStr,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
-		}else {
-			userLocationStr = json.toJson(userLocationDB,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
-			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);//create for the first time
-		}
+		System.out.println("  distanceFromFav "+distanceFromFav+" "+nearestFavLoc.getLabel());
+		
 		
 		
 		//Entering or existing any klnown location
@@ -214,7 +226,7 @@ public class LocationFacade {
 		
 
 		double distanceFromLastSaved = 1000* Utils.distance(userLocationDB.getLat(), userLocationDB.getLan(), current_lat, current_lan, "K");
-		if (distanceFromLastSaved > 40) {
+		if (distanceFromLastSaved > safeDistancethreahHold) {
 			//kusum is moving to update time
 			userLocationStr = json.toJson(currentLocation,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
 			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);
@@ -223,8 +235,8 @@ public class LocationFacade {
 		
 		
 		currentLocation.setComment("Stay at current location minutes : "+((currentLocation.getLocationEntryTime() - userLocationDB.getLocationEntryTime())/60000 ) +
-				" GPS time "+((System.currentTimeMillis() - currentLocation.getGprsTime()*1000 )/60000 )+
-				" GPRS time "+((System.currentTimeMillis() - currentLocation.getGprsTime()*1000 )/60000 ));
+				" last GPS update in minutes "+((System.currentTimeMillis() - currentLocation.getGpsTime()*1000 )/60000 )+ " conn: "+pos.getGpsStatus()+
+				" last GPRS update in minutes "+((System.currentTimeMillis() - currentLocation.getGprsTime()*1000 )/60000 )+ " conn: "+pos.getGprsStatus());
 		return currentLocation;
 	}
 	
