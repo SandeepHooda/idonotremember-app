@@ -204,7 +204,7 @@ public class LocationFacade {
 		com.esp8266.location.LatLang currentLocation = new com.esp8266.location.LatLang(current_lat,  current_lan, nearestFavLoc.getLabel(), dbCollection, pos.getGpsStatusTime(), pos.getGprsStatusTime());
 		currentLocation.setDistanceFromNearestKnow(distanceFromFav);
 		
-		int safeDistancethreahHold = 100;
+		int safeDistancethreahHold = 40;
 		if (!pos.getGpsStatus()) {
 			safeDistancethreahHold = 600;
 		}
