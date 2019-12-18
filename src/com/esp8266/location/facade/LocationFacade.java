@@ -215,7 +215,7 @@ public class LocationFacade {
 		currentLocation.setBattery_percent(pos.getBatteryPercent());
 		currentLocation.setTime(time_str);
 		Address add =pos.getAddress();
-		currentLocation.setAddress(add.getHouseNo()+" "+add.getStreet()+" "+add.getCity()+" near "+add.getPOI() + "<a href=\"http://maps.google.com/maps?&z=10&q="+pt.getY()+"+"+pt.getX()+"(Pool+Location)&mrt=yp)\"> Location </a>");
+		currentLocation.setAddress(add.getHouseNo()+" "+add.getStreet()+" "+add.getCity()+" near "+add.getPOI() + "  http://maps.google.com/maps?&z=10&q="+pt.getY()+"+"+pt.getX()+"(Pool+Location)&mrt=yp)");
 		int safeDistancethreahHold = 100;
 		if (!pos.getGpsStatus()) {
 			safeDistancethreahHold = 1000;
