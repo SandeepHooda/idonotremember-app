@@ -22,12 +22,15 @@ public class LatLang {
 	private double lat;
 	private double lan;
 	private String label;
+	private String address;
 	private boolean atKnownLocation;
 	private double distanceFromNearestKnow;
 	private long locationEntryTime;
 	private long gpsTime;
 	private long gprsTime;
 	private String comment;
+	private String time;
+	private long battery_percent;
 	public double getLat() {
 		return lat;
 	}
@@ -87,6 +90,24 @@ public class LatLang {
 	}
 	public void set_id(String _id) {
 		this._id = _id;
+	}
+	public long getBattery_percent() {
+		return battery_percent;
+	}
+	public void setBattery_percent(long battery_percent) {
+		this.battery_percent = battery_percent;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
 	}
 	
 }

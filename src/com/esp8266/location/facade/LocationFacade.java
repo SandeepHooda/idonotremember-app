@@ -5,12 +5,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +24,7 @@ import com.esp8266.location.HealthPing.HealthStatus;
 import com.esp8266.location.LocationVO;
 import com.esp8266.location.Utils;
 import com.esp8266.location.mapMyIndia.Device;
+import com.esp8266.location.mapMyIndia.safemate.Address;
 import com.esp8266.location.mapMyIndia.safemate.Position;
 import com.esp8266.location.mapMyIndia.safemate.Pt;
 import com.esp8266.location.mapMyIndia.safemate.SafeMateDevice;
@@ -40,7 +44,7 @@ public class LocationFacade {
 	Pattern houseNoPattern = Pattern.compile("H.no[\\.]{0,1}[\\s]{0,1}(.*)");
 	 
 	
-	
+	private static boolean battryNotificationSent = false;
 	 private String httpsURL ="https://www.googleapis.com/geolocation/v1/geolocate?key="+Key.googleLocationAPI;
 
 	public  String getLocation(LocationVO locationVO) {
@@ -173,6 +177,11 @@ public class LocationFacade {
 	public com.esp8266.location.LatLang userGeoFencingDistance(List<com.esp8266.location.LatLang> favLocations , String userName) {
 		String dbCollection  = "safemate-"+userName;
 		
+		 SimpleDateFormat sdf = new SimpleDateFormat("H mm");
+			TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
+			sdf.setTimeZone(userTimeZone);
+			String time_str = sdf.format(new Date());
+		
 		//User location from DB
 		String userLocationStr = MangoDB.getDocumentWithQuery("wemos-users", dbCollection, dbCollection, null, true, MangoDB.mlabKeySonu, null) ;
 		Gson  json = new Gson();
@@ -203,10 +212,13 @@ public class LocationFacade {
 		}
 		com.esp8266.location.LatLang currentLocation = new com.esp8266.location.LatLang(current_lat,  current_lan, nearestFavLoc.getLabel(), dbCollection, pos.getGpsStatusTime(), pos.getGprsStatusTime());
 		currentLocation.setDistanceFromNearestKnow(distanceFromFav);
-		
-		int safeDistancethreahHold = 40;
+		currentLocation.setBattery_percent(pos.getBatteryPercent());
+		currentLocation.setTime(time_str);
+		Address add =pos.getAddress();
+		currentLocation.setAddress(add.getHouseNo()+" "+add.getStreet()+" "+add.getCity()+" near "+add.getPOI() + "<a href=\"http://maps.google.com/maps?&z=10&q="+pt.getY()+"+"+pt.getX()+"(Pool+Location)&mrt=yp)\"> Location </a>");
+		int safeDistancethreahHold = 100;
 		if (!pos.getGpsStatus()) {
-			safeDistancethreahHold = 600;
+			safeDistancethreahHold = 1000;
 		}
 		
 		if (distanceFromFav <= safeDistancethreahHold) {
@@ -224,6 +236,20 @@ public class LocationFacade {
 			DataService.sendPushOverNotification(userName +" has reached  "+currentLocation.getLabel(),Key.sandeepPhone, true );
 		}
 		
+		if (currentLocation.getBattery_percent() > 95) {
+			if (!battryNotificationSent) {
+				DataService.sendPushOverNotification(userName +" device is fully charged.  Battery level: "+currentLocation.getBattery_percent(),Key.sandeepPhone, true );
+				battryNotificationSent = true;
+			}
+			
+		}else if (currentLocation.getBattery_percent() < 30) {
+			if (!battryNotificationSent) {
+				DataService.sendPushOverNotification(userName +" device need charging. Battery level:  "+currentLocation.getBattery_percent(),Key.sandeepPhone, true );
+				battryNotificationSent = true;
+			}
+		}else {
+			battryNotificationSent = false;
+		}
 
 		double distanceFromLastSaved = 1000* Utils.distance(userLocationDB.getLat(), userLocationDB.getLan(), current_lat, current_lan, "K");
 		if (distanceFromLastSaved > safeDistancethreahHold) {
