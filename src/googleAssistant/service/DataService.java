@@ -65,7 +65,7 @@ public class DataService {
 			int time = Integer.parseInt(time_str.replaceAll(" ", ""));
 			System.out.println(" time now is "+time);
 			
-			if (ignoreDNDTimings || (time < 900 || time > 1630)) {
+			if (ignoreDNDTimings || ( (time >600 && time < 900) || ( time > 1330 && time < 2000))) {
 				String data = "{\"token\":\"au2pgshc1vu4p3cxsa8n8zgvrnsed4\" , \"user\":\""+user+"\" ,\"message\" :\""+msg+"\"}";
 						
 				Map<String, String> headers = new HashMap<String, String>();

@@ -8,7 +8,8 @@ function getCarLocation() {
 	        	  
 	        	   if(xmlhttp.responseText){
 	        		   var resp =  JSON.parse(xmlhttp.responseText.substring(5));
-		        	  let location = "http://maps.google.com/maps?&z=10&q="+resp.latitude+"+"+resp.longitude+"(Pool+Location)&mrt=yp"
+		        	  let location = "http://maps.google.com/maps?&z=10&q="+resp.latitude+"+"+resp.longitude+"(Pool+Location)&mrt=yp";
+		        	  location = "https://maps.mapmyindia.com/@"+resp.latitude+","+resp.longitude;
 		        	  document.getElementById("loader").style.display = "none";
 		        	  document.getElementById("Address").innerHTML = resp.address
 	        		   window.open(location);

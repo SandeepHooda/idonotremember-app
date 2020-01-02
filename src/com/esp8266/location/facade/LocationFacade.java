@@ -44,7 +44,7 @@ public class LocationFacade {
 	Pattern houseNoPattern = Pattern.compile("H.no[\\.]{0,1}[\\s]{0,1}(.*)");
 	 
 	
-	private static boolean battryNotificationSent = false;
+	
 	 private String httpsURL ="https://www.googleapis.com/geolocation/v1/geolocate?key="+Key.googleLocationAPI;
 
 	public  String getLocation(LocationVO locationVO) {
@@ -177,7 +177,7 @@ public class LocationFacade {
 	public com.esp8266.location.LatLang userGeoFencingDistance(List<com.esp8266.location.LatLang> favLocations , String userName) {
 		String dbCollection  = "safemate-"+userName;
 		
-		 SimpleDateFormat sdf = new SimpleDateFormat("H mm");
+		 SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss");
 			TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 			sdf.setTimeZone(userTimeZone);
 			String time_str = sdf.format(new Date());
@@ -228,31 +228,40 @@ public class LocationFacade {
 		System.out.println("  distanceFromFav "+distanceFromFav+" "+nearestFavLoc.getLabel());
 		
 		
-		
+		boolean changeInDBState = false;
 		//Entering or existing any klnown location
 		if (userLocationDB.isAtKnownLocation()  && !currentLocation.isAtKnownLocation()) {//existing
 			DataService.sendPushOverNotification(userName +" has started from "+userLocationDB.getLabel(),Key.sandeepPhone, true );
+			changeInDBState = true;
 		}else if (!userLocationDB.isAtKnownLocation()  && currentLocation.isAtKnownLocation()) {//entering
 			DataService.sendPushOverNotification(userName +" has reached  "+currentLocation.getLabel(),Key.sandeepPhone, true );
+			changeInDBState = true;
 		}
+		boolean  battryNotificationSent = currentLocation.isBattryNotificationSent();
 		
 		if (currentLocation.getBattery_percent() > 95) {
 			if (!battryNotificationSent) {
-				DataService.sendPushOverNotification(userName +" device is fully charged.  Battery level: "+currentLocation.getBattery_percent(),Key.sandeepPhone, true );
+				changeInDBState = true;
+				DataService.sendPushOverNotification(userName +" device is fully charged.  Battery level: "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
 				battryNotificationSent = true;
+				currentLocation.setBattryNotificationSent(true);
 			}
 			
 		}else if (currentLocation.getBattery_percent() < 30) {
 			if (!battryNotificationSent) {
-				DataService.sendPushOverNotification(userName +" device need charging. Battery level:  "+currentLocation.getBattery_percent(),Key.sandeepPhone, true );
+				DataService.sendPushOverNotification(userName +" device need charging. Battery level:  "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
 				battryNotificationSent = true;
+				currentLocation.setBattryNotificationSent(true);
+				changeInDBState = true;
 			}
 		}else {
 			battryNotificationSent = false;
+			currentLocation.setBattryNotificationSent(false);
+			changeInDBState = true;
 		}
 
 		double distanceFromLastSaved = 1000* Utils.distance(userLocationDB.getLat(), userLocationDB.getLan(), current_lat, current_lan, "K");
-		if (distanceFromLastSaved > safeDistancethreahHold) {
+		if ((distanceFromLastSaved > safeDistancethreahHold ) || changeInDBState) {
 			//kusum is moving to update time
 			userLocationStr = json.toJson(currentLocation,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
 			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);

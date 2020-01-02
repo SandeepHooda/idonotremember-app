@@ -31,6 +31,7 @@ public class LatLang {
 	private String comment;
 	private String time;
 	private long battery_percent;
+	private boolean battryNotificationSent;
 	public double getLat() {
 		return lat;
 	}
@@ -108,6 +109,12 @@ public class LatLang {
 	}
 	public void setTime(String time) {
 		this.time = time;
+	}
+	public boolean isBattryNotificationSent() {
+		return battryNotificationSent;
+	}
+	public void setBattryNotificationSent(boolean battryNotificationSent) {
+		this.battryNotificationSent = battryNotificationSent;
 	}
 	
 }
