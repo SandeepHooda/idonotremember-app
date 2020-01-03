@@ -237,27 +237,27 @@ public class LocationFacade {
 			DataService.sendPushOverNotification(userName +" has reached  "+currentLocation.getLabel(),Key.sandeepPhone, true );
 			changeInDBState = true;
 		}
-		boolean  battryNotificationSent = currentLocation.isBattryNotificationSent();
+		boolean  battryNotificationSentDB = userLocationDB.isBattryNotificationSent();
 		
 		if (currentLocation.getBattery_percent() > 95) {
-			if (!battryNotificationSent) {
+			if (!battryNotificationSentDB) {
 				changeInDBState = true;
 				DataService.sendPushOverNotification(userName +" device is fully charged.  Battery level: "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
-				battryNotificationSent = true;
 				currentLocation.setBattryNotificationSent(true);
 			}
 			
 		}else if (currentLocation.getBattery_percent() < 30) {
-			if (!battryNotificationSent) {
+			if (!battryNotificationSentDB) {
 				DataService.sendPushOverNotification(userName +" device need charging. Battery level:  "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
-				battryNotificationSent = true;
 				currentLocation.setBattryNotificationSent(true);
 				changeInDBState = true;
 			}
 		}else {
-			battryNotificationSent = false;
-			currentLocation.setBattryNotificationSent(false);
-			changeInDBState = true;
+			if (battryNotificationSentDB) {
+				currentLocation.setBattryNotificationSent(false);
+				changeInDBState = true;
+			}
+			
 		}
 
 		double distanceFromLastSaved = 1000* Utils.distance(userLocationDB.getLat(), userLocationDB.getLan(), current_lat, current_lan, "K");
