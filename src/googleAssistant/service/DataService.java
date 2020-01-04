@@ -358,7 +358,7 @@ public String getMMILocation() {
 					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
 					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 					sdf.setTimeZone(userTimeZone);
-					response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
+					response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress()+" GPS update time :  "+sdf.format(new Date(device.getTimestamp()*1000L)) ;
 					StringBuilder emailBody = new StringBuilder(response);
 					//response += "https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
@@ -401,12 +401,13 @@ public Device mmiCarCordinates() {
 					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
 					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 					sdf.setTimeZone(userTimeZone);
-					String response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress() ;
+					String gpsTime =  " As of "+sdf.format(new Date(device.getGprsTime()*1000L))+" And GPS update time : "+sdf.format(new Date(device.getTimestamp()*1000L));
+					String response = gpsTime+". Your Car is located at " +device.getAddress() ;
 					StringBuilder emailBody = new StringBuilder(response);
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					emailBody.append(" <br/><br/>  <br/>  Odo meter reading "+device.getDeviceOdometer());
 					sendEmail(emailBody.toString());
-					String whatAppMsg = "Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
+					String whatAppMsg = gpsTime+" Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					MailService.sendWhatAppMsg("917837394152", whatAppMsg,false,true);
 					MailService.sendWhatAppMsg("919216411835", whatAppMsg,true,false);
 					return device;

@@ -239,25 +239,24 @@ public class LocationFacade {
 		}
 		boolean  battryNotificationSentDB = userLocationDB.isBattryNotificationSent();
 		
-		if (currentLocation.getBattery_percent() > 95) {
-			if (!battryNotificationSentDB) {
-				changeInDBState = true;
-				DataService.sendPushOverNotification(userName +" device is fully charged.  Battery level: "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
-				currentLocation.setBattryNotificationSent(true);
-			}
+		if (currentLocation.getBattery_percent() >= 30 && currentLocation.getBattery_percent() <= 95) { // 30 - 95
 			
-		}else if (currentLocation.getBattery_percent() < 30) {
-			if (!battryNotificationSentDB) {
-				DataService.sendPushOverNotification(userName +" device need charging. Battery level:  "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
-				currentLocation.setBattryNotificationSent(true);
+			if (battryNotificationSentDB) {
 				changeInDBState = true;
+				currentLocation.setBattryNotificationSent(false);
 			}
 		}else {
-			if (battryNotificationSentDB) {
-				currentLocation.setBattryNotificationSent(false);
+			if (!battryNotificationSentDB) {
+				
+				if (currentLocation.getBattery_percent() > 95) {// after 95
+					DataService.sendPushOverNotification(userName +" device is fully charged.  Battery level: "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
+				}else {//below 30
+					DataService.sendPushOverNotification(userName +" device need charging. Battery level:  "+currentLocation.getBattery_percent(),Key.sandeepPhone, false );
+				}
+				
 				changeInDBState = true;
+				currentLocation.setBattryNotificationSent(true);
 			}
-			
 		}
 
 		double distanceFromLastSaved = 1000* Utils.distance(userLocationDB.getLat(), userLocationDB.getLan(), current_lat, current_lan, "K");
