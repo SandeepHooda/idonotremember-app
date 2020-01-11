@@ -355,7 +355,7 @@ public String getMMILocation() {
 			for (Device device : mmiLocation.getDevices()) {
 				if (device.getDeviceId() == Key.mmiDeviceID) {
 					device.setDeviceOdometer(device.getDeviceOdometer() +odometer_init);
-					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
+					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, h : mm aa");
 					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 					sdf.setTimeZone(userTimeZone);
 					response = " As of "+sdf.format(new Date(device.getGprsTime()*1000L)) +". Your Car is located at " +device.getAddress()+" GPS update time :  "+sdf.format(new Date(device.getTimestamp()*1000L)) ;
@@ -398,7 +398,7 @@ public Device mmiCarCordinates() {
 			for (Device device : mmiLocation.getDevices()) {
 				if (device.getDeviceId() == Key.mmiDeviceID) {
 					device.setDeviceOdometer(device.getDeviceOdometer() +odometer_init);
-					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy h, mm aa");
+					SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, h : mm aa");
 					TimeZone userTimeZone	=	TimeZone.getTimeZone("Asia/Calcutta");
 					sdf.setTimeZone(userTimeZone);
 					String gpsTime =  " As of "+sdf.format(new Date(device.getGprsTime()*1000L))+" And GPS update time : "+sdf.format(new Date(device.getTimestamp()*1000L));
@@ -407,9 +407,9 @@ public Device mmiCarCordinates() {
 					emailBody.append(" <br/><br/>  <br/> \n https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude());
 					emailBody.append(" <br/><br/>  <br/>  Odo meter reading "+device.getDeviceOdometer());
 					sendEmail(emailBody.toString());
-					String whatAppMsg = gpsTime+" Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
+					String whatAppMsg = "Your CarLocation code is https://maps.mapmyindia.com/@"+device.getLatitude()+","+device.getLongitude();
 					MailService.sendWhatAppMsg("917837394152", whatAppMsg,false,true);
-					MailService.sendWhatAppMsg("919216411835", whatAppMsg,true,false);
+					//MailService.sendWhatAppMsg("919216411835", whatAppMsg,true,false);
 					return device;
 				
 				}

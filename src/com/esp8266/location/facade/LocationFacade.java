@@ -255,8 +255,9 @@ public class LocationFacade {
 				}
 				
 				changeInDBState = true;
-				currentLocation.setBattryNotificationSent(true);
+				
 			}
+			currentLocation.setBattryNotificationSent(true);
 		}
 
 		double distanceFromLastSaved = 1000* Utils.distance(userLocationDB.getLat(), userLocationDB.getLan(), current_lat, current_lan, "K");
