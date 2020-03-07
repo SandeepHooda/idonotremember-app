@@ -1,11 +1,16 @@
 package mangodb;
 
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -37,11 +42,50 @@ public class MangoDB {
 	public static String makeExternalRequest(String httpsURL, String method, String data, Map<String, String> headers) {
 		return makeExternalRequest(httpsURL,  method,  data,  headers, true, null);
 	}
+	public static String makeExternalRequest2(String httpsURL, String method, String data, Map<String, String> headers, boolean followRefirect, String needResponseCookie) throws IOException {
+		URL url = new URL(httpsURL);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		// Enable output for the connection.
+		conn.setDoOutput(true);
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	
+		
+		 
+	
+		   
+		// Set HTTP request method.
+		conn.setRequestMethod("POST");
+
+		conn.setConnectTimeout(30000);
+
+		OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+		writer.write(data);
+		writer.close();
+		conn.setConnectTimeout(30000);
+		int respCode = conn.getResponseCode(); // New items get NOT_FOUND on PUT
+		if (respCode == HttpURLConnection.HTTP_OK || respCode == HttpURLConnection.HTTP_NOT_FOUND) {
+		  
+		  StringBuilder response = new StringBuilder();
+		  String line;
+
+		  // Read input data stream.
+		  BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		  while ((line = reader.readLine()) != null) {
+		    response.append(line);
+		  }
+		  reader.close();
+		  System.out.println("Response "+ response.toString());
+		} else {
+		 System.out.println("code "+ conn.getResponseCode() + " " + conn.getResponseMessage());
+		}
+		return "";
+	}
 	public static String makeExternalRequest(String httpsURL, String method, String data, Map<String, String> headers, boolean followRefirect, String needResponseCookie) {
 		try {
 			FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate().setDeadline(300d);
 			if (!followRefirect) {
 				lFetchOptions = lFetchOptions.doNotFollowRedirects();
+				
 			}
 	        URL url = new URL(httpsURL);
             HTTPRequest req = null;
@@ -52,7 +96,8 @@ public class MangoDB {
             	
             }
             
-           
+           //conn.setConnectTimeout(2000);
+            //conn.setReadTimeout(2000);
             
             	Set<String>  keys=  headers.keySet();
                 for (String key: keys) {
@@ -74,8 +119,8 @@ public class MangoDB {
             
            
 
-    		
             
+           
             HTTPResponse res =fetcher.fetch(req);
          
            if (needResponseCookie != null) {
@@ -130,6 +175,27 @@ public class MangoDB {
 		String mmiCookie = getLoginCookie();
 		return exchangeExcessToken(mmiCookie);
 		
+	}
+	
+	public static String getElecticity(String userName, String password) throws UnsupportedEncodingException  {
+		String loginUrl = "http://uhbvn.org.in/web/portal/auth?lastPage=/consumer-info";
+	
+		Map<String, String> headers = new HashMap<String, String>();
+	  
+		String consumerInfo = "";
+		try {
+			consumerInfo = makeExternalRequest(loginUrl, "GET", null, headers, false,null);
+			System.out.println(consumerInfo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		headers = new HashMap<String, String>();
+	    headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+	    headers.put("Cookie", consumerInfo);
+	    headers.put("Referer", "http://uhbvn.org.in/web/portal/auth?lastPage=/consumer-info");
+		return null; 
 	}
 	
 	private static String getLoginCookie()  {

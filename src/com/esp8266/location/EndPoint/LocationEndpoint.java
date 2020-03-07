@@ -67,5 +67,11 @@ public interface LocationEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response kusumGeoFencingDistance(@Context HttpServletRequest request);
 	
+	@GET
+	@Path("/utility/bill/all")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getUtilityBills(@Context HttpServletRequest request);
+	
 
 }

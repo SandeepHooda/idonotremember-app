@@ -2,6 +2,7 @@ package com.esp8266.location.facade;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -18,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.communication.phone.text.Key;
+import com.esp8266.bill.UtilityBillResponse;
 import com.esp8266.location.GoogleAddress;
 import com.esp8266.location.HealthPing;
 import com.esp8266.location.HealthPing.HealthStatus;
@@ -173,6 +175,15 @@ public class LocationFacade {
 	}
 	public SafeMateDevice getSafeMateLocation() {
 		return new DataService().getSafeMateLocation();
+	}
+	public UtilityBillResponse getUtilityBills() {
+		try {
+			return new DataService().getUtilityBills();
+		} catch (Exception e) {
+		
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public com.esp8266.location.LatLang userGeoFencingDistance(List<com.esp8266.location.LatLang> favLocations , String userName) {
 		String dbCollection  = "safemate-"+userName;

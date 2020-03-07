@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import com.Constants;
+import com.esp8266.bill.UtilityBillResponse;
 import com.esp8266.location.LocationVO;
 import com.esp8266.location.WiFiVO;
 import com.esp8266.location.facade.LocationFacade;
@@ -129,6 +130,20 @@ public class LocationEndpointImpl implements LocationEndpoint {
 	}
 	
 
+	@Override
+	public Response getUtilityBills(HttpServletRequest request) {
+		UtilityBillResponse utilityResponse = null;
+		try {
+			utilityResponse = locationFacade.getUtilityBills();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (null == utilityResponse) {
+			return Response.serverError().entity(utilityResponse).build();
+		}
+		return Response.ok().entity(utilityResponse).build();
+	}
 	
 	
 

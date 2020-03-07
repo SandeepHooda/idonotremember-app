@@ -68,6 +68,14 @@ public class LoginEndpointImpl implements LoginEndpoint {
 					session.setAttribute("timeZoneSettings", loginVO.getUserSuppliedTimeZone());
 					
 				}
+				System.out.println(" user logged in "+loginVO.getEmailID());
+				if (!"sonu.hooda@gmail.com".equalsIgnoreCase(loginVO.getEmailID())) {
+					System.out.println(" user not authorized");
+					LoginVO vo = new LoginVO();
+					vo.setErrorMessage("Please log in to authenticate ");
+					return Response.status(Response.Status.UNAUTHORIZED).entity(vo).build();
+				}
+				
 				session.setAttribute("email", loginVO.getEmailID());
 				session.setAttribute("userName", loginVO.getName());
 				session.setAttribute("settings", loginVO.getUserSettings());

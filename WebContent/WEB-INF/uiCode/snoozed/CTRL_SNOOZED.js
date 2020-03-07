@@ -24,7 +24,15 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$window', '$location','$scope','$io
 	
 		 $http.get(appData.getHost()+'/ws/login/validate/'+regID+'/timeZone/'+Intl.DateTimeFormat().resolvedOptions().timeZone.replace("/", "@"), config)
 	  		.then(function(response){
-					if (!window.localStorage.getItem('name') ){
+	  			if (response.status == 401){
+	  				window.localStorage.removeItem('regID');
+	  				localStorage.removeItem('name');
+	  				document.cookie = 'regID' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	  				document.cookie = 'name' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+					$state.transitionTo('menu.login');
+	  				
+	  			}else {
+	  				if (!window.localStorage.getItem('name') ){
 						let userName = response.data.userName;
 						if (userName.indexOf("@") >0){
 							userName = userName.substring(0,userName.indexOf("@"));
@@ -34,6 +42,8 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$window', '$location','$scope','$io
 				
 	  			$scope.getCallCredits();
 	  			$scope.recordLoginSucess();
+	  			}
+					
 	  		},
 			function(response){
 	  			window.localStorage.removeItem('regID');

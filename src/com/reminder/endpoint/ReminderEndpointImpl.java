@@ -116,6 +116,13 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 				HttpSession session = request.getSession();
 				 email = (String)session.getAttribute("email");
 			}*/
+			System.out.println(" user logged in "+email);
+			if (!"sonu.hooda@gmail.com".equalsIgnoreCase(email)) {
+				System.out.println(" user not authorized");
+				LoginVO vo = new LoginVO();
+				vo.setErrorMessage("Please log in to authenticate ");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(vo).build();
+			}
 			
 			if (null != email) {
 				return Response.ok().entity(reminderFacade.getReminders(regID, email)).build();
@@ -297,6 +304,12 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 				HttpSession session = request.getSession();
 				 email = (String)session.getAttribute("email");
 			}*/
+			if (!"sonu.hooda@gmail.com".equalsIgnoreCase(email)) {
+				System.out.println(" user not authorized");
+				LoginVO vo = new LoginVO();
+				vo.setErrorMessage("Please log in to authenticate ");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(vo).build();
+			}
 			if (null != email) {
 				return Response.ok().entity(reminderFacade.getToDos(email)).build();
 			}else {

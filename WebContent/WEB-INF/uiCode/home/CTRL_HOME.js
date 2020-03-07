@@ -290,8 +290,8 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 	  		},
 			function(response){
 	  			if (response.status == 401){
-	  				$scope.popUp('Please Log in ', 'Seams like you have been logged out. Please login back.',null  );
-	  				$state.transitionTo('menu.login');
+	  				$scope.popUp('Please Log in ', '.Seams like you have been logged out. Please login back.',null  );
+	  				//$state.transitionTo('menu.login');
 	  				
 	  			}else {
 	  				 $scope.hideBusy();

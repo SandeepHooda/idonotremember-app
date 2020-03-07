@@ -252,7 +252,9 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	  		},
 			function(response){
 	  			if (response.status == 401){
-	  				$state.transitionTo('menu.login');
+	  				$scope.hideBusy();
+	 	  			$scope.popUp('Sorry ', 'Please close your browser and log back in. ',null  );
+	  				//$state.transitionTo('menu.login');
 	  			}else {
 	  				 $scope.hideBusy();
 	 	  			$scope.popUp('Sorry ', 'Could not fectch data. Please relaunch the app. ',null  );
