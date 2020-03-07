@@ -29,6 +29,9 @@ var monthNames =[
 		}
 		
 	}
+	let now = new Date();
+	let dateStr = ""+monthNames[now.getMonth()]+ " "+now.getDate()+", "+now.getFullYear()+" "+now.getHours() +":"+now.getMinutes()+":"+now.getSeconds()
+	$scope.reminder.meetingTime = new Date(dateStr);
 	$scope.moveToDay =function(){
 		if ($scope.reminder.month > 12 || isNaN($scope.reminder.month) ){
 			$scope.reminder.month = "";
@@ -135,11 +138,14 @@ var monthNames =[
 		var allRequiredFields = true;
 		if($scope.frequencyType =='Date'){
 			 if ($scope.frequencyWithDate== "Once" ){
-				 	if (!$scope.reminder.year  || !$scope.reminder.month || !$scope.reminder.day || !$scope.reminder.hour || !$scope.reminder.minute  ) {
+				 	/*if (!$scope.reminder.year  || !$scope.reminder.month || !$scope.reminder.day || !$scope.reminder.hour || !$scope.reminder.minute  ) {
 				 		allRequiredFields = false;
-				 	}else {
-				 		reminderObj.displayTime = $scope.reminder.day + " " +monthNames[$scope.reminder.month-1] +" "+$scope.reminder.year +" @ "+ $scope.reminder.hour +" : "+$scope.reminder.minute 
-				 	}
+				 	}else {*/
+				 	let time = $scope.reminder.meetingTime;
+				
+				 		reminderObj.displayTime = time.getDate() + " " +monthNames[time.getMonth() ] +" "+time.getFullYear() +" @ "+ time.getHours() +" : "+time.getMinutes(); 
+				 	
+				 		//}
 			  }else  if ($scope.frequencyWithDate== "Monthly"){
 				  if (!$scope.reminder.day || !$scope.reminder.hour || !$scope.reminder.minute) {
 					  allRequiredFields = false;
@@ -194,9 +200,17 @@ var monthNames =[
 			reminderObj.selectedPhone = theCtrl.selectedPhone;
 		if($scope.frequencyType =='Date'){
 			reminderObj.frequencyWithDate = $scope.frequencyWithDate;//Once , Monthly, Yearly
-			reminderObj.date =$scope.reminder.year+"_"+$scope.reminder.month+"_"+$scope.reminder.day;
-			reminderObj.time = $scope.reminder.hour+"_"+$scope.reminder.minute;
-			reminderObj._id = new Date($scope.reminder.year,$scope.reminder.month -1, $scope.reminder.day, $scope.reminder.hour, $scope.reminder.minute).getTime() +Math.random();
+			if ($scope.frequencyWithDate == 'Once'){
+				let time = $scope.reminder.meetingTime;
+				reminderObj.date =time.getFullYear()+"_"+(time.getMonth() +1)+"_"+time.getDate();
+				reminderObj.time = time.getHours()+"_"+time.getMinutes();
+				reminderObj._id = time.getTime() +Math.random();
+			}else {
+				reminderObj.date =$scope.reminder.year+"_"+$scope.reminder.month+"_"+$scope.reminder.day;
+				reminderObj.time = $scope.reminder.hour+"_"+$scope.reminder.minute;
+				reminderObj._id = new Date($scope.reminder.year,$scope.reminder.month -1, $scope.reminder.day, $scope.reminder.hour, $scope.reminder.minute).getTime() +Math.random();
+			}
+			
 		
 			
 		}else {

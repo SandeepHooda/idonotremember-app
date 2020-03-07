@@ -33,22 +33,28 @@
 			</button>
 	 	</div>
 		<!-- Enter date -->
-		<div class="textBoxSmall " ng-show="frequencyWithDate =='Once'">
-	 		<input id="year" class="smallInput" type="text" placeholder="YYYY *" ng-model="reminder.year" ng-change="moveToMonth()">
-		</div>
-		<div class="textBoxSmall" ng-show="frequencyWithDate =='Once'  || frequencyWithDate =='Yearly'">
-	 		<input id="month" class="verySmallInput" type="text" placeholder="MM *" ng-model="reminder.month" ng-change="moveToDay()">
-		</div>
-		<div class="textBoxSmall" ng-show="frequencyWithDate =='Once' || frequencyWithDate =='Yearly' || frequencyWithDate =='Monthly' ">
-	 		<input id="day" class="verySmallInput" type="text" placeholder="DD *" ng-model="reminder.day" ng-change="moveToHour()">
-		</div>
-		<div class="textBoxSmall">
-	 		<input id="hour" class="verySmallInput" type="text" placeholder="HH *" ng-model="reminder.hour" ng-change="moveToMinute()">
-		</div>
-		<div class="textBoxSmall">
-	 		<input id="minute" class="verySmallInput" type="text" placeholder="Min *" ng-model="reminder.minute" ng-change="moveToSubject()">
-		</div><!-- Enter date -->
+		<span  ng-if="frequencyWithDate != 'Once' ">
 		
+			<div class="textBoxSmall " ng-show="frequencyWithDate =='Once'">
+		 		<input id="year" class="smallInput" type="text" placeholder="YYYY *" ng-model="reminder.year" ng-change="moveToMonth()">
+			</div>
+			<div class="textBoxSmall" ng-show="frequencyWithDate =='Once'  || frequencyWithDate =='Yearly'">
+		 		<input id="month" class="verySmallInput" type="text" placeholder="MM *" ng-model="reminder.month" ng-change="moveToDay()">
+			</div>
+			<div class="textBoxSmall" ng-show="frequencyWithDate =='Once' || frequencyWithDate =='Yearly' || frequencyWithDate =='Monthly' ">
+		 		<input id="day" class="verySmallInput" type="text" placeholder="DD *" ng-model="reminder.day" ng-change="moveToHour()">
+			</div>
+			<div class="textBoxSmall">
+		 		<input id="hour" class="verySmallInput" type="text" placeholder="HH *" ng-model="reminder.hour" ng-change="moveToMinute()">
+			</div>
+			<div class="textBoxSmall">
+		 		<input id="minute" class="verySmallInput" type="text" placeholder="Min *" ng-model="reminder.minute" ng-change="moveToSubject()">
+			</div><!-- Enter date -->
+		</span>
+		
+		<span  ng-if="frequencyWithDate == 'Once' ">
+			<input type="datetime-local" id="meeting-time"  style="min-width: 300px;background-color: white;"    name="meeting-time" ng-model="reminder.meetingTime"   >
+		</span>
 		
 	 	<br/>
 	</span>	
