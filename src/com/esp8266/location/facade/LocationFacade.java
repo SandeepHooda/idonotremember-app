@@ -177,12 +177,7 @@ public class LocationFacade {
 		return new DataService().getSafeMateLocation();
 	}
 	public UtilityBillResponse getUtilityBills() {
-		try {
-			return new DataService().getUtilityBills();
-		} catch (Exception e) {
 		
-			e.printStackTrace();
-		}
 		return null;
 	}
 	public com.esp8266.location.LatLang userGeoFencingDistance(List<com.esp8266.location.LatLang> favLocations , String userName) {

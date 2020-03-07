@@ -79,7 +79,11 @@ public class Oauth extends HttpServlet {
 		}
 		 if (null != code) {
 			
-			 addCookiedToResponseAndRecordLoginInDB(request, response, code);
+			String email=  addCookiedToResponseAndRecordLoginInDB(request, response, code);
+			if (null == email) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
 			response.sendRedirect("/ui/index.html");
 		}else {
 			//showLoginPage(response,state);
@@ -88,12 +92,15 @@ public class Oauth extends HttpServlet {
 		
 	}
 	
-	private void addCookiedToResponseAndRecordLoginInDB(HttpServletRequest request, HttpServletResponse response, String code) throws IOException {
+	private String addCookiedToResponseAndRecordLoginInDB (HttpServletRequest request, HttpServletResponse response, String code) throws IOException {
 		String access_token = getAccesstoken(request, response, code, client_id);
 		
 		//Set cookies
 		Map<String, String> userData = getUserEmail(access_token);
 		String email = userData.get("email");
+		if (!"sonu.hooda@gmail.com".equalsIgnoreCase(email)) {
+			return null;
+		}
 		String name  = userData.get("name");
 		addCookie("email", email,request, response );
 		addCookie("name" , name,request, response );
@@ -109,6 +116,7 @@ public class Oauth extends HttpServlet {
          String data = json.toJson(loginVO, new TypeToken<LoginVO>() {}.getType());
 		
          MangoDB.createNewDocumentInCollection("idonot-remember", "registered-users", data, null);
+         return email;
 		
 		
 	}

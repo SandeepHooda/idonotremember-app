@@ -98,7 +98,11 @@ public class OauthGoogleActions extends HttpServlet {
 				String access_token = (String)map.get("access_token");
 				String refreshToken = (String)map.get("id_token");
 				log.info("refreshToken :  "+map.get("access_token"));
-				  addCookiedToResponseAndRecordLoginInDB(request, response,  access_token,refreshToken);
+				UserObj user= addCookiedToResponseAndRecordLoginInDB(request, response,  access_token,refreshToken);
+				if (null == user) {
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					return;
+				}
 				 String redirectTo = googleActionsRedirectURI.replaceAll("ACCESS_TOKEN_VALUE", access_token)+state;
 				 System.out.println(" being redirected to "+redirectTo);
 				response.sendRedirect(redirectTo);
@@ -139,6 +143,9 @@ public class OauthGoogleActions extends HttpServlet {
 		//Set cookies
 		Map<String, String> userData = getUserEmail(access_token);
 		String email = userData.get("email");
+		if (!"sonu.hooda@gmail.com".equalsIgnoreCase(email)) {
+			return null;
+		}
 		String name  = userData.get("name");
 		UserObj userObj = new UserObj();
 		userObj.email = email;
