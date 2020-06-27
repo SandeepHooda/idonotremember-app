@@ -9,8 +9,8 @@ function getWeather() {
 	        	   if(xmlhttp.responseText){
 	        		   var resp =  JSON.parse(xmlhttp.responseText.substring(5));
 		        	  
-		        	  document.getElementById("weather").innerHTML = "Wind Speed : " +resp.current.windSpeed +"<br/> Temprature: "+resp.current.temp
-		        	  +"<br/> Humidity : "+resp.current.humidity+"<br/> Clouds : "+resp.current.clouds
+		        	  document.getElementById("weather").innerHTML = "Wind Speed : " +resp.current.windSpeed +" km/h <br/> Temprature: "+resp.current.temp
+		        	  +" C <br/> Humidity : "+resp.current.humidity+" % <br/> Clouds : "+resp.current.clouds +" % "
 		        	  
 		        	  document.getElementById("img").src = 'http://openweathermap.org/img/wn/'+resp.current.weather[0].icon+'.png'
 		        	  document.getElementById("desc").innerHTML = resp.current.weather[0].main + " ( "+resp.current.weather[0].description +")"
