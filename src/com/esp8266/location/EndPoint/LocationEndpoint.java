@@ -73,5 +73,17 @@ public interface LocationEndpoint {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getUtilityBills(@Context HttpServletRequest request);
 	
+	@GET
+	@Path("/weather")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getWeather(@Context HttpServletRequest request);
+	
+	@GET
+	@Path("/weather/snoozAlerts")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response snoozAlerts(@Context HttpServletRequest request);
+	
 
 }

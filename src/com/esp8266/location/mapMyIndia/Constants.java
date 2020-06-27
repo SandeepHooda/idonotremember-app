@@ -12,6 +12,7 @@ public static final LatLang home1157 = new LatLang(30.667010,76.8856068 , "Home 
 public static final LatLang chcraipurani = new LatLang(30.5835968951446,77.0256654918194 , "CHC raipurani");
 public static final LatLang infosys = new LatLang(30.7258348,76.8460987 , "Infosys");
 public static final LatLang phcbarwala = new LatLang(30.557332,76.936412 , "PHC Barwala");
+public static final LatLang phcKot = new LatLang(30.623992769324,76.9440566003323 , "PHC Kot");
 public static final LatLang sector6GH = new LatLang(30.7047881,76.8536179 , "Sector 6 GH");
 public static final LatLang redBishop = new LatLang(30.7062122037605,76.8652345240116 , "Red Bishop");
 public static final LatLang gurukul = new LatLang(30.6671466,76.86251 , "The Gurukul Sec 20");

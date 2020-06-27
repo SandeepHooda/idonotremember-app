@@ -13,6 +13,8 @@ import com.esp8266.location.WiFiVO;
 import com.esp8266.location.facade.LocationFacade;
 import com.esp8266.location.mapMyIndia.Device;
 import com.esp8266.location.mapMyIndia.safemate.SafeMateDevice;
+import com.esp8266.weather.WeatherAlertSnooz;
+import com.esp8266.weather.WeatherResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.facade.LoginFacade;
@@ -145,6 +147,35 @@ public class LocationEndpointImpl implements LocationEndpoint {
 		return Response.ok().entity(utilityResponse).build();
 	}
 	
+	@Override
+	public Response getWeather(HttpServletRequest request) {
+		WeatherResponse weather = null;
+		try {
+			weather = locationFacade.getWeather();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (null == weather) {
+			return Response.serverError().entity(weather).build();
+		}
+		return Response.ok().entity(weather).build();
+	}
+	
+	@Override
+	public Response snoozAlerts(HttpServletRequest request) {
+		WeatherAlertSnooz snoozUntil = null;
+		try {
+			snoozUntil = locationFacade.snoozAlerts();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (null == snoozUntil) {
+			return Response.serverError().entity(snoozUntil).build();
+		}
+		return Response.ok().entity(snoozUntil).build();
+	}
 	
 
 }

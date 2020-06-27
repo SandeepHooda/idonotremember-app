@@ -2,7 +2,7 @@ APP.CONTROLLERS.controller ('CTRL_SNOOZED',['$window', '$location','$scope','$io
     function($window,$location,$scope, $ionicSideMenuDelegate,$state,$http,$rootScope,$ionicPopup,$ionicLoading,appData){
 	var theCtrl = this;
 	var regID = window.localStorage.getItem('regID');
-	$scope.snoozedReminders = [];
+	$scope.snoozedReminders = null;
 	$scope.currentCallCredits = 0;
 	
 	

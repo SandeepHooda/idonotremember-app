@@ -81,7 +81,7 @@ public class Oauth extends HttpServlet {
 			
 			String email=  addCookiedToResponseAndRecordLoginInDB(request, response, code);
 			if (null == email) {
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//Only sandeep can log in
 				return;
 			}
 			response.sendRedirect("/ui/index.html");

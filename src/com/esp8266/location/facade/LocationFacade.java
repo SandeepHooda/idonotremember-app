@@ -18,6 +18,8 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.communication.email.EmailAddess;
+import com.communication.email.MailService;
 import com.communication.phone.text.Key;
 import com.esp8266.bill.UtilityBillResponse;
 import com.esp8266.location.GoogleAddress;
@@ -30,12 +32,16 @@ import com.esp8266.location.mapMyIndia.safemate.Address;
 import com.esp8266.location.mapMyIndia.safemate.Position;
 import com.esp8266.location.mapMyIndia.safemate.Pt;
 import com.esp8266.location.mapMyIndia.safemate.SafeMateDevice;
+import com.esp8266.weather.Current;
+import com.esp8266.weather.WeatherAlertSnooz;
+import com.esp8266.weather.WeatherResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.login.vo.LatLang;
 import com.login.vo.UserLocation;
 import com.login.vo.UserLocationComparator;
 import com.login.vo.UserLocations;
+import com.reminder.vo.CallLogs;
 
 import googleAssistant.service.DataService;
 import mangodb.MangoDB;
@@ -180,6 +186,73 @@ public class LocationFacade {
 		
 		return null;
 	}
+	public WeatherAlertSnooz snoozAlerts(){
+		String weatherAlertSnooz = MangoDB.getDocumentWithQuery("remind-me-on", "weather-alert-snooz", "weather-alert-snooz", null, true, null, null) ;
+		Gson  json = new Gson();
+		 WeatherAlertSnooz snoozUntil = json.fromJson(weatherAlertSnooz,  new TypeToken<WeatherAlertSnooz>() {}.getType());
+		 System.out.println(weatherAlertSnooz);
+		 snoozUntil.setTime(System.currentTimeMillis()+ 1000*60*60*12);//12 hour
+		 weatherAlertSnooz = json.toJson(snoozUntil,  new TypeToken<WeatherAlertSnooz>() {}.getType());
+		 MangoDB. updateData("remind-me-on", "weather-alert-snooz",  weatherAlertSnooz, "weather-alert-snooz",  null);
+		 return snoozUntil;
+	}
+	
+	public WeatherResponse getWeather( ) {
+		WeatherResponse weather = new WeatherResponse();
+		try {
+			String urlStr = "https://api.openweathermap.org/data/2.5/onecall?units=metric&lat=30.7&lon=76.86&appid="+Key.weatherKey;
+			
+			
+			 URL url = new URL(urlStr);
+			 long startTime = System.currentTimeMillis();
+	            
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setConnectTimeout(2000);
+	            conn.setReadTimeout(2000);
+	    	    conn.setRequestMethod("GET");
+	    	    BufferedReader in = new BufferedReader(    new InputStreamReader(conn.getInputStream()));
+	    		String inputLine;
+	    		StringBuffer responseBuf = new StringBuffer();
+	    		while ((inputLine = in.readLine()) != null) {
+	    			responseBuf.append(inputLine);
+	    		}
+	    		in.close();
+	    		Gson  json = new Gson();
+	    		
+	    		System.out.println(" weather "+(System.currentTimeMillis() - startTime)+ " "+responseBuf.toString());
+	    		weather = json.fromJson(responseBuf.toString(),  new TypeToken<WeatherResponse>() {}.getType());
+	    	
+	    		Current current = weather.getCurrent();
+	    		current.setWindSpeed(current.getWindSpeed()*3.6);//M per sec to Km per hour
+	    		EmailAddess toAddress = new EmailAddess();
+				 toAddress.setAddress("sonu.hooda@gmail.com");
+				 
+				 String weatherAlertSnooz = MangoDB.getDocumentWithQuery("remind-me-on", "weather-alert-snooz", "weather-alert-snooz", null, true, null, null) ;
+				
+				 WeatherAlertSnooz snoozUntil = json.fromJson(weatherAlertSnooz,  new TypeToken<WeatherAlertSnooz>() {}.getType());
+				 System.out.println(weatherAlertSnooz);
+				
+	    		if (current.getWindSpeed() > 20 && snoozUntil.getTime() < System.currentTimeMillis()) {
+	    			
+	    			DataService.sendPushOverNotification("Wind speed : "+current.getWindSpeed(),Key.sandeepPhone, true );
+	    			new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Wind speed : "+current.getWindSpeed(),	""+current.getWindSpeed(), null, null));
+	    			CallLogs callLog = new CallLogs();
+	    			callLog.set_id(""+new Date().getTime());
+	    			callLog.setFrom("sonu.hooda@gmail.com");
+	    			callLog.setTo("919216411835");
+	    			
+	    			callLog.setMessage("Please park your car inside. High spped winds are blowing at speed of "+current.getWindSpeed());
+	    			String logsJson = json.toJson(callLog, new TypeToken<CallLogs>() {}.getType());
+	    			 MangoDB.createNewDocumentInCollection("remind-me-on", "call-logs", logsJson, null);
+	    		
+	    		}
+	    		
+	           return weather; 
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	public com.esp8266.location.LatLang userGeoFencingDistance(List<com.esp8266.location.LatLang> favLocations , String userName) {
 		String dbCollection  = "safemate-"+userName;
 		
@@ -237,7 +310,8 @@ public class LocationFacade {
 		boolean changeInDBState = false;
 		//Entering or existing any klnown location
 		if (userLocationDB.isAtKnownLocation()  && !currentLocation.isAtKnownLocation()) {//existing
-			DataService.sendPushOverNotification(userName +" has started from "+userLocationDB.getLabel(),Key.sandeepPhone, true );
+			Address address = pos.getAddress();
+			DataService.sendPushOverNotification(userName +" has started from "+userLocationDB.getLabel()+". At "+address.getHouseNo()+" "+address.getCity(),Key.sandeepPhone, true );
 			changeInDBState = true;
 		}else if (!userLocationDB.isAtKnownLocation()  && currentLocation.isAtKnownLocation()) {//entering
 			DataService.sendPushOverNotification(userName +" has reached  "+currentLocation.getLabel(),Key.sandeepPhone, true );
