@@ -89,7 +89,7 @@
 	</div>
 	<div class="topSpace"	>
 		<ion-item class="smallPadding" ng-repeat="reminder in reminders track by $index" on-swipe-left="deleteReminder({{$index}})">
-		  <div class="productDesc">
+		  <div class="productDesc" ng-click="edit(reminder)">
 		  		 <b>{{reminder.reminderSubject}} - {{reminder.reminderText}}</b> <br/>
 		  		 <span class="italicBlue">Remind via Email, 
 		  		 
@@ -112,6 +112,7 @@
 		  		 <span ng-if="reminder.frequencyWithDate != 'Once'"> Time: <span> {{reminder.displayTime}}</span></span><br/>
 		  		  <span class="italicGreen"> Next due time <span> {{reminder.nextExecutionDisplayTime}}</span> 
 		   </div>
+		   <input class="item item-input searchboxInput fullWidth" ng-if="reminder.editMode"  ng-keyup="checkEnter(reminder)" ng-blur="editOff(reminder)" type="text"   ng-model="reminder.reminderSubject" >
 		 </ion-item>
 	</div>
 </ion-content>

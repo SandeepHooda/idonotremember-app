@@ -670,6 +670,22 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		reminderObj._id = new Date().getTime() +Math.random();
 		$scope.httpAdd(reminderObj);
 	}
+	
+	
+	$scope.edit = function(reminder){
+		//alert(JSON.stringify(todo))
+		reminder.editMode = true;
+	}
+	$scope.editOff = function(reminder){
+		reminder.editMode = false;
+		$scope.updateReminder(reminder);
+	}
+	
+	$scope.checkEnter = function(reminder){
+		if(event.keyCode == 13){
+			$scope.editOff(reminder);
+		}
+	}
 
 	$scope.httpAdd = function(reminderObj){
 		$scope.showBusy();
