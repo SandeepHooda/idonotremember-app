@@ -629,6 +629,10 @@ button.accordion.active:after {
 .searchboxInput{
 	height: 30px;
 }
+
+.fullWidth{
+	width: 100%;
+}
     
 
 .custom {

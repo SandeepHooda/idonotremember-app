@@ -35,7 +35,27 @@
 <div class="loader" id="loader"></div>
 <img id="img" src="" width="50" height="50">
 <div  id="desc"></div>
-<div  id="weather"></div>
+<div  id="weather">
+</div>
+<div  id="weather_data">
+	<table border="1">
+		<tr>
+			<td></td><td>now</td><td> +1 hr </td><td>+2 hr</td><td>+3 hr</td><td>+4 hr</td>
+		</tr>
+		<tr>
+			<td>Wind speed km/h</td><td><span id="wind_0"></span></td><td><span id="wind_1"></span> </td><td><span id="wind_2"></span></td><td><span id="wind_3"></span></td><td><span id="wind_4"></span></td>
+		</tr>
+		<tr>
+			<td>Temperature C</td><td><span id="t_0"></span></td><td><span id="t_1"></span> </td><td><span id="t_2"></span></td><td><span id="t_3"></span></td><td><span id="t_4"></span></td>
+		</tr>
+		<tr>
+			<td>Humidity %</td><td><span id="h_0"></span></td><td><span id="h_1"></span> </td><td><span id="h_2"></span></td><td><span id="h_3"></span></td><td><span id="h_4"></span></td>
+		</tr>
+		<tr>
+			<td>Clouds %</td><td><span id="c_0"></span></td><td><span id="c_1"></span> </td><td><span id="c_2"></span></td><td><span id="c_3"></span></td><td><span id="c_4"></span></td>
+		</tr>
+	</table>
+</div>
 <div  id="snooz"></div>
 <button type="button" onclick="snoozAlerts()">Snooz 12 hours</button>
  </body>

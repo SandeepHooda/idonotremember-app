@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import com.communication.email.EmailAddess;
 import com.communication.email.MailService;
+import com.communication.phone.call.MakeACall;
 import com.communication.phone.text.Key;
 import com.esp8266.bill.UtilityBillResponse;
 import com.esp8266.location.GoogleAddress;
@@ -33,6 +34,7 @@ import com.esp8266.location.mapMyIndia.safemate.Position;
 import com.esp8266.location.mapMyIndia.safemate.Pt;
 import com.esp8266.location.mapMyIndia.safemate.SafeMateDevice;
 import com.esp8266.weather.Current;
+import com.esp8266.weather.Hourly;
 import com.esp8266.weather.WeatherAlertSnooz;
 import com.esp8266.weather.WeatherResponse;
 import com.google.gson.Gson;
@@ -219,7 +221,6 @@ public class LocationFacade {
 	    		in.close();
 	    		Gson  json = new Gson();
 	    		
-	    		System.out.println(" weather "+(System.currentTimeMillis() - startTime)+ " "+responseBuf.toString());
 	    		weather = json.fromJson(responseBuf.toString(),  new TypeToken<WeatherResponse>() {}.getType());
 	    	
 	    		Current current = weather.getCurrent();
@@ -231,11 +232,26 @@ public class LocationFacade {
 				
 				 WeatherAlertSnooz snoozUntil = json.fromJson(weatherAlertSnooz,  new TypeToken<WeatherAlertSnooz>() {}.getType());
 				 System.out.println(weatherAlertSnooz);
+				 
+				 boolean highWindSpeed = false;
+				 int highWindthreshHold = 25;
+				 if (current.getWindSpeed() > highWindthreshHold) {
+					 highWindSpeed = true;
+				 }
+					 
+				 List<Hourly> hourly = weather.getHourly();
+					for (int i =0;i <=4;i++ ) {
+						hourly.get(i).setWindSpeed(hourly.get(i).getWindSpeed()*3.6);
+						if( hourly.get(i).getWindSpeed() > highWindthreshHold ) {
+							 highWindSpeed = true;
+						}
+					}		
+					 
+				 
 				
-	    		if (current.getWindSpeed() > 20 && snoozUntil.getTime() < System.currentTimeMillis()) {
+	    		if (highWindSpeed && snoozUntil.getTime() < System.currentTimeMillis()) {
 	    			
 	    			DataService.sendPushOverNotification("Wind speed : "+current.getWindSpeed(),Key.sandeepPhone, true );
-	    			new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Wind speed : "+current.getWindSpeed(),	""+current.getWindSpeed(), null, null));
 	    			CallLogs callLog = new CallLogs();
 	    			callLog.set_id(""+new Date().getTime());
 	    			callLog.setFrom("sonu.hooda@gmail.com");
@@ -244,6 +260,10 @@ public class LocationFacade {
 	    			callLog.setMessage("Please park your car inside. High spped winds are blowing at speed of "+current.getWindSpeed());
 	    			String logsJson = json.toJson(callLog, new TypeToken<CallLogs>() {}.getType());
 	    			 MangoDB.createNewDocumentInCollection("remind-me-on", "call-logs", logsJson, null);
+	    			 MakeACall.call(callLog.getTo(), callLog.get_id(),"+12222222222");
+	    			 
+	    			 new  MailService().sendSimpleMail(MailService.prepareEmailVO(toAddress, "Wind speed : "+current.getWindSpeed(),	""+current.getWindSpeed(), null, null));
+		    			
 	    		
 	    		}
 	    		

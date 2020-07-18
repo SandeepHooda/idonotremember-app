@@ -48,7 +48,10 @@
 		<ion-item class="smallPadding" ng-repeat="todo in todos track by $index" on-swipe-left="markeComplete({{$index}})">
 		  <div class="productDesc" style=" height: 55px;">
 		  	<button ng-click="moveDown($index)" class="greenRoundBtn"><i class="icon ion-arrow-down-a" ></i></button>
-		  	<span class="floatingLeftToDo italicBlue" style=" line-height: 1.5;"><b>{{todo.taskDesc}} </b> </span> 
+		  	<span ng-click="edit(todo)"  class="floatingLeftToDo italicBlue" style=" line-height: 1.5;"><b>{{todo.taskDesc}} </b> </span> 
+		  		
+		  	 <input class="item item-input searchboxInput fullWidth" ng-if="todo.editMode"  ng-keyup="checkEnter(todo)" ng-blur="editOff(todo)" type="text"   ng-model="todo.taskDesc" >
+		  	 	
 		  
 		  	<button ng-click="moveUp($index)" class="floatingRightToDo greenRoundBtn"><i class="icon ion-arrow-up-a"></i></button>
 		   </div>

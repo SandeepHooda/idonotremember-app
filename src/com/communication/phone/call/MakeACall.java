@@ -20,8 +20,14 @@ public class MakeACall {
 	private static FetchOptions lFetchOptions = FetchOptions.Builder.doNotValidateCertificate().setDeadline(300d);
 	private static URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
 	public static boolean call(String phoneNo, String messageID) throws IOException {
+		return call(phoneNo, messageID, null);
+	}
+	public static boolean call(String phoneNo, String messageID, String fromNumber) throws IOException {
 		log.info("Hero making a call sms to "+phoneNo);
 		String httpsURL  = "https://post-master.herokuapp.com/MakeACall?phone="+phoneNo+"&messageID="+messageID;
+		if (null != fromNumber) {
+			httpsURL +="&fromNumber="+fromNumber;
+		}
 		
 		String responseStr = "";
 		

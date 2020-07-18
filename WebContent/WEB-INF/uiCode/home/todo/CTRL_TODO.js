@@ -18,6 +18,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	}else {
 		$scope.userName ="Hello Guest";
 	}
+	$scope.editMode = false;
 	$scope.todos = [];
 	$scope.loginTry = 0;
 	$scope.completedTodos = [];
@@ -313,6 +314,21 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 		function(response){
   			});
 	}
+	$scope.edit = function(todo){
+		//alert(JSON.stringify(todo))
+		todo.editMode = true;
+	}
+	$scope.editOff = function(todo){
+		todo.editMode = false;
+		$scope.updateToDoOrderInDB(todo);
+	}
+	
+	$scope.checkEnter = function(todo){
+		if(event.keyCode == 13){
+			$scope.editOff(todo);
+		}
+	}
+	
 	$scope.swapToDoOrderInDB = function(toDo1, toDo2){
 		$scope.showBusy();
 		var todos = []

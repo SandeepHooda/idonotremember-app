@@ -147,7 +147,7 @@ public class MailService {
 	            	return true;
 	            }else {
 	            	log.warning("Email sending failed "+(new String(res.getContent())));
-	            	return false;
+	            	return false;//Made it true if you get "Daily user sending quota exceeded" from heroku
 	            }
 	            
 	            
