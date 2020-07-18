@@ -62,7 +62,7 @@
 	<!-- Users todos -->
 	<div class="topSpace">
 	<div ng-if="completedTodos.length > 0"><span class="userName">Completed items will be deleted after 7 days</span></div>
-		<ion-item class="smallPadding" ng-repeat="todo in completedTodos track by $index" on-swipe-left="markePending({{$index}})">
+		<ion-item class="smallPadding" ng-repeat="todo in completedTodos track by $index" ng-click="markePending({{$index}})" on-swipe-left="markePending({{$index}})">
 		  <div class="productDesc">
 		  		<span class="italicGray" style=" line-height: 1.5;"> <b><strike>{{todo.taskDesc}} </strike></b> </span>
 		   </div>
