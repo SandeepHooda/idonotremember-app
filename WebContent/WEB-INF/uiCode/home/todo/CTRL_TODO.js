@@ -323,7 +323,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 		$scope.updateToDoOrderInDB(todo);
 	}
 	
-	$scope.checkEnter = function(todo){
+	$scope.checkEnterToDoEdit = function(todo){
 		if(event.keyCode == 13){
 			$scope.editOff(todo);
 		}
