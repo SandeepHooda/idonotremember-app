@@ -246,7 +246,12 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 				  	  _.filter($scope.remindersInDB, function(o) {//Search in all reminders in DB
 				  		        var matchingProduct = true;
 				  		      _.forEach(searchArray, function(search){ // look for all words in search string in any order and  case insensitive
-				  		    	if ( (o.reminderSubject.toLowerCase().indexOf(search) < 0 ) && (o.reminderText.toLowerCase().indexOf(search) < 0 )){
+				  		    	let subject = o.reminderSubject;
+				  		    	let text = o.reminderText;
+				  		    	if (text == null){
+				  		    		text = "";
+				  		    	}
+				  		    	  if ( (subject.toLowerCase().indexOf(search) < 0 ) && (text.toLowerCase().indexOf(search) < 0 )){
 				  		    		matchingProduct = false;
 				  				}
 				  		      });
