@@ -16,6 +16,8 @@ import googleAssistant.PushNotificationUtils;
 
 /**
  * ScanReminders - See if any reminder is past its trigger time
+ * GetSnoozedReminders - Send push over notification every 15 minutes for snoozed remoinders
+ * DeleteOldTodosAndRemindSnoozed =  * Once in a day delete todo > 7 days * consolidated email for snoozed reminders
  */
 @WebServlet("/ScanReminders")
 public class ScanReminders extends HttpServlet {
