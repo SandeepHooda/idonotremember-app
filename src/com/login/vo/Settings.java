@@ -6,6 +6,7 @@ public class Settings implements Serializable {
 	public static double callCharges = 7;
 	public static double smsCharges = 2;
 	private String _id;
+	private String _import_id;
 	private String appTimeZone;
 	private String userSuppliedTimeZone;
 	private double currentCallCredits ;
@@ -40,6 +41,14 @@ public class Settings implements Serializable {
 
 	public void setCurrentCallCredits(double currentCallCredits) {
 		this.currentCallCredits = currentCallCredits;
+	}
+
+	public String get_import_id() {
+		return _import_id;
+	}
+
+	public void set_import_id(String _import_id) {
+		this._import_id = _import_id;
 	}
 
 }

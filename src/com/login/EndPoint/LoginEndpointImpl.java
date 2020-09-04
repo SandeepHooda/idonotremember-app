@@ -68,9 +68,9 @@ public class LoginEndpointImpl implements LoginEndpoint {
 					session.setAttribute("timeZoneSettings", loginVO.getUserSuppliedTimeZone());
 					
 				}
-				System.out.println(" user logged in "+loginVO.getEmailID());
+				System.out.println(" user logged in = "+loginVO.getEmailID());
 				if (!"sonu.hooda@gmail.com".equalsIgnoreCase(loginVO.getEmailID())) {
-					System.out.println(" user not authorized");
+					System.out.println(" user not authorized "+loginVO.getEmailID()+" regID "+regID);
 					LoginVO vo = new LoginVO();
 					vo.setErrorMessage("Please log in to authenticate ");
 					return Response.status(Response.Status.UNAUTHORIZED).entity(vo).build();
@@ -114,7 +114,7 @@ public class LoginEndpointImpl implements LoginEndpoint {
 				Gson  json = new Gson();
 				 String settingsJson = json.toJson(usrSettings, new TypeToken<Settings>() {}.getType());
 				 String email = new ReminderFacade().getEmail(regID);
-				 MangoDB.updateData("remind-me-on", "registered-users-settings", settingsJson, email, null);
+				 MangoDB.updateData("remind-me-on", "registered-users-settings-new", settingsJson, email, null);
 				
 				return Response.ok().entity(loginFacade.addPhoneNo(phone, regID)).build();
 			}else {

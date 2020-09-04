@@ -141,7 +141,7 @@ public class LocationFacade {
 	}
 	private void saveLocationInDB(LatLang latLang, GoogleAddress address) {
 		Gson  json = new Gson();
-		String allLocations = MangoDB.getDocumentWithQuery("wemos-users", "user-locations", UserLocations.id, null, true, MangoDB.mlabKeySonu, null) ;
+		String allLocations = MangoDB.getDocumentWithQuery("remind-me-on", "user-locations", UserLocations.id, null, true, null, null) ;
 		UserLocations userLocations = new UserLocations();
 		if (allLocations != null && allLocations.trim().length() > 0) {
 			userLocations = json.fromJson(allLocations,  new TypeToken<UserLocations>() {}.getType());
@@ -173,7 +173,7 @@ public class LocationFacade {
 			userLocations.getLocations().add(userLocation);
 			allLocations = json.toJson(userLocations, new TypeToken<UserLocations>() {}.getType());
 			
-			 MangoDB.createNewDocumentInCollection("wemos-users", "user-locations",  allLocations, MangoDB.mlabKeySonu);
+			 MangoDB.createNewDocumentInCollection("remind-me-on", "user-locations",  allLocations, null);
 	}
 	public String mmiLocation() {
 		return new DataService().getMMILocation();
@@ -282,14 +282,14 @@ public class LocationFacade {
 			String time_str = sdf.format(new Date());
 		
 		//User location from DB
-		String userLocationStr = MangoDB.getDocumentWithQuery("wemos-users", dbCollection, dbCollection, null, true, MangoDB.mlabKeySonu, null) ;
+		String userLocationStr = MangoDB.getDocumentWithQuery("remind-me-on", dbCollection, dbCollection, null, true, null, null) ;
 		Gson  json = new Gson();
 		com.esp8266.location.LatLang userLocationDB = new com.esp8266.location.LatLang();
 		if (userLocationStr != null && userLocationStr.trim().length() > 0) {
 			userLocationDB = json.fromJson(userLocationStr,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
 		}else {
 			userLocationStr = json.toJson(userLocationDB,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
-			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);//create for the first time
+			MangoDB.createNewDocumentInCollection("remind-me-on" , dbCollection,  userLocationStr, null);//create for the first time
 		}
 		
 		
@@ -364,7 +364,7 @@ public class LocationFacade {
 		if ((distanceFromLastSaved > safeDistancethreahHold ) || changeInDBState) {
 			//kusum is moving to update time
 			userLocationStr = json.toJson(currentLocation,  new TypeToken<com.esp8266.location.LatLang>() {}.getType());
-			MangoDB.createNewDocumentInCollection("wemos-users", dbCollection,  userLocationStr, MangoDB.mlabKeySonu);
+			MangoDB.createNewDocumentInCollection("remind-me-on" , dbCollection,  userLocationStr,null);
 		}
 		
 		
@@ -378,7 +378,7 @@ public class LocationFacade {
 	public List<UserLocation> getRecentLocations() {
 		//sendToRaspberryPi("55 Sector 25");
 		Gson  json = new Gson();
-		String allLocations = MangoDB.getDocumentWithQuery("wemos-users", "user-locations", UserLocations.id, null, true, MangoDB.mlabKeySonu, null) ;
+		String allLocations = MangoDB.getDocumentWithQuery("wemos-users", "user-locations", UserLocations.id, null, true, null, null) ;
 	
 		UserLocations userLocations = new UserLocations();
 		if (allLocations != null && allLocations.trim().length() > 0) {
@@ -421,7 +421,7 @@ public class LocationFacade {
 		return top5;
 	}
 	public void healthPing(String wifii) {
-		String healthPingStr = MangoDB.getDocumentWithQuery("wemos-users", "health-ping", "HealthPing", null, true, MangoDB.mlabKeySonu, null) ;
+		String healthPingStr = MangoDB.getDocumentWithQuery("wemos-users", "health-ping", "HealthPing", null, true, null, null) ;
 		Gson  json = new Gson();
 		HealthPing healthPing = null;
 		if (healthPingStr != null && healthPingStr.trim().length() > 0) {
@@ -435,6 +435,6 @@ public class LocationFacade {
 		healthPing.getHealthUpdate().add(status);
 		
 		healthPingStr = json.toJson(healthPing, new TypeToken<HealthPing>() {}.getType());
-		MangoDB.createNewDocumentInCollection("wemos-users", "health-ping",  healthPingStr, MangoDB.mlabKeySonu);
+		MangoDB.createNewDocumentInCollection("wemos-users", "health-ping",  healthPingStr, null);
 	}
 }

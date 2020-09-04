@@ -28,7 +28,9 @@ import com.reminder.vo.ReminderVO;
 import mangodb.MangoDB;
 
 /**
- * Servlet implementation class GetSnoozedReminders
+  * ScanReminders - See if any reminder is past its trigger time
+ * GetSnoozedReminders - Send push over notification every 15 minutes for snoozed remoinders
+ * DeleteOldTodosAndRemindSnoozed =  * Once in a day delete todo > 7 days * consolidated email for snoozed reminders
  */
 @WebServlet("/GetSnoozedReminders")
 public class GetSnoozedReminders extends HttpServlet {

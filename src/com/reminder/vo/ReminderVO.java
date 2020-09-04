@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class ReminderVO {
+	private String _import_id;
 	private String _id;
 	private String regID;
 	private String email;
@@ -166,6 +167,14 @@ public class ReminderVO {
 
 	public void setAnounceOnGoogleAssist(boolean anounceOnGoogleAssist) {
 		this.anounceOnGoogleAssist = anounceOnGoogleAssist;
+	}
+
+	public String get_import_id() {
+		return _import_id;
+	}
+
+	public void set_import_id(String _import_id) {
+		this._import_id = _import_id;
 	}
 
 }

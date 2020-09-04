@@ -30,6 +30,7 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 	@Override
 	public Response addReminder(ReminderVO reminderVO, HttpServletRequest request) {
 		try{
+			
 			String timeZone = (String)request.getSession().getAttribute("timeZoneSettings");
 			if(timeZone == null) {
 				LoginVO vo = new LoginVO();
@@ -216,7 +217,7 @@ public class ReminderEndpointImpl implements ReminderEndpoint{
 			}*/
 			if (null != email) {
 				todo.setDateCreated(new Date().getTime());
-				todo.set_id(""+todo.getDateCreated()+"_"+email);
+				todo.set_import_id(""+todo.getDateCreated()+"_"+email);
 				todo.setEmail(email);
 				return Response.ok().entity(reminderFacade.addToDo(todo)).build();
 			}else {

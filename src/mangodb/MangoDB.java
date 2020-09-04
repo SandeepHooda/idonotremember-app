@@ -32,7 +32,7 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
 
 public class MangoDB {
-	public static final String mlabKeyReminder = Key.mlabKeyReminder;
+	public static final String mlabKeyReminder = Key.restDBKeyReminder;
 	public static final String mlabKeySonu = Key.mlabKeySonu;;
 	public static final String noCollection = "";
 	private static final Logger log = Logger.getLogger(MangoDB.class.getName());
@@ -228,10 +228,10 @@ public class MangoDB {
 		if (null == mlabApiKey) {
 			mlabApiKey = mlabKeyReminder;
 		}
-		String httpsURL  = "https://api.mlab.com/api/1/databases/"+dbName+"/collections/"+collection+"?apiKey="+mlabApiKey;
+		String httpsURL  = "https://remindmeon-cbcd.restdb.io/rest/"+collection+"?apiKey="+mlabApiKey;
 		if (null != documentKey){
 			if (isKeyString){
-				httpsURL += "&q=%7B%22_id%22:%22"+documentKey+"%22%7D";
+				httpsURL += "&q=%7B%22_import_id%22:%22"+documentKey+"%22%7D";
 			}else {
 				httpsURL += "&q=%7B%22"+keyName+"%22:%22"+documentKey+"%22%7D";
 			}
@@ -248,6 +248,9 @@ public class MangoDB {
 			
 		        URL url = new URL(httpsURL);
 	            HTTPRequest req = new HTTPRequest(url, HTTPMethod.GET, lFetchOptions);
+	           req.addHeader(new HTTPHeader("Content-type", "application/json"));
+	           req.addHeader(new HTTPHeader("Accept", "application/json"));
+	           req.addHeader(new HTTPHeader("x-apikey", mlabApiKey));
 	            HTTPResponse res = fetcher.fetch(req);
 	            responseStr =(new String(res.getContent()));
 	            
@@ -288,19 +291,22 @@ public static void createNewDocumentInCollection(String dbName,String collection
 	if (null == key) {
 		key = mlabKeyReminder;
 	}
-		String httpsURL = "https://api.mlab.com/api/1/databases/"+dbName+"/collections/"+collection+"?apiKey="+key;
+		String httpsURL = "https://remindmeon-cbcd.restdb.io/rest/"+collection+"?apiKey="+key;
 		
 		 try {
 			
 		        URL url = new URL(httpsURL);
 	            HTTPRequest req = new HTTPRequest(url, HTTPMethod.POST, lFetchOptions);
-	            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
-	            
-	            req.setHeader(header);
+	          
+	            req.addHeader(new HTTPHeader("Content-type", "application/json"));
+		           req.addHeader(new HTTPHeader("Accept", "application/json"));
+		           req.addHeader(new HTTPHeader("x-apikey", key));
 	           
 	            req.setPayload(data.getBytes());
-	            fetcher.fetch(req);
+	         
+	            HTTPResponse res  = fetcher.fetch(req); 
 	            
+	            log.info("create the DB  collection "+collection+" code "+res.getResponseCode() +" "+new String(res.getContent()));
 	 
 	        } catch (IOException e) {
 	        	e.printStackTrace();
@@ -309,13 +315,13 @@ public static void createNewDocumentInCollection(String dbName,String collection
 	
 public static void updateData(String dbName,String collection, String data, String documentKey,  String apiKey){
 	if (null == apiKey) {
-		apiKey = mlabKeyReminder;
+		apiKey = mlabKeyReminder; 
 	}
-	String httpsURL = "https://api.mlab.com/api/1/databases/"+dbName+"/collections/"+collection+"?apiKey="+apiKey;
-	if (null != documentKey){
+	String httpsURL = "https://remindmeon-cbcd.restdb.io/rest/"+collection+"/"+documentKey;
+	/*if (null != documentKey){
 		httpsURL += "&q=%7B%22_id%22:%22"+documentKey+"%22%7D";
 		
-	}	
+	}	*/
 	
 	 try {
 		 	/*URL url = new URL(httpsURL);
@@ -325,14 +331,15 @@ public static void updateData(String dbName,String collection, String data, Stri
 		
 	       URL url = new URL(httpsURL);
             HTTPRequest req = new HTTPRequest(url, HTTPMethod.PUT, lFetchOptions);
-            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
             
-            req.setHeader(header);
+            req.addHeader(new HTTPHeader("Content-type", "application/json"));
+	           req.addHeader(new HTTPHeader("Accept", "application/json"));
+	           req.addHeader(new HTTPHeader("x-apikey", apiKey));
            
             req.setPayload(data.getBytes());
-            fetcher.fetch(req);
+            HTTPResponse res  = fetcher.fetch(req); 
             
-           //log.info("Updated the DB  collection "+collection+data);
+           log.info("Updated the DB  collection "+collection+" code "+res.getResponseCode() +" "+new String(res.getContent()));
  
         } catch (IOException e) {
         	 log.info("Error while  upfdating DB  collection "+collection+" Message "+e.getMessage());
@@ -356,9 +363,9 @@ public static void deleteAllDocuments(String dbName,String collection,   String 
 		
 	       URL url = new URL(httpsURL);
             HTTPRequest req = new HTTPRequest(url, HTTPMethod.PUT, lFetchOptions);
-            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
-            
-            req.setHeader(header);
+            req.addHeader(new HTTPHeader("Content-type", "application/json"));
+	           req.addHeader(new HTTPHeader("Accept", "application/json"));
+	           req.addHeader(new HTTPHeader("x-apikey", apiKey));
            
             req.setPayload("[]".getBytes());
             fetcher.fetch(req);
@@ -377,16 +384,18 @@ public static void deleteDocument(String dbName,String collection,  String dataK
 		key = mlabKeyReminder;
 	}
 		
-		String httpsURL = "https://api.mlab.com/api/1/databases/"+dbName+"/collections/"+collection+"/"+dataKeyTobeDeleted+"?apiKey="+key;
+		String httpsURL = "https://remindmeon-cbcd.restdb.io/rest/"+collection+"/"+dataKeyTobeDeleted;
 		 HttpURLConnection connection = null;
 		 try {
 			
 			 URL url = new URL(httpsURL);
 	            HTTPRequest req = new HTTPRequest(url, HTTPMethod.DELETE, lFetchOptions);
-	            HTTPHeader header = new HTTPHeader("Content-type", "application/json");
-	            
-	            req.setHeader(header);
-	            fetcher.fetch(req);
+	            req.addHeader(new HTTPHeader("Content-type", "application/json"));
+		           req.addHeader(new HTTPHeader("Accept", "application/json"));
+		           req.addHeader(new HTTPHeader("x-apikey", key));
+		           HTTPResponse res  = fetcher.fetch(req); 
+		            
+		           log.info("delete the DB  collection "+collection+" code "+res.getResponseCode() +" "+new String(res.getContent()));
 	            
 	         
 	        } catch (IOException e) {

@@ -9,3 +9,5 @@
 /src/com/login/facade/Constants.java
 /src/com/reminder/Config.java
 /WebContent/map.html
+/WebContent/WEB-INF/uiCode/node_modules/*
+/WebContent/WEB-INF/uiCode/node_modules/*.*

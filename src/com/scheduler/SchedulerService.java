@@ -27,7 +27,7 @@ public class SchedulerService {
 	public static List<ReminderVO> getRemindersToBeExecuted(){
 		 List<ReminderVO> passedReminders = new ArrayList<>();
 		 String sortByExecutionTimeAsc =  "&s=%7B%22nextExecutionTime%22%3A%201%7D";
-		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "reminders", null, null, false, null, sortByExecutionTimeAsc)+"]";
+		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "reminders-new", null, null, false, null, sortByExecutionTimeAsc)+"]";
 		 Gson  json = new Gson();
 		 List<ReminderVO> result  = json.fromJson(data, new TypeToken<List<ReminderVO>>() {}.getType());
 		 for (ReminderVO  reminder: result) {
@@ -61,7 +61,7 @@ public class SchedulerService {
 					Settings settings = settingsMap.get(reminderVO.getEmail());
 					if (null == settings) {
 						Gson  json = new Gson();
-						 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", reminderVO.getEmail(), null,true, null, null);
+						 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings-new", reminderVO.getEmail(), null,true, null, null);
 						 settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
 						 settingsMap.put(reminderVO.getEmail(), settings);
 					}
@@ -81,15 +81,15 @@ public class SchedulerService {
 						reminderVO.setNextExecutionTime(ReminderFacade.nextReminder(reminderVO, timeZone).getTime());
 						Gson  json = new Gson();
 						String data = json.toJson(reminderVO, new TypeToken<ReminderVO>() {}.getType());
-						//MangoDB.createNewDocumentInCollection("remind-me-on", "reminders", data, null);
-						MangoDB.updateData("remind-me-on", "reminders", data,reminderVO.get_id(), null);
+						//MangoDB.createNewDocumentInCollection("remind-me-on", "reminders-new", data, null);
+						MangoDB.updateData("remind-me-on", "reminders-new", data,reminderVO.get_id(), null);
 					} catch (Exception e) {
 						
 						e.printStackTrace();
 					}
 					
 				}else {
-					MangoDB.deleteDocument("remind-me-on", "reminders", reminderVO.get_id(), null);
+					MangoDB.deleteDocument("remind-me-on", "reminders-new", reminderVO.get_id(), null);
 				}
 				
 			}catch(Exception e) {
@@ -127,7 +127,7 @@ public class SchedulerService {
 		Settings settings =  new Settings();
 		Gson  json = new Gson();
 		String email = reminderVO.getEmail();
-		String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
+		String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings-new", email, null,true, null, null);
 		settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
 		if (null == settings ) {
 			 settings = new Settings();
@@ -140,7 +140,7 @@ public class SchedulerService {
 		//Prepare a log of this call
 		if ((reminderVO.isMakeACall() || reminderVO.isSendText()) &&  settings.getCurrentCallCredits() >=1) {
 			callLog = new CallLogs();
-			callLog.set_id(""+new Date().getTime());
+			callLog.set_import_id(""+new Date().getTime());
 			callLog.setFrom(reminderVO.getEmail());
 			callLog.setTo(reminderVO.getSelectedPhone());
 			
@@ -192,7 +192,7 @@ public class SchedulerService {
 		
 		
 			 settingsJson = json.toJson(settings, new TypeToken<Settings>() {}.getType());
-			 MangoDB.updateData("remind-me-on", "registered-users-settings", settingsJson, reminderVO.getEmail(), null);
+			 MangoDB.updateData("remind-me-on", "registered-users-settings-new", settingsJson, settings.get_id(), null);
 			 
 		
 		

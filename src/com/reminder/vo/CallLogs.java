@@ -2,6 +2,7 @@ package com.reminder.vo;
 
 public class CallLogs {
 	
+	private String _import_id;
 	private String _id;
 	private String from;
 	private String to;
@@ -30,6 +31,12 @@ public class CallLogs {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	public String get_import_id() {
+		return _import_id;
+	}
+	public void set_import_id(String _import_id) {
+		this._import_id = _import_id;
 	}
 	
 }

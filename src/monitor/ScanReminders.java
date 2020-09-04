@@ -15,7 +15,7 @@ import com.scheduler.SchedulerService;
 import googleAssistant.PushNotificationUtils;
 
 /**
- * Servlet implementation class ScanReminders
+ * ScanReminders - See if any reminder is past its trigger time
  */
 @WebServlet("/ScanReminders")
 public class ScanReminders extends HttpServlet {
@@ -36,8 +36,13 @@ public class ScanReminders extends HttpServlet {
 		System.out.println(" Starting to check if any reminder is due");
 		SchedulerService schedulerService = new SchedulerService();
 		List<ReminderVO> currentReminders = schedulerService.getRemindersToBeExecuted();//Past reminders or executing in next 10 minutes
-		schedulerService.snoozReminders(currentReminders);//Keep reminding users till they stop it
+		
 		schedulerService.executeReminderAndReschedule(currentReminders);//Send email/phone/sms and if it recurring find next execution time
+		for (ReminderVO reminder: currentReminders) {
+			reminder.set_id(null);
+		}
+		schedulerService.snoozReminders(currentReminders);//Keep reminding users till they stop it
+		
 		PushNotificationUtils.sendNotification(currentReminders);
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}

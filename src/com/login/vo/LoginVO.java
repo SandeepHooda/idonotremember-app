@@ -6,6 +6,7 @@ public class LoginVO {
 	
 	private String accessToken;
 	private String refreshToken;
+	private String _import_id ;
 	private String _id ;
 	private String regID ;
 	private String emailID;
@@ -138,6 +139,12 @@ public class LoginVO {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String get_import_id() {
+		return _import_id;
+	}
+	public void set_import_id(String _import_id) {
+		this._import_id = _import_id;
 	}
 	
 

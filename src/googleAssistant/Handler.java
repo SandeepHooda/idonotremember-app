@@ -225,7 +225,7 @@ public class Handler extends HttpServlet {
 				   String dateTimeStr = dateStr.substring(0, 10) +timeStr.substring(10) ;
 				    
 				    Gson  json = new Gson();
-					String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
+					String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings-new", email, null,true, null, null);
 					Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
 					if (null == settings) {
 						settings = new Settings();
@@ -334,7 +334,7 @@ public class Handler extends HttpServlet {
 					
 				}
 				Gson  json = new Gson();
-				String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
+				String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings-new", email, null,true, null, null);
 				Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
 				if (null == settings) {
 					settings = new Settings();

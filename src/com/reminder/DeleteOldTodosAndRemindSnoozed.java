@@ -23,10 +23,13 @@ import com.reminder.vo.ToDO;
 
 import mangodb.MangoDB;
 
+
 /**
- * Servlet implementation class DeleteOldTodos
+ * ScanReminders - See if any reminder is past its trigger time
+ * GetSnoozedReminders - Send push over notification every 15 minutes for snoozed remoinders
+ * DeleteOldTodosAndRemindSnoozed =  * Once in a day delete todo > 7 days * consolidated email for snoozed reminders
  */
-@WebServlet("/DeleteOldTodosAndRemindSnoozed")
+@WebServlet("/DeleteOldTodosAndRemindSnoozed") //Once in a day
 public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -42,14 +45,14 @@ public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     private void deleteOldToDos() {
-    	System.out.println(" deleting old reminders");
-		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "to-dos", null,null, false, null,null)+"]";
+    	System.out.println(" deleting old to dos");
+		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "to-dos-new", null,null, false, null,null)+"]";
 		 Gson  json = new Gson();
 		 List<ToDO> toDos  = json.fromJson(data, new TypeToken<List<ToDO>>() {}.getType());
 		 for (ToDO todo: toDos) {
 			 if (todo.getDateCompleted() > 0 && ( (new Date().getTime() -todo.getDateCompleted())) > Constants.aDay*7) {
 				 System.out.println(" deleting this todo : "+todo.getTaskDesc());
-				 MangoDB.deleteDocument("remind-me-on", "to-dos", todo.get_id(), null);
+				 MangoDB.deleteDocument("remind-me-on", "to-dos-new", todo.get_id(), null);
 			 }
 		 }
 		
@@ -70,11 +73,12 @@ public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
 				reminderText += "<br/><br/> &nbsp;&nbsp;&nbsp; &#8226; &nbsp;<b>" +reminder.getReminderSubject()+" "+reminder.getReminderText()+" </b>";
 				soozedRemindersMap.put(reminder.getEmail(), reminderText);
 				reminder.setAnounceOnGoogleAssist(true);
+				//Since this funcation get called every morning so this will set anouncement flag on if user turned it off previous day
+				data  = json.toJson(reminder, new TypeToken<ReminderVO>() {}.getType());
+				MangoDB.updateData("remind-me-on", "reminders-snooz", data, reminder.get_id(),null);
 			}
 			
-			//Since this funcation get called every morning so this will set anouncement flag on if user turned it off previous day
-			data  = json.toJson(reminders, new TypeToken<List<ReminderVO>>() {}.getType());
-			MangoDB.updateData("remind-me-on", "reminders-snooz", data, null,null);
+			
 			
 			Set<String> emailIds = soozedRemindersMap.keySet();
 			if (!CollectionUtils.isEmpty(emailIds)){
@@ -90,7 +94,7 @@ public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
     }
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		deleteOldToDos();
-		sendReminderToSnoozedOnes();
+		sendReminderToSnoozedOnes(); //Once in a day
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 

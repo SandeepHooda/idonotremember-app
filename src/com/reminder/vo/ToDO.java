@@ -1,6 +1,7 @@
 package com.reminder.vo;
 
 public class ToDO {
+	private String _import_id;
 	private String _id;
 	private long dateCreated;
 	private long dateCompleted;
@@ -50,6 +51,12 @@ public class ToDO {
 	}
 	public void setDateCompleted(long dateCompleted) {
 		this.dateCompleted = dateCompleted;
+	}
+	public String get_import_id() {
+		return _import_id;
+	}
+	public void set_import_id(String _import_id) {
+		this._import_id = _import_id;
 	}
 
 }
