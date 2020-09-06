@@ -46,13 +46,13 @@ public class DeleteOldTodosAndRemindSnoozed extends HttpServlet {
 	 */
     private void deleteOldToDos() {
     	System.out.println(" deleting old to dos");
-		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "to-dos-new", null,null, false, null,null)+"]";
+		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "to-dos", null,null, false, null,null)+"]";
 		 Gson  json = new Gson();
 		 List<ToDO> toDos  = json.fromJson(data, new TypeToken<List<ToDO>>() {}.getType());
 		 for (ToDO todo: toDos) {
 			 if (todo.getDateCompleted() > 0 && ( (new Date().getTime() -todo.getDateCompleted())) > Constants.aDay*7) {
 				 System.out.println(" deleting this todo : "+todo.getTaskDesc());
-				 MangoDB.deleteDocument("remind-me-on", "to-dos-new", todo.get_id(), null);
+				 MangoDB.deleteDocument("remind-me-on", "to-dos", todo.get_id(), null);
 			 }
 		 }
 		

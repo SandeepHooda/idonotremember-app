@@ -4,6 +4,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 			
 	var theCtrl = this;
 	theCtrl.newTodo = "";
+	$scope.MaxOrder = 0;
 	window.localStorage.setItem('postlogin-moveto','menu.tab.todo');
 	var regIDStorege = window.localStorage.getItem('regID');
 	 var config = {
@@ -205,15 +206,23 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	$scope.addNewTodo  = function(){
 		if (!theCtrl.newTodo) return;
 		var toDo = {};
-		toDo.order = $scope.findMaxOrder();
+		if ($scope.MaxOrder == 0){
+			$scope.MaxOrder = $scope.findMaxOrder();
+			
+		}else {
+			$scope.MaxOrder ++;
+		}
+		toDo.order = $scope.MaxOrder;
 		toDo.taskDesc = theCtrl.newTodo;
 		$scope.showBusy();
+		theCtrl.newTodo = "";
+		$scope.hideBusy();
 		$http.post(appData.getHost()+'/ws/todo/',toDo , config)
   		.then(function(response){
-  			 $scope.hideBusy();
+  			 
   			if (response.data){
   				$scope.loginTry = 0;
-  				$scope.getToDos();
+  				$scope.getToDos(false);
   			}else {
   				$scope.popUpRefresh('Failure', 'Please retry',null )
   			}
@@ -238,10 +247,12 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 			
 		});
 	}
-	$scope.getToDos = function(){
+	$scope.getToDos = function(showBusyPopup){
 		
+		if (showBusyPopup){
+			$scope.showBusy();
+		}
 		
-		$scope.showBusy();
 		
 		 $http.get(appData.getHost()+'/ws/todo', config)
 	  		.then(function(response){
@@ -249,6 +260,10 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	  			//$scope.todos = response.data ;
 	  			$scope.showToDos(response.data);
 	  			theCtrl.newTodo = "";
+	  			if ($scope.MaxOrder == 0){
+	  				$scope.MaxOrder = $scope.findMaxOrder();
+	  				
+	  			}
 	  			
 	  		},
 			function(response){

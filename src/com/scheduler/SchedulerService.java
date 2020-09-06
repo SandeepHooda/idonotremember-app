@@ -27,7 +27,7 @@ public class SchedulerService {
 	public static List<ReminderVO> getRemindersToBeExecuted(){
 		 List<ReminderVO> passedReminders = new ArrayList<>();
 		 String sortByExecutionTimeAsc =  "&s=%7B%22nextExecutionTime%22%3A%201%7D";
-		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "reminders-new", null, null, false, null, sortByExecutionTimeAsc)+"]";
+		String data ="["+ MangoDB.getDocumentWithQuery("remind-me-on", "reminders", null, null, false, null, sortByExecutionTimeAsc)+"]";
 		 Gson  json = new Gson();
 		 List<ReminderVO> result  = json.fromJson(data, new TypeToken<List<ReminderVO>>() {}.getType());
 		 for (ReminderVO  reminder: result) {
@@ -81,15 +81,15 @@ public class SchedulerService {
 						reminderVO.setNextExecutionTime(ReminderFacade.nextReminder(reminderVO, timeZone).getTime());
 						Gson  json = new Gson();
 						String data = json.toJson(reminderVO, new TypeToken<ReminderVO>() {}.getType());
-						//MangoDB.createNewDocumentInCollection("remind-me-on", "reminders-new", data, null);
-						MangoDB.updateData("remind-me-on", "reminders-new", data,reminderVO.get_id(), null);
+						//MangoDB.createNewDocumentInCollection("remind-me-on", "reminders", data, null);
+						MangoDB.updateData("remind-me-on", "reminders", data,reminderVO.get_id(), null);
 					} catch (Exception e) {
 						
 						e.printStackTrace();
 					}
 					
 				}else {
-					MangoDB.deleteDocument("remind-me-on", "reminders-new", reminderVO.get_id(), null);
+					MangoDB.deleteDocument("remind-me-on", "reminders", reminderVO.get_id(), null);
 				}
 				
 			}catch(Exception e) {
