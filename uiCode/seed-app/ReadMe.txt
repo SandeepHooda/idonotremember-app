@@ -13,4 +13,5 @@ Cmd : ng generate component <component name>
 
 ng serve --open
 
+This command works at C:\Users\shaurya\workspace\gitCode\sanhoo-home-security\uiCode\seed-app
 ng build --prod --base-href .
