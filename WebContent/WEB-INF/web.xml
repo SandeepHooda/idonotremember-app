@@ -59,6 +59,39 @@
     <servlet-name>OauthDaddy</servlet-name>
     <url-pattern>/OauthDaddy</url-pattern>
   </servlet-mapping>
+  
+  
+  
+  <servlet>
+  <servlet-name>IamAlive</servlet-name>
+  <servlet-class>health.IamAlive</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>IamAlive</servlet-name>
+    <url-pattern>/IamAlive</url-pattern>
+  </servlet-mapping>
+  
+  
+   <servlet>
+  <servlet-name>HealthCheck</servlet-name>
+  <servlet-class>health.HealthCheck</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>HealthCheck</servlet-name>
+    <url-pattern>/HealthCheck</url-pattern>
+  </servlet-mapping>
+  
+  
+     <servlet>
+  <servlet-name>Devices</servlet-name>
+  <servlet-class>health.Devices</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>Devices</servlet-name>
+    <url-pattern>/Devices</url-pattern>
+  </servlet-mapping>
+  
+  
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>SessionTest</web-resource-name>
