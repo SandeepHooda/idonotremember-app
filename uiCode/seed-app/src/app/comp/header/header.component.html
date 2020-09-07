@@ -1,0 +1,27 @@
+
+
+<div id="mySidenav" class="sidenav" (click)="closeNav()">
+    <a  class="closebtn" >&times;</a>
+    <a [routerLink]="['/home']" routerLinkActive="active">home</a>
+    <a [routerLink]="['/addcash']" routerLinkActive="active">addcash</a>  
+    <a [routerLink]="['/login']" routerLinkActive="active">login</a>  
+</div>
+
+<div class="fixedheader" >     
+<div class="app-header" >
+<div class="navbar-header navbar-header-white">
+  
+  
+        <span style="font-size:30px;cursor:pointer;float: left;" (click)="openNav()">&#9776; 
+          </span>
+      
+          <span style="line-height: 3">
+             Home security
+          </span>
+  
+     
+
+    
+</div>
+</div>
+</div>

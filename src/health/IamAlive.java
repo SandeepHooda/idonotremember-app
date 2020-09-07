@@ -74,7 +74,7 @@ public class IamAlive extends HttpServlet {
 			}
 			deviceJson = json.toJson(device, new TypeToken<Device>() {}.getType());
 			
-	        MangoDB.updateData("idonot-remember", "device-id", deviceJson, null,device.get_id());
+	        MangoDB.updateData("idonot-remember", "device-id", deviceJson, device.get_id(),null);
 			response.getWriter().append("Device name ").append(device.getName()+monitorStatus);
 		}else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

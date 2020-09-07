@@ -1,0 +1,65 @@
+
+    <ul>
+
+ 
+        <li>  Add papa phone number in mlab "sanhoo-home-security", "phone-numbers" with country code</li>
+      
+        <li>  in raspberry pi run -> sudo crontab -e and make sure we have MonitorFTP.sh IAmAlive.sh    </li>
+         
+        <li>D3D camera web app: FTP is set by D3D Search Tool- > Settings-> Advance-> Auto Snap </li> 
+        <li> D3D camera mobile app : Settings-> Amarm Setting-> Motion Detection</li>
+        <li>  Turn on WiFi and esp8266 on for first floor and ground floor</li>
+          
+        <li>  Check the monitor app that all devices are connected</li>
+          
+        <li>  Turn on the monitor check box in front of each device and "master device 0" as well</li>
+        <li>  In the settings tabs of the app make sure the Auto delete email is off</li>
+        <li>  Turn on google vision analysis on image. if you are getting too many calls else turn it off</li>
+        <li>  Add all phone numbers of familily</li>    
+        <li>  check raspberry by that camera healt is being monitored ps -ef | grep "MonitorFTP"</li>
+        <li>  If cameras are down restart them from smart life app - > HomeMate wifi switch</li>
+        <li>  Door heartbeat is monitored by scips running from seenu , kusum and foscam id. verify that heart icon is fine and device icon is connected  
+          <a href="https://console.cloud.google.com/logs/viewer?project=sanhoo-home-security" target="_blank"> Verify that monitor is up </a></li>
+          
+          <li>  Mi camera turn on survlience / setting/ home surveillance assistance</li>
+          <li>  Camera automation turn off sleep time</li>
+          <li> Came automation turn on. Motion detection</li>
+        <li>  Test all this via a drill </li>
+        </ul>
+
+        <hr/>
+        <span> Monitoring scripts</span>
+        <ul>
+          <li><b>Read foscam mail box and monitor human</b> 
+            <br/>
+            d3d.heroku.emails.1 and 2 - gmail account to run the heroku thread 
+            <br/>
+            d3d.heroku.emails.1 monitor google scripts runs only from 1 
+            <br/>
+            d3d-heroku-emails-1 and 2 - heroku account - creates thread and read emails
+            <br/>
+          </li>
+
+          <li><b>Devices hear beat</b> 
+            <br/>
+            sonu.hooda - sanhoo-home-security.appspot.com 
+            <br/>
+             google trigger scripts scripts - seenu , kusum and foscam
+            <br/>
+          </li>
+
+          <li><b>Delete foscamnotificationsandeep mail box </b> 
+            <br/>
+            foscamnotificationsandeep  - google script 
+            
+            <br/>
+          </li>
+
+          <li><b>make a call </b> 
+            <br/>
+            heroku post-master 
+           
+            <br/>
+          </li>
+        </ul>
+

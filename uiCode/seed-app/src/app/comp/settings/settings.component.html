@@ -1,0 +1,84 @@
+
+
+
+<div style="padding-left: 2px;padding-top: 5px;">
+    <button id="multi-button" 
+     type="button" 
+    class="md-button md-primary md-raised ng-binding ng-isolate-scope progress-button md-ink-ripple" 
+     data-loading="Working..." (click)="toggleEmailDeletePrcocess()"
+      style="background-color:  rgb(3,155,229) ; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);  width: 100%; height: 30px;">
+    <span *ngIf="deletefoscamInboxDaily">Foscam emails inbox will be deleted daily</span>
+    <span *ngIf="!deletefoscamInboxDaily">Foscam emails inbox will not be auto deleted</span>
+    <span class="tz-bar background-horizontal"></span></button>
+    </div>
+
+<div style="padding-left: 2px;padding-top: 5px;">
+    <button id="multi-button" 
+     type="button" 
+    class="md-button md-primary md-raised ng-binding ng-isolate-scope progress-button md-ink-ripple" 
+     data-loading="Working..." (click)="toggleGooglevisionanalysisSettings()"
+      style="background-color:  rgb(3,155,229) ; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);  width: 100%; height: 30px;">
+      <span *ngIf="useGoogleVisionanalysis">Using google vision for image analysis </span>
+      <span *ngIf="!useGoogleVisionanalysis">Google vision for image analysis if off</span>
+    <span class="tz-bar background-horizontal"></span></button>
+    </div>
+<br/><br/>
+
+<!-- Phone numbers -->
+<div class="completer__wrapper text-box" > 
+    <div resize-selections="" 
+    class="form-control template-editor-holder b-user-says-editor ng-pristine ng-valid ng-isolate-scope ng-not-empty custom-classifier-enabled ng-touched" 
+    contenteditable="true" spellcheck="true" placeholder="919813526901" safe-paste="" 
+    (keyup.enter)="updatePhones()"  [textContent]="phone1" max-length="768"
+    (input)="phone1=$event.target.textContent" name="userEntry" ngDefaultControl
+     completer-template-editor="templateEditorCommonConfig" aria-disabled="false" aria-invalid="false" 
+     style="padding-left: 10px">
+    </div>
+
+    <div resize-selections="" 
+    class="form-control template-editor-holder b-user-says-editor ng-pristine ng-valid ng-isolate-scope ng-not-empty custom-classifier-enabled ng-touched" 
+    contenteditable="true" spellcheck="true" placeholder="919813526901" safe-paste="" 
+    (keyup.enter)="updatePhones()"  [textContent]="phone2" max-length="768"
+    (input)="phone2=$event.target.textContent" name="userEntry" ngDefaultControl
+     completer-template-editor="templateEditorCommonConfig" aria-disabled="false" aria-invalid="false" 
+     style="padding-left: 10px">
+    </div>
+    <div resize-selections="" 
+    class="form-control template-editor-holder b-user-says-editor ng-pristine ng-valid ng-isolate-scope ng-not-empty custom-classifier-enabled ng-touched" 
+    contenteditable="true" spellcheck="true" placeholder="919813526901" safe-paste="" 
+    (keyup.enter)="updatePhones()"  [textContent]="phone3" max-length="768"
+    (input)="phone3=$event.target.textContent" name="userEntry" ngDefaultControl
+     completer-template-editor="templateEditorCommonConfig" aria-disabled="false" aria-invalid="false" 
+     style="padding-left: 10px">
+    </div>
+    <div resize-selections="" 
+    class="form-control template-editor-holder b-user-says-editor ng-pristine ng-valid ng-isolate-scope ng-not-empty custom-classifier-enabled ng-touched" 
+    contenteditable="true" spellcheck="true" placeholder="919813526901" safe-paste="" 
+    (keyup.enter)="updatePhones()"  [textContent]="phone4" max-length="768"
+    (input)="phone4=$event.target.textContent" name="userEntry" ngDefaultControl
+     completer-template-editor="templateEditorCommonConfig" aria-disabled="false" aria-invalid="false" 
+     style="padding-left: 10px">
+    </div>
+
+    <div resize-selections="" 
+    class="form-control template-editor-holder b-user-says-editor ng-pristine ng-valid ng-isolate-scope ng-not-empty custom-classifier-enabled ng-touched" 
+    contenteditable="true" spellcheck="true" placeholder="919813526901" safe-paste="" 
+    (keyup.enter)="updatePhones()"  [textContent]="phone5" max-length="768"
+    (input)="phone5=$event.target.textContent" name="userEntry" ngDefaultControl
+     completer-template-editor="templateEditorCommonConfig" aria-disabled="false" aria-invalid="false" 
+     style="padding-left: 10px">
+    </div>
+  </div>
+
+  <div style="padding-left: 2px;padding-top: 10px;">
+    <button id="multi-button" 
+     type="button" 
+    class="md-button md-primary md-raised ng-binding ng-isolate-scope progress-button md-ink-ripple" 
+     data-loading="Working..." (click)="updatePhones()"
+      style="background-color:  rgb(3,155,229) ; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);  width: 100%; height: 30px;">
+      Update phone
+    <span class="tz-bar background-horizontal"></span></button>
+    </div>
+
+           
+

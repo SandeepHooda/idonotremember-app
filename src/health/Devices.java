@@ -63,7 +63,7 @@ public class Devices extends HttpServlet {
 			if (null != allDevices) {
 				for (Device device: allDevices) {
 					String deviceJson = json.toJson(device, new TypeToken<Device>() {}.getType());
-					MangoDB.updateData("sanhoo-home-security", "device-id",deviceJson , null,device.get_id());
+					MangoDB.updateData("idonot-remember", "device-id",deviceJson , device.get_id(), null);
 				}
 				
 			}

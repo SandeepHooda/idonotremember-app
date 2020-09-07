@@ -83,6 +83,8 @@
     <servlet-name>Devices</servlet-name>
     <url-pattern>/Devices</url-pattern>
   </servlet-mapping>
+  
+  <!-- 
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>SessionTest</web-resource-name>
@@ -92,4 +94,6 @@
       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
+  
+   -->
 </web-app>

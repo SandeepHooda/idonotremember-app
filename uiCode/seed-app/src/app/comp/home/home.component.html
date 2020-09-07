@@ -1,0 +1,70 @@
+<div [ngStyle]="{'background-color':  systemInGoodhealth ? 'green' : 'red' }">
+
+
+<button class="btn success" (click)="refresh()">&#8634; Refresh</button>
+<button class="btn success" (click)="enableAll()">&#9745; Enable All</button>
+<button class="btn success" (click)="disableAll()">&#9746; Disable All</button>
+
+
+<img  src="assets/img/foscam.jpg" class="header-img"  (click)="foscamOpen()">
+<img  src="assets/img/d3d.jpg" class="header-img"  (click)="d3dOpen()">
+<img  src="assets/img/picam.jpg" class="header-img"  (click)="piCamOpen()">
+<!--<img *ngIf="systemInGoodhealth" src="assets/img/locked.jpg" class="header-img">
+<img *ngIf="!systemInGoodhealth" src="assets/img/unlocked.jpg" class="header-img">-->
+        
+<div>External IP : {{externalIPString}} </div>
+
+<div style="overflow-x:auto;">
+<table>
+<tr>
+    
+    <th>  Name</th>
+    <th> Alarmed</th>
+    <th> Active/Snooz</th>
+    <th> Email Only</th>
+    <th> Heart beat</th>
+    <th> Last Alarm</th>
+    <th>  ID</th>
+    <th> Moak Drill</th>
+</tr>
+<tr class="btn-group-button" *ngFor="let device of devices">
+  
+ <td>  <span>{{device.name}}</span></td>
+  
+ <td> 
+     <span *ngIf="device.deviceType == 'doorSensor'">
+        <span *ngIf="device.unplugged">
+            <img  src="assets/img/unplugged.jpg" style="width: 40px; height: 30px; padding-right: 10px;">
+        </span>
+        <span *ngIf="!device.unplugged">
+                <img *ngIf="device.alarmTriggered" src="assets/img/alarmed.jpg" style="width: 40px; height: 30px; padding-right: 10px;">
+                <img *ngIf="!device.alarmTriggered" src="assets/img/safe.jpg" style="width: 40px; height: 30px; padding-right: 10px;">
+        </span>
+        
+    </span> 
+   
+ <td> 
+        <input class="healthCheck" type="checkbox" [disabled]="device.disabledHelthCheckbox"
+        [(ngModel)]="device.turnOnHealthCheck"
+        (change)="updateDevice(device)"> 
+</td> 
+<td> 
+    <input class="healthCheck" type="checkbox" 
+    [(ngModel)]="device.alertType_emailOnly"
+    (change)="updateDevice(device)"> 
+</td> 
+ <td>  <span *ngIf="device.deviceType == 'doorSensor'">
+        <img *ngIf="device.unplugged" src="assets/img/broken-heart.jpg" style="width: 40px; height: 30px; padding-right: 10px;">
+        <img *ngIf="!device.unplugged" src="assets/img/heart.jpg" style="width: 40px; height: 30px; padding-right: 10px;">
+            {{device.healthCheckTimeDisplay}}
+    </span></td> 
+ <td>  <span *ngIf="device.deviceType == 'doorSensor'">{{device.lastAlarmTimeDisplay}}</span></td>
+ <td>  <span>{{device._id}}</span></td>
+ <td>  <button *ngIf="device.deviceType == 'doorSensor'" class="btn success" (click)="moakDrill(device._id)">Drill</button></td> 
+
+</tr>
+</table>
+</div>
+
+</div>
+
