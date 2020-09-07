@@ -124,13 +124,13 @@ public class PaymentStatus extends HttpServlet {
 						 }
 						 
 						 //4. get user call settings from DB
-						 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings-new", order.getOrderDetails().get("EMAIL"), null,true, null, null);
+						 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", order.getOrderDetails().get("EMAIL"), null,true, null, null);
 						 Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
 						 double txAmount = Double.parseDouble(mapData.get("TXNAMOUNT")[0]);
 						 settings.setCurrentCallCredits(settings.getCurrentCallCredits() + txAmount);
 						 settingsJson = json.toJson(settings, new TypeToken<Settings>() {}.getType());
 						 //5. Add txn amount to user credits
-						 MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users-settings-new", settingsJson, null);
+						 MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users-settings", settingsJson, null);
 						 
 						 EmailAddess toAddress = new EmailAddess();
 						 toAddress.setAddress("sonu.hooda@gmail.com");

@@ -66,7 +66,7 @@ public class LoginFacade {
 			 }
 			 MangoDB.updateData("remind-me-on",collectionName , data, result.get_id(),null);//Insert loging time stamp
 			 //Update settings 
-			 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings-new", email, null,true, null, null);
+			 String settingsJson = MangoDB.getDocumentWithQuery("remind-me-on", "registered-users-settings", email, null,true, null, null);
 			 Settings settings = json.fromJson(settingsJson, new TypeToken<Settings>() {}.getType());
 			 if (null == settings ) {
 				 settings = new Settings();
@@ -75,7 +75,7 @@ public class LoginFacade {
 			 settings.setAppTimeZone(appTimeZone);
 			 result.setUserSettings(settings);
 			 settingsJson = json.toJson(settings, new TypeToken<Settings>() {}.getType());
-			 MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users-settings-new", settingsJson, null);
+			 MangoDB.createNewDocumentInCollection("remind-me-on", "registered-users-settings", settingsJson, null);
 			 result.setPassword(null);
 			 result.setPasswordConfirm(null);
 			 return result;

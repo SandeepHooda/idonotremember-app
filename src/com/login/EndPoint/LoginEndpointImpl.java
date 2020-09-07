@@ -114,7 +114,7 @@ public class LoginEndpointImpl implements LoginEndpoint {
 				Gson  json = new Gson();
 				 String settingsJson = json.toJson(usrSettings, new TypeToken<Settings>() {}.getType());
 				 String email = new ReminderFacade().getEmail(regID);
-				 MangoDB.updateData("remind-me-on", "registered-users-settings-new", settingsJson, email, null);
+				 MangoDB.updateData("remind-me-on", "registered-users-settings", settingsJson, email, null);
 				
 				return Response.ok().entity(loginFacade.addPhoneNo(phone, regID)).build();
 			}else {
