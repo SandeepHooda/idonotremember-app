@@ -32,7 +32,7 @@ public class LoginVO {
 	
 	public LoginVO() {
 		this.regID = UUID.randomUUID().toString();
-		this._id = this.regID;
+		this._import_id = this.regID;
 	}
 	public String getRegID() {
 		return regID;
