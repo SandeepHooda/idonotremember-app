@@ -259,7 +259,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	  			 $scope.hideBusy();
 	  			//$scope.todos = response.data ;
 	  			$scope.showToDos(response.data);
-	  			theCtrl.newTodo = "";
+	  			//theCtrl.newTodo = "";
 	  			if ($scope.MaxOrder == 0){
 	  				$scope.MaxOrder = $scope.findMaxOrder();
 	  				
