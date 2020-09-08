@@ -307,6 +307,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	}
 	
 	$scope.toggleComplete = function(todo){
+		
 		 $scope.showBusy();
 		$interval(function() {
 			$scope.hideBusy();
@@ -321,6 +322,20 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	  			 $scope.hideBusy();
 				
 			});
+		 
+		 let toDoCache = window.localStorage.getItem('to-do-cache');
+			if (toDoCache){
+				let allTodos = JSON.parse(toDoCache);
+				for (let i=0; i<allTodos.length;i++){
+					if (allTodos[i]._id == todo._id){
+						allTodos[i].complete = !allTodos[i].complete
+						$scope.showToDos(allTodos);
+						break;
+					}
+				}
+				
+			}
+		
 	}
 	
 	$scope.compareToDos = function(a, b) {
