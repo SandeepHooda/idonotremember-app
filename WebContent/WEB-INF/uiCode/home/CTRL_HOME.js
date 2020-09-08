@@ -284,11 +284,17 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		}
 		$scope.gettingUserReminderList = false;
 		
-		$scope.showBusy();
+		//$scope.showBusy();
+		
+		let reminderCache = window.localStorage.getItem('reminder-cache');
+		if (reminderCache){
+			$scope.formatReminderDisplay(JSON.parse(reminderCache));
+		}
 		
 		 $http.get(appData.getHost()+'/ws/reminder',config )
 	  		.then(function(response){
 	  			 $scope.hideBusy();
+	  			window.localStorage.setItem('reminder-cache',JSON.stringify(response.data));
 	  			$scope.formatReminderDisplay(response.data) ;
 	  			
 	  			
@@ -374,6 +380,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 					 $http.delete(appData.getHost()+'/ws/reminder/reminderID/'+$scope.reminders[$scope.deleteIndex]._id, config)
 				  		.then(function(response){
 				  			 $scope.hideBusy();
+				  			window.localStorage.setItem('reminder-cache',JSON.stringify(response.data));
 				  			$scope.formatReminderDisplay(response.data) ;
 				  		},
 						function(response){

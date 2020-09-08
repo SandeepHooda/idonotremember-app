@@ -252,13 +252,18 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 		if (showBusyPopup){
 			$scope.showBusy();
 		}
-		
+		 
+		let toDoCache = window.localStorage.getItem('to-do-cache');
+		if (toDoCache){
+			$scope.showToDos(JSON.parse(toDoCache));
+		}
 		
 		 $http.get(appData.getHost()+'/ws/todo', config)
 	  		.then(function(response){
 	  			 $scope.hideBusy();
 	  			//$scope.todos = response.data ;
 	  			$scope.showToDos(response.data);
+	  			window.localStorage.setItem('to-do-cache',JSON.stringify(response.data));
 	  			//theCtrl.newTodo = "";
 	  			if ($scope.MaxOrder == 0){
 	  				$scope.MaxOrder = $scope.findMaxOrder();
@@ -302,10 +307,11 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	}
 	
 	$scope.toggleComplete = function(todo){
-		 $scope.showBusy();
+		 //$scope.showBusy();
 		 $http.delete(appData.getHost()+'/ws/todo/id/'+todo._id, config)
 	  		.then(function(response){
 	  			 $scope.hideBusy();
+	  			window.localStorage.setItem('to-do-cache',JSON.stringify(response.data));
 	  			$scope.showToDos(response.data);
 	  		},
 			function(response){
