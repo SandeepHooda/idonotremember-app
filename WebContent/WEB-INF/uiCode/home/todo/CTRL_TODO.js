@@ -1,5 +1,5 @@
-APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope','$ionicLoading','$http','$ionicPopup','appData',
-    function($window,$scope,$state,$rootScope,$ionicLoading,$http,$ionicPopup, appData){
+APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope','$ionicLoading','$http','$ionicPopup','appData','$interval',
+    function($window,$scope,$state,$rootScope,$ionicLoading,$http,$ionicPopup, appData,$interval){
 	
 			
 	var theCtrl = this;
@@ -307,7 +307,10 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	}
 	
 	$scope.toggleComplete = function(todo){
-		 //$scope.showBusy();
+		 $scope.showBusy();
+		$interval(function() {
+			$scope.hideBusy();
+		},500);
 		 $http.delete(appData.getHost()+'/ws/todo/id/'+todo._id, config)
 	  		.then(function(response){
 	  			 $scope.hideBusy();
