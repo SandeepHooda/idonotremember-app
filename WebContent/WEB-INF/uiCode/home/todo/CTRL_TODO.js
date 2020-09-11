@@ -19,6 +19,8 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	}else {
 		$scope.userName ="Hello Guest";
 	}
+	$scope.toDoCache = JSON.parse(window.localStorage.getItem('to-do-cache'));
+	
 	$scope.editMode = false;
 	$scope.todos = [];
 	$scope.loginTry = 0;
@@ -253,9 +255,9 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 			$scope.showBusy();
 		}
 		 
-		let toDoCache = window.localStorage.getItem('to-do-cache');
-		if (toDoCache){
-			$scope.showToDos(JSON.parse(toDoCache));
+		
+		if ($scope.toDoCache){
+			$scope.showToDos($scope.toDoCache);
 		}
 		
 		 $http.get(appData.getHost()+'/ws/todo', config)
@@ -323,13 +325,13 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 				
 			});
 		 
-		 let toDoCache = window.localStorage.getItem('to-do-cache');
-			if (toDoCache){
-				let allTodos = JSON.parse(toDoCache);
-				for (let i=0; i<allTodos.length;i++){
-					if (allTodos[i]._id == todo._id){
-						allTodos[i].complete = !allTodos[i].complete
-						$scope.showToDos(allTodos);
+		 
+			if ($scope.toDoCache){
+				
+				for (let i=0; i<$scope.toDoCache.length;i++){
+					if ($scope.toDoCache[i]._id == todo._id){
+						$scope.toDoCache[i].complete = !$scope.toDoCache[i].complete
+						$scope.showToDos($scope.toDoCache);
 						break;
 					}
 				}
