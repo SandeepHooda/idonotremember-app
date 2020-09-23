@@ -9,7 +9,7 @@ function getWeather() {
 	        	   if(xmlhttp.responseText){
 	        		   let resp =  JSON.parse(xmlhttp.responseText.substring(5));
 	        		   document.getElementById("img").src = 'http://openweathermap.org/img/wn/'+resp.current.weather[0].icon+'.png'
-			           document.getElementById("desc").innerHTML = resp.current.weather[0].main + " ( "+resp.current.weather[0].description +")"
+			           document.getElementById("desc").innerHTML = resp.current.weather[0].main + " ( "+resp.current.weather[0].description + " -> "+resp.current.windSpeed+" KM/h)"
 	        		   
 		        	  /*let windSpeed = "("+resp.current.windSpeed.toFixed(2) + " ) "+ resp.hourly[0].windSpeed.toFixed(2) + ", "+ resp.hourly[1].windSpeed.toFixed(2) + ", "+ resp.hourly[2].windSpeed.toFixed(2)  + ", "+ resp.hourly[3].windSpeed.toFixed(2) + ", "+ resp.hourly[4].windSpeed.toFixed(2) 
 		        	  document.getElementById("weather").innerHTML = "Wind Speed : " +windSpeed +" km/h <br/> Temprature: "+resp.current.temp

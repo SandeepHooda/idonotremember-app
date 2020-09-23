@@ -35,19 +35,25 @@ public class CallLog extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/xml");
 		String id = request.getParameter("id");
+		System.out.println(" id "+id);
 		String logJson = MangoDB.getDocumentWithQuery("remind-me-on", "call-logs", id, null,true, null, null);
 		Gson  json = new Gson();
 		CallLogs log = json.fromJson(logJson, new TypeToken<CallLogs>() {}.getType());
 		String messageToSpeak = "";
-		if (log.getMessage().length() < 120) {
-			messageToSpeak = log.getMessage()+". I repeat. "+log.getMessage()+". I repeat. "+log.getMessage();
-		}else {
-			messageToSpeak = log.getMessage();
-			if (messageToSpeak.length() > 360) {
-				messageToSpeak = messageToSpeak.substring(0, 360);
+		if (log != null) {
+			if (log.getMessage().length() < 120) {
+				messageToSpeak = log.getMessage()+". I repeat. "+log.getMessage()+". I repeat. "+log.getMessage();
+			}else {
+				messageToSpeak = log.getMessage();
+				if (messageToSpeak.length() > 360) {
+					messageToSpeak = messageToSpeak.substring(0, 360);
+				}
 			}
+		}else {
+			messageToSpeak ="Please check your reminder app to know your reminder.";
 		}
 		
+		System.out.println(" messageToSpeak "+messageToSpeak);
 		String message = "<Response><Speak>"+messageToSpeak+".</Speak></Response>";
 		response.getWriter().print(message);
 	}

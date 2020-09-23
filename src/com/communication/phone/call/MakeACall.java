@@ -23,7 +23,7 @@ public class MakeACall {
 		return call(phoneNo, messageID, null);
 	}
 	public static boolean call(String phoneNo, String messageID, String fromNumber) throws IOException {
-		log.info("Hero making a call sms to "+phoneNo);
+		log.info("Hero making a call sms to "+phoneNo+" message id "+messageID);
 		String httpsURL  = "https://post-master.herokuapp.com/MakeACall?phone="+phoneNo+"&messageID="+messageID;
 		if (null != fromNumber) {
 			httpsURL +="&fromNumber="+fromNumber;

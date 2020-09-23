@@ -195,7 +195,7 @@ public class LocationFacade {
 		 System.out.println(weatherAlertSnooz);
 		 snoozUntil.setTime(System.currentTimeMillis()+ 1000*60*60*12);//12 hour
 		 weatherAlertSnooz = json.toJson(snoozUntil,  new TypeToken<WeatherAlertSnooz>() {}.getType());
-		 MangoDB. updateData("remind-me-on", "weather-alert-snooz",  weatherAlertSnooz, "weather-alert-snooz",  null);
+		 MangoDB. updateData("remind-me-on", "weather-alert-snooz",  weatherAlertSnooz, snoozUntil.get_id(),  null);
 		 return snoozUntil;
 	}
 	

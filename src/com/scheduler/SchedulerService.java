@@ -151,7 +151,7 @@ public class SchedulerService {
 		
 		try {
 			if (reminderVO.isMakeACall() && settings.getCurrentCallCredits() >=Settings.callCharges) {
-				if (!MakeACall.call(callLog.getTo(), callLog.get_id())) {
+				if (!MakeACall.call(callLog.getTo(), callLog.get_import_id())) {
 					throw new Exception("Couln't not notify user via Phone");
 				}
 				
