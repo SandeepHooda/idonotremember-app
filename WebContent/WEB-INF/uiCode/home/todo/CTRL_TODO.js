@@ -418,7 +418,21 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 		}
 	}
 	$scope.markeComplete = function(index){
-		$scope.toggleComplete($scope.todos[index]);
+		let todo = $scope.todos[index];
+		if (!todo.complete){
+			var confirmPopup = $ionicPopup.confirm({
+			     title: 'Do you want to delete ',
+			     template: ''+todo.taskDesc
+			   });
+			 confirmPopup.then(function(res) {
+				 if (res){
+					 $scope.toggleComplete($scope.todos[index]);
+				 }else {
+					 return;
+				 }
+			  });
+		}
+		
 	}
 	$scope.markePending = function(index){
 		$scope.toggleComplete($scope.completedTodos[index]);
