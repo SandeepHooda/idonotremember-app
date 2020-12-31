@@ -19,7 +19,9 @@
 			    
 			  </label>
 			</div>
-			<div><span class="infoText">Swipe left to complete/undo an item</span></div>
+			<div><span class="infoText">Swipe left to complete/undo an item</span>
+			 <i class="fa fa-bookmark" style="font-size:22px;color:red;position: fixed;right: 30px;" ng-if="bookMark" ng-click="addToFav('no')"></i>
+			<i class="fa fa-bookmark-o" style="font-size:22px;color:red;position: fixed;right: 30px;" ng-if="!bookMark" ng-click="addToFav('yes')"></i></div>
 		</span>
 		<button ng-click="listenToVoice()" id="floatingBtnMic" class="floatingBtn top0"  name="add new" title="add new todo" >
 			 <i class="fa fa-microphone"></i>

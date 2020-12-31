@@ -5,6 +5,10 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	var theCtrl = this;
 	theCtrl.newTodo = "";
 	$scope.MaxOrder = 0;
+	$scope.bookMark = false;
+	if (window.localStorage.getItem('book-mark-page') === 'todo'){
+		$scope.bookMark = true;
+	}
 	window.localStorage.setItem('postlogin-moveto','menu.tab.todo');
 	var regIDStorege = window.localStorage.getItem('regID');
 	 var config = {
@@ -20,6 +24,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 		$scope.userName ="Hello Guest";
 	}
 	$scope.toDoCache = JSON.parse(window.localStorage.getItem('to-do-cache'));
+	
 	
 	$scope.editMode = false;
 	$scope.todos = [];
@@ -248,6 +253,17 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
   			
 			
 		});
+	}
+	$scope.addToFav  = function(cmd){
+		if (cmd ==='yes'){
+			window.localStorage.setItem('book-mark-page','todo');
+			$scope.bookMark = true;
+		}else {
+			window.localStorage.removeItem('book-mark-page');
+			$scope.bookMark = false;
+
+		}
+		
 	}
 	$scope.getToDos = function(showBusyPopup){
 		

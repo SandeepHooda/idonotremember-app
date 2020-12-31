@@ -763,5 +763,13 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 		    });
 		  };
 		  
+		  if (window.sessionStorage.getItem("navigatedToBookMark") == null){
+			  window.sessionStorage.setItem("navigatedToBookMark","yes");
+			  if (window.localStorage.getItem('book-mark-page') === 'todo'){
+				  $state.transitionTo('menu.tab.todo');
+			  }
+		  }
+		  
+		  
 	 
 }])
