@@ -23,6 +23,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	}else {
 		$scope.userName ="Hello Guest";
 	}
+	$scope.date =" ";
 	$scope.toDoCache = JSON.parse(window.localStorage.getItem('to-do-cache'));
 	
 	
@@ -287,6 +288,8 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	  				$scope.MaxOrder = $scope.findMaxOrder();
 	  				
 	  			}
+	  			$scope.date =" "+ (new Date());
+	  			$scope.date = $scope.date.substring(0, 26);
 	  			
 	  		},
 			function(response){

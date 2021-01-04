@@ -177,6 +177,7 @@ public class ReminderFacade {
 			Calendar cal = new GregorianCalendar();
 			Calendar today = new GregorianCalendar();
 			today.setTimeZone(userTimeZone);
+			today.add(Calendar.MINUTE, 2);
 			cal.setTimeZone(userTimeZone);
 			
 			cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeSplit[0]));
@@ -220,6 +221,7 @@ public class ReminderFacade {
 			Calendar cal = new GregorianCalendar();
 			Calendar today = new GregorianCalendar();
 			today.setTimeZone(userTimeZone);
+			today.add(Calendar.MINUTE, 2);
 			cal.setTimeZone(userTimeZone);
 			cal.set(Calendar.DATE, Integer.parseInt(dateSplit[2]));
 			{//If date is 31 then and this month don't have 31 then cals months needs to be adjusted
@@ -229,7 +231,7 @@ public class ReminderFacade {
 			cal.set(Calendar.MINUTE, Integer.parseInt(timeSplit[1]));
 			System.out.println(cal.getTime()+" #= "+cal.get(Calendar.MONTH));
 			cal.get(Calendar.MONTH);
-			if (cal.before(today)){//Reminder date has past in this month
+			if (cal.before(today) ){//Reminder date has past in this month
 				cal.add(Calendar.MONTH, 1);
 				System.out.println(" adding a month");
 			}
@@ -241,12 +243,15 @@ public class ReminderFacade {
 			Calendar cal = new GregorianCalendar();
 			Calendar today = new GregorianCalendar();
 			today.setTimeZone(userTimeZone);
+			today.add(Calendar.MINUTE, 2);
 			cal.setTimeZone(userTimeZone);
 			cal.set(Calendar.MONTH, (Integer.parseInt(dateSplit[1])) -1);
 			cal.set(Calendar.DATE, Integer.parseInt(dateSplit[2]));
 			cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeSplit[0]));
 			cal.set(Calendar.MINUTE, Integer.parseInt(timeSplit[1]));
-			if (cal.before(today)){//Reminder date has past in this month
+			System.out.println(" checking before reminder yesr set next year : "+((cal.getTimeInMillis() -today.getTimeInMillis())/1000) );
+			if (cal.before(today)  ){//Reminder date has past in this month
+				System.out.println(" reminder yesr set next year");
 				cal.add(Calendar.YEAR, 1);
 			}
 			return sdf.parse(""+cal.get(Calendar.YEAR)+"_"+(cal.get(Calendar.MONTH)+1)+"_"+cal.get(Calendar.DATE)+" "+reminderVO.getTime());

@@ -58,6 +58,8 @@ APP.CONTROLLERS.controller ('CTRL_HOME',['$window','$scope','$state','$rootScope
 	}else {
 		$scope.userName ="Hello Guest";
 	}
+	$scope.date =" ";
+	
 	theCtrl.addNewReminder  = function(){
 		$state.transitionTo('menu.newReminder');
 	}
@@ -296,7 +298,8 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 	  			 $scope.hideBusy();
 	  			window.localStorage.setItem('reminder-cache',JSON.stringify(response.data));
 	  			$scope.formatReminderDisplay(response.data) ;
-	  			
+	  			$scope.date =" "+ (new Date());
+	  			$scope.date = $scope.date.substring(0, 26);
 	  			
 	  		},
 			function(response){
