@@ -289,7 +289,7 @@ APP.CONTROLLERS.controller ('CTRL_TODO',['$window','$scope','$state','$rootScope
 	  				
 	  			}
 	  			$scope.date =" "+ (new Date());
-	  			$scope.date = $scope.date.substring(0, 26);
+	  			$scope.date = $scope.date.substring(16, 26);
 	  			
 	  		},
 			function(response){

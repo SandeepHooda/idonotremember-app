@@ -299,7 +299,7 @@ window.plugins.speechRecognition.isRecognitionAvailable(function(available){
 	  			window.localStorage.setItem('reminder-cache',JSON.stringify(response.data));
 	  			$scope.formatReminderDisplay(response.data) ;
 	  			$scope.date =" "+ (new Date());
-	  			$scope.date = $scope.date.substring(0, 26);
+	  			$scope.date = $scope.date.substring(16, 26);
 	  			
 	  		},
 			function(response){
